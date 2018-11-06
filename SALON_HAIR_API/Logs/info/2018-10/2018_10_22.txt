@@ -1,0 +1,2 @@
+10/22/2018 3:39:27 PM: {"_method":"GET","_url":"/ProductCategorys","_data":{"_Soure":"System.Private.CoreLib","_StackTrace":"   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in C:\\projects\\mysqlconnector\\src\\MySqlConnector\\Core\\ResultSet.cs:line 44","_Data":{},"_Message":"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ascx \r\n    ) AS `p`\r\n    LIMIT 50 OFFSET 0\r\n) AS `t`' at line 5"}}
+

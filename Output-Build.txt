@@ -1,0 +1,3 @@
+﻿1>------ Build started: Project: ULTIL_HELPER, Configuration: Debug Any CPU ------
+1>ULTIL_HELPER -> E:\CTNET\VASDEALER\BACKEND\VAS_DEALER_API\ULTIL_HELPER\bin\Debug\netcoreapp2.1\ULTIL_HELPER.dll
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
