@@ -14,7 +14,7 @@ namespace SALON_HAIR_CORE.Service
         public BookingDetailService(salon_hairContext salon_hairContext) : base(salon_hairContext)
         {
             _salon_hairContext = salon_hairContext;
-        }        
+        }
         public new void Edit(BookingDetail bookingDetail)
         {
             bookingDetail.Updated = DateTime.Now;

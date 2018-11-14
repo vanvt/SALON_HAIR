@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -26,8 +27,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetUser(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_user.Paging( _user.SearchAllFileds(keyword, orderBy, orderType),page,rowPerPage));
-            //return OkList(_user.Paging(_user.GetAll().Where(e=>e.CreatedDate.ToString().Contains(keyword)), page, rowPerPage));
+            var data = _user.SearchAllFileds(keyword);
+            var dataReturn =   _user.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Users/5
         [HttpGet("{id}")]
@@ -46,7 +48,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest();
                 }
                 //var jbtUser = await _jbtUser.FindBy(e => e.Id == id).Include(x => x.JbtUserAuthority).FirstOrDefaultAsync();
-                var user = await _user.FindBy(e => e.Id == id).Include(x => x.Salon).Include(e=>e.SalonBranch).FirstOrDefaultAsync();
+                var user = await _user.FindBy(e => e.Id == id).Include(x => x.Salon).Include(e => e.SalonBranch).FirstOrDefaultAsync();
                 if (user == null)
                 {
                     return NotFound();
@@ -56,8 +58,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
+           // return null;
         }
 
         // PUT: api/Users/5
@@ -74,7 +77,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-               
+                //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _user.EditAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
@@ -93,7 +96,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(user,e);
             }
         }
 
@@ -108,14 +111,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                user.CreatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _user.AddAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(user,e);
             }
           
         }
@@ -145,7 +148,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

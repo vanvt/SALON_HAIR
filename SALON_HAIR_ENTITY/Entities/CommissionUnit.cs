@@ -13,6 +13,7 @@ namespace SALON_HAIR_ENTITY.Entities
             CommissionLimitCommisionUnit = new HashSet<Commission>();
             CommissionRetailCommisionUnit = new HashSet<Commission>();
             CommissionWholesaleCommisionUnit = new HashSet<Commission>();
+            InvoiceDetail = new HashSet<InvoiceDetail>();
         }
 
         public long Id { get; set; }
@@ -29,5 +30,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Commission> CommissionLimitCommisionUnit { get; set; }
         public ICollection<Commission> CommissionRetailCommisionUnit { get; set; }
         public ICollection<Commission> CommissionWholesaleCommisionUnit { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
     }
 }

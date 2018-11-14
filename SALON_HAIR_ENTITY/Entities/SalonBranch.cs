@@ -16,7 +16,8 @@ namespace SALON_HAIR_ENTITY.Entities
             Staff = new HashSet<Staff>();
             StaffCommisonGroup = new HashSet<StaffCommisonGroup>();
             StaffTitle = new HashSet<StaffTitle>();
-            User = new HashSet<User>();
+            UserSalonBranch = new HashSet<User>();
+            UserSalonBranchCurrent = new HashSet<User>();
         }
 
         public long Id { get; set; }
@@ -53,6 +54,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Staff> Staff { get; set; }
         public ICollection<StaffCommisonGroup> StaffCommisonGroup { get; set; }
         public ICollection<StaffTitle> StaffTitle { get; set; }
-        public ICollection<User> User { get; set; }
+        public ICollection<User> UserSalonBranch { get; set; }
+        public ICollection<User> UserSalonBranchCurrent { get; set; }
     }
 }

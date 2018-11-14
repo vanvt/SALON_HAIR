@@ -83,16 +83,15 @@ namespace SALON_HAIR_AUTHENTICATION.Controllers
             //string roleClaim = String.Join(",", roleNameUsers);
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub,acc.Id.ToString()),
-              
-                //new Claim(ClaimTypes.Role,roleClaim) 
+                new Claim(JwtRegisteredClaimNames.Sub,acc.Id.ToString()),              
             };
+            
             var claimsRole = from a in _userAuthority.FindBy(e => e.UserId == acc.Id) select new Claim("role", a.Authority.Name);
             claims.AddRange(claimsRole);
             claims.Add(new Claim("name", acc.Name));
-            claims.Add(new Claim("email", acc.Email));
-            claims.Add(new Claim("salonId", ""+acc.SalonId.Value));
-            claims.Add(new Claim("salonBranchId", "" + acc.SalonBranchId.Value));
+            //claims.Add(new Claim("emailAddress", acc.Email));
+            claims.Add(new Claim("emailAddress", acc.Email));
+            claims.Add(new Claim("salonId", ""+acc.SalonId.Value));       
             var key = new SymmetricSecurityKey(SecurityHelper.Base64UrlDecode(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 

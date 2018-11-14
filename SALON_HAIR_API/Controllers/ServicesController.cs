@@ -9,7 +9,6 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
-
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -60,7 +59,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -105,7 +104,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(service,e);
             }
         }
 
@@ -121,7 +120,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 
-                service.CreatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                service.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
               
                 await _service.AddAsync(service);               
                 var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x=>x.Unit);
@@ -131,7 +130,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(service,e);
             }
           
         }
@@ -161,7 +160,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -70,7 +71,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -116,7 +117,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(commission,e);
             }
         }
 
@@ -131,7 +132,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                commission.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                commission.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _commission.AddAsync(commission);
 
                 var data = await _commission.FindBy(e => e.Id == commission.Id).Include(e => e.RetailCommisionUnit)
@@ -148,11 +149,11 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(commission,e);
             }
           
         }
-         
+
         // DELETE: api/Commissions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommission([FromRoute] long id)
@@ -178,7 +179,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

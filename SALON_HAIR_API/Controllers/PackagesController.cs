@@ -9,7 +9,6 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
-
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -31,7 +30,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPackage(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_package.Paging( _package.SearchAllFileds(keyword),page,rowPerPage).Include(e=>e.ServicePackage).ThenInclude(x=>x.Service));
+            var data = _package.SearchAllFileds(keyword);
+            var dataReturn =   _package.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Packages/5
         [HttpGet("{id}")]
@@ -54,7 +55,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -72,7 +73,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                //package.UpdatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                  package.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 //await _package.EditAsync(package);
                 //return CreatedAtAction("GetPackage", new { id = package.Id }, package);
 
@@ -108,7 +109,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(package,e);
             }
         }
 
@@ -119,17 +120,11 @@ namespace SALON_HAIR_API.Controllers
 
             try
             {
-
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-
-                if (package.ServicePackage.Select(e => e.ServiceId).Count() != package.ServicePackage.Select(e => e.ServiceId).Distinct().Count())
-                {
-                    throw new BadRequestException("Không thể tạo gói dịch vụ có hai dịch vụ giống nhau được babe");
-                }
-                package.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                package.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _package.AddAsync(package);
                 var servicePackge = _servicePackage.FindBy(e => e.PackageId == package.Id).Include(e=>e.Service);
                 package.ServicePackage = servicePackge.ToList();
@@ -137,7 +132,8 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-                throw;
+
+                throw new UnexpectedException(package,e);
             }
           
         }
@@ -167,7 +163,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

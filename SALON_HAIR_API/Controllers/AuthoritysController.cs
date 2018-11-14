@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
+using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -16,6 +19,7 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly IAuthority _authority;
         private readonly IUser _user;
+
         public AuthoritysController(IAuthority authority, IUser user)
         {
             _authority = authority;
@@ -24,9 +28,11 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Authoritys
         [HttpGet]
-        public IActionResult GetAuthority(int page = 1, int rowPerPage = 50, string keyword = "",string orderBy="",string orderType = "")
+        public IActionResult GetAuthority(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_authority.Paging( _authority.SearchAllFileds(keyword, orderBy,orderType),page,rowPerPage));
+            var data = _authority.SearchAllFileds(keyword);
+            var dataReturn =   _authority.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Authoritys/5
         [HttpGet("{id}")]
@@ -49,7 +55,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -86,7 +92,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(authority,e);
             }
         }
 
@@ -108,7 +114,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(authority,e);
             }
           
         }
@@ -138,7 +144,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

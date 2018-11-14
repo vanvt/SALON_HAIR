@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
+            Invoice = new HashSet<Invoice>();
         }
 
         public long Id { get; set; }
@@ -16,7 +17,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Status { get; set; }
         public DateTime? Updated { get; set; }
         public string Address { get; set; }
-        public string CustomerType { get; set; }
         public DateTime? Dob { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
@@ -27,7 +27,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public long SalonId { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
-        public bool? IsNewCustomer { get; set; }
         public long? PhotoId { get; set; }
 
         public Photo Photo { get; set; }
@@ -35,5 +34,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public SalonBranch SalonBranch { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<Invoice> Invoice { get; set; }
     }
 }

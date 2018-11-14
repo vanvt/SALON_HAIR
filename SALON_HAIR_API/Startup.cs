@@ -55,7 +55,8 @@ namespace WebApplication4
                 });
             #region Dbcontext
             services.AddDbContextPool<salon_hairContext>( // replace "YourDbContext" with the class name of your DbContext
-                options => options.UseMySql(ConfigurationExtensions.GetConnectionString(this.Configuration, "DefaultConnection"), // replace with your Connection String
+                
+                options => options.UseLazyLoadingProxies(false).UseMySql(ConfigurationExtensions.GetConnectionString(this.Configuration, "DefaultConnection"), // replace with your Connection String
                     mysqlOptions =>
                     {
                         mysqlOptions.ServerVersion(new Version(5, 7, 17), ServerType.MySql); // replace with your Server Version and Type
@@ -115,6 +116,7 @@ namespace WebApplication4
                 IssuerSigningKey = new SymmetricSecurityKey(
                     SecurityHelper.Base64UrlDecode(Configuration["Jwt:Key"])),
                 ClockSkew = TimeSpan.Zero,                
+                
             };
         });
             #endregion
@@ -130,6 +132,7 @@ namespace WebApplication4
             });
             #endregion
             #region Dependency injection
+            services.AddScoped<IGeneric, GenericService>();
             services.AddScoped<IAuthority, AuthorityService>();
             services.AddScoped<IAuthorityRouter, AuthorityRouterService>();
             services.AddScoped<IPhoto, PhotoService>();
@@ -146,7 +149,9 @@ namespace WebApplication4
             services.AddScoped<IServiceCategory, ServiceCategoryService>();
             services.AddScoped<IServicePackage ,ServicePackageService> ();
             services.AddScoped<IServiceProduct, ServiceProductService>();
-      
+            services.AddScoped<ICustomer, CustomerService>();
+            services.AddScoped<IInvoice, InvoiceService>();
+            services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
             services.AddScoped<IUser ,UserService> ();
             services.AddScoped<IUserAuthority, UserAuthorityService>();          
             services.AddScoped<IWarehouse, WarehouseService>();
@@ -169,6 +174,7 @@ namespace WebApplication4
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+           
             app.UseStaticFiles();
             if (env.IsDevelopment())
             {

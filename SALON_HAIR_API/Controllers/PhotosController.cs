@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.Extensions.Configuration;
-
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -31,9 +31,11 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Photos
         [HttpGet]
-        public IActionResult GetAuthority(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetPhoto(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_photo.Paging(_photo.SearchAllFileds(keyword, orderBy, orderType), page, rowPerPage));
+            var data = _photo.SearchAllFileds(keyword);
+            var dataReturn =   _photo.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Photos/5
         [HttpGet("{id}")]
@@ -56,7 +58,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -74,7 +76,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-          
+               // photo.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _photo.EditAsync(photo);
                 return CreatedAtAction("GetPhoto", new { id = photo.Id }, photo);
             }
@@ -93,7 +95,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(photo,e);
             }
         }
 
@@ -136,7 +138,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(fileImageCollect, e);
             }
           
         }
@@ -166,7 +168,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

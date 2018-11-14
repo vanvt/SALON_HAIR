@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -28,7 +29,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetCommissionDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_commissionDetail.Paging( _commissionDetail.SearchAllFileds(keyword),page,rowPerPage).Include(e=>e.Status));
+            var data = _commissionDetail.SearchAllFileds(keyword);
+            var dataReturn =   _commissionDetail.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/CommissionDetails/5
         [HttpGet("{id}")]
@@ -51,7 +54,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -69,7 +72,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                commissionDetail.UpdatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                commissionDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _commissionDetail.EditAsync(commissionDetail);
                 return CreatedAtAction("GetCommissionDetail", new { id = commissionDetail.Id }, commissionDetail);
             }
@@ -88,7 +91,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(commissionDetail,e);
             }
         }
 
@@ -103,14 +106,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                commissionDetail.CreatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                commissionDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _commissionDetail.AddAsync(commissionDetail);
                 return CreatedAtAction("GetCommissionDetail", new { id = commissionDetail.Id }, commissionDetail);
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(commissionDetail,e);
             }
           
         }
@@ -140,7 +143,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

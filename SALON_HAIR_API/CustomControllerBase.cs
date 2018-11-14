@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SALON_HAIR_API.ViewModels;
+using SALON_HAIR_CORE.Interface;
 using System.Linq;
 using ULTIL_HELPER;
 
 namespace SALON_HAIR_API
 {
     public class CustomControllerBase : ControllerBase
-    {
+    {   
         public override OkObjectResult Ok(object value)
         {
             int.TryParse(HttpContext.Request.Query["page"].ToString(), out int page);
@@ -39,6 +40,8 @@ namespace SALON_HAIR_API
                 response.Meta.TotalItem = rs.Meta.TotalItem;
                 response.Meta.TotalPage = StringHelper.CountTotalPage(rs.Meta.TotalItem, rowPerPage);
             }
+           
+
             return new OkObjectResult(response);
         }
         public OkObjectResult OkList<T>(IQueryable<T> rs)

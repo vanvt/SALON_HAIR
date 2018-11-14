@@ -38,12 +38,10 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetStaff(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_staff.Paging(_staff.SearchAllFileds(keyword), page, rowPerPage)
-                .Include(e=>e.StaffTitle)
-                .Include(e=>e.StaffCommisionGroup)
-                .Include(e => e.Photo)
-                .Include(e=>e.StaffService).ThenInclude(e=>e.Service)              
-                );
+            var user =   JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+            var data = _staff.SearchAllFileds(keyword);
+            var dataReturn =   _staff.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Staffs/5
         [HttpGet("{id}")]
@@ -66,7 +64,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -74,6 +72,7 @@ namespace SALON_HAIR_API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStaff([FromRoute] long id, [FromBody] Staff staff)
         {
+         
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -84,12 +83,13 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                 if (staff.StaffService.Select(e => e.ServiceId).Count() != staff.StaffService.Select(e => e.ServiceId).Distinct().Count())
+              
+           
+                if (staff.StaffService.Select(e => e.ServiceId).Count() != staff.StaffService.Select(e => e.ServiceId).Distinct().Count())
                 {
                     throw new BadRequestException("Không thể tạo nhân có hai sản dịch vụ nhau được babe");
                 }
-                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
-
+                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _staff.EditMany2ManyAsync(staff);
                 staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
@@ -108,8 +108,7 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
-                throw;
+                throw new UnexpectedException(staff,e);
             }
         }
 
@@ -147,7 +146,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(staff, e);
             }
           
         }
@@ -177,7 +176,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id, e);
             }
           
         }
@@ -208,7 +207,7 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-                throw;
+                throw new UnexpectedException(staff, e);
             }
         }
     }

@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -27,7 +28,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetRouter(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_router.Paging( _router.SearchAllFileds(keyword),page,rowPerPage));
+            var data = _router.SearchAllFileds(keyword);
+            var dataReturn =   _router.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Routers/5
         [HttpGet("{id}")]
@@ -50,7 +53,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -87,7 +90,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(router,e);
             }
         }
 
@@ -109,7 +112,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(router,e);
             }
           
         }
@@ -139,7 +142,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

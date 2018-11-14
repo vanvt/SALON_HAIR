@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -28,7 +29,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_booking.Paging( _booking.SearchAllFileds(keyword),page,rowPerPage).Include(e=>e.Status));
+            var data = _booking.SearchAllFileds(keyword);
+            var dataReturn =   _booking.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/Bookings/5
         [HttpGet("{id}")]
@@ -51,7 +54,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -69,7 +72,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _booking.EditAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
@@ -88,7 +91,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(booking,e);
             }
         }
 
@@ -103,14 +106,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _booking.AddAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(booking,e);
             }
           
         }
@@ -140,7 +143,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -27,7 +28,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetSalonBranch(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            return OkList(_salonBranch.Paging( _salonBranch.SearchAllFileds(keyword,orderBy,orderType),page,rowPerPage));
+            var data = _salonBranch.SearchAllFileds(keyword);
+            var dataReturn =   _salonBranch.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/SalonBranchs/5
         [HttpGet("{id}")]
@@ -50,7 +53,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -68,7 +71,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                salonBranch.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                salonBranch.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _salonBranch.EditAsync(salonBranch);
                 return CreatedAtAction("GetSalonBranch", new { id = salonBranch.Id }, salonBranch);
             }
@@ -87,7 +90,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(salonBranch,e);
             }
         }
 
@@ -102,15 +105,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                salonBranch.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
-
+                salonBranch.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _salonBranch.AddAsync(salonBranch);
                 return CreatedAtAction("GetSalonBranch", new { id = salonBranch.Id }, salonBranch);
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(salonBranch,e);
             }
           
         }
@@ -140,7 +142,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

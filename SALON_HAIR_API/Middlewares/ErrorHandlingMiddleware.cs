@@ -32,7 +32,11 @@ namespace SALON_HAIR_API.Middlewares
                 _logHelper = logHelper;              
                 await _next(context);
             }
-            catch(BadRequestException ex)
+            catch (UnexpectedException unexpectedException)
+            {
+                await HandleExceptionDetailAsync(context, unexpectedException);
+            }
+            catch (BadRequestException ex)
             {
                 await HandleExceptionDetailAsync(context, ex);
             }
@@ -44,18 +48,18 @@ namespace SALON_HAIR_API.Middlewares
             {
                 await HandleExceptionDetailAsync(context, x);
             }
-
+         
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex);
             }
+           
             finally
             {
 
             }
 
         }
-
         private async Task HandleExceptionDetailAsync(HttpContext context, BadRequestException exception)
         {
             string message = exception.Message;
@@ -80,6 +84,42 @@ namespace SALON_HAIR_API.Middlewares
                         _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
                         _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
                         _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
+                        _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+
+            }
+            await respone;
+        }
+        private async Task HandleExceptionDetailAsync(HttpContext context, UnexpectedException unexpectedException)
+        {
+            Exception exception = unexpectedException.exception;
+            string message = exception.Message;
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = context.Response.StatusCode;
+            var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
+            {            
+                errorCode = context.Response.StatusCode,
+                errorDesc = message,
+            }));
+            try
+            {
+           
+                await _logHelper.LogAsync(new
+                {
+                    _method = context.Request.Method,
+                    _url = context.Request.Path.Value,
+                    _tooken = context.Request.Headers.Where(e=>e.Key.Equals("Authorization")).Select(e => e.Value).FirstOrDefault(),
+                    _data = new
+                    {
+                        //_body = FormatRequest(context.Request),
+                        //_respone = context.Response,
+                        _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
+                        _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
+                        _Data = unexpectedException.DataLog,
                         _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
                     }
                 });

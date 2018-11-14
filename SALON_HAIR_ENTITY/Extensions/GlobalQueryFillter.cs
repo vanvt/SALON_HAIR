@@ -10,7 +10,7 @@ namespace SALON_HAIR_ENTITY.Extensions
     public static class GlobalQueryFillter
     {
         public static ModelBuilder BuilCustomFillter( ModelBuilder  builder)
-        {         
+        {
             builder.Entity<AuthorityRouter>().HasQueryFilter(e => !e.Status.Equals("DELETED"));          
             builder.Entity<Product>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));

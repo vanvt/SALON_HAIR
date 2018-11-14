@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 using MySql.Data.MySqlClient;
 using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_ENTITY.Extensions;
@@ -30,6 +31,8 @@ namespace SALON_HAIR_CORE.Repository
                 _easyspaContext.Set<T>().Add(entity);
 
                 _easyspaContext.SaveChanges();
+                entity =  LoadAllReference(entity);
+   
             }
             catch (Exception ex)
             {
@@ -45,7 +48,7 @@ namespace SALON_HAIR_CORE.Repository
             {
 
                 _easyspaContext.Set<T>().Add(entity);
-
+                entity = LoadAllReference(entity);
                 return await _easyspaContext.SaveChangesAsync();
             }
             catch (Exception e)
@@ -111,7 +114,7 @@ namespace SALON_HAIR_CORE.Repository
             try
             {
                 _easyspaContext.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-
+                entity = LoadAllReference(entity);
                 return await _easyspaContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -196,7 +199,9 @@ namespace SALON_HAIR_CORE.Repository
 
         public async Task<T> FindAsync(params object[] keyValues)
         {
-            return await _easyspaContext.Set<T>().FindAsync(keyValues);
+            var  entity = await _easyspaContext.Set<T>().FindAsync(keyValues);
+            entity = LoadAllReference(entity);
+            return entity;
         }
 
         public bool Any<Tsoure>(Expression<Func<T, bool>> predicate)
@@ -291,59 +296,7 @@ namespace SALON_HAIR_CORE.Repository
             }
             return rs;
         }
-        //public IQueryable<T> SearchAllFileds(string keyword, string field, string type)
-        //{
-        //    if (string.IsNullOrEmpty(field))
-        //    {
-        //        return SearchAllFileds(keyword);
-        //    }
-        //    field = field.ToLower().Trim();
-        //    type = type.Trim().ToLower();
-
-        //    var entityType = _easyspaContext.Model.FindEntityType(typeof(T));
-        //    var fieldOrder = entityType.GetProperties().Where(e => e.Name.ToLower().Equals(field)).FirstOrDefault();
-        //    IQueryable<T> rs;
-        //    string tableName = entityType.Relational().TableName;
-        //    string query = "";
-        //    if (string.IsNullOrEmpty(keyword))
-        //    {
-        //        query = $" SELECT * FROM  {tableName}   ";
-        //    }
-        //    else
-        //    {
-        //        query = $" SELECT * FROM  {tableName} where  ";
-
-        //        List<string> filter = new List<string>();
-
-        //        var parameters = new List<MySqlParameter>();
-
-        //        var querySearch =
-        //            from a in entityType.GetProperties()
-        //            where a.ClrType.FullName != typeof(System.Nullable<DateTime>).FullName
-        //            && a.ClrType.FullName != typeof(DateTime).FullName
-        //            select new { filler = $"(LOCATE(@keyword, CONVERT({a.Relational().ColumnName}, CHAR(450))) > 0) ", searchable = true };
-        //        querySearch = querySearch.Where(a => a.searchable == true);
-        //        filter = querySearch.Select(e => e.filler).ToList();
-
-        //        query += String.Join("or", filter);
-
-
-        //    }
-        //    if (fieldOrder != null)
-        //    {
-        //        query += $" order by {fieldOrder.Relational().ColumnName} {type} ";
-
-        //    }
-        //    if (string.IsNullOrEmpty(keyword))
-        //    {
-        //        rs = _easyspaContext.Set<T>().FromSql(query);
-        //    }
-        //    else
-        //    {
-        //        rs = _easyspaContext.Set<T>().FromSql(query, new MySqlParameter("@keyword", keyword));
-        //    }
-        //    return rs;
-        //}
+      
         public string GennerateSQL(Type type, string keyword, string field, string typeOrder)
         {
             string sqlRaw = "";
@@ -437,6 +390,26 @@ namespace SALON_HAIR_CORE.Repository
             return entity;
           
         }
+        public IQueryable<T> LoadAllInclude(IQueryable<T> rs)
+        {
+            var refs =  _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).References.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;        
+            refs.ToList().ForEach(e =>
+            {
+                rs = rs.Include(e);
+            });
+            
+            return rs;
+        }
+        public async Task<IEnumerable<T>> LoadAllIncludeEnumAsync(IQueryable<T> rs)
+        {
+            var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).References.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;
+            refs.ToList().ForEach(e =>
+            {
+                rs = rs.Include(e);
+            });
+           await rs.ToListAsync();
+            return rs;
+        }
         public T LoadAllCollecttion(T entity)
         {
 
@@ -469,11 +442,6 @@ namespace SALON_HAIR_CORE.Repository
             //rs += " EXECUTE stmt; ";
             //rs += " DEALLOCATE PREPARE stmt;   ";
             //return rs;
-        }
-        //public IQueryable<T> OrderByCustom(string fieldOrder,int typeOrder,  IQueryable<T> rs)
-        //{
-
-        //    return rs.OrderBy(e => {e. });
-        //}
+        }     
     }
 }

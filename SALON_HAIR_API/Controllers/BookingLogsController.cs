@@ -8,6 +8,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -26,14 +27,131 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/BookingLogs
         [HttpGet]
-        public IActionResult GetBookingLog(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",long bookingId = 0)
+        public IActionResult GetBookingLog(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            if (bookingId != 0)
+            var data = _bookingLog.SearchAllFileds(keyword);
+            var dataReturn =   _bookingLog.LoadAllInclude(data);
+            return OkList(dataReturn);
+        }
+        // GET: api/BookingLogs/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookingLog([FromRoute] long id)
+        {
+            try
             {
-                return OkList(_bookingLog.Paging(_bookingLog.SearchAllFileds(keyword).Where(e=>e.BookingId==bookingId), page, rowPerPage).Include(e => e.Status));
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var bookingLog = await _bookingLog.FindAsync(id);
+
+                if (bookingLog == null)
+                {
+                    return NotFound();
+                }
+                return Ok(bookingLog);
             }
-            return OkList(_bookingLog.Paging( _bookingLog.SearchAllFileds(keyword),page,rowPerPage).Include(e=>e.Status));
-        }     
+            catch (Exception e)
+            {
+
+                  throw new UnexpectedException(id, e);
+            }
+        }
+
+        // PUT: api/BookingLogs/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutBookingLog([FromRoute] long id, [FromBody] BookingLog bookingLog)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != bookingLog.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                bookingLog.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                await _bookingLog.EditAsync(bookingLog);
+                return CreatedAtAction("GetBookingLog", new { id = bookingLog.Id }, bookingLog);
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BookingLogExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }           
+            catch (Exception e)
+            {
+
+                  throw new UnexpectedException(bookingLog,e);
+            }
+        }
+
+        // POST: api/BookingLogs
+        [HttpPost]
+        public async Task<IActionResult> PostBookingLog([FromBody] BookingLog bookingLog)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                bookingLog.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                await _bookingLog.AddAsync(bookingLog);
+                return CreatedAtAction("GetBookingLog", new { id = bookingLog.Id }, bookingLog);
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(bookingLog,e);
+            }
+          
+        }
+
+        // DELETE: api/BookingLogs/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBookingLog([FromRoute] long id)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var bookingLog = await _bookingLog.FindAsync(id);
+                if (bookingLog == null)
+                {
+                    return NotFound();
+                }
+
+                await _bookingLog.DeleteAsync(bookingLog);
+
+                return Ok(bookingLog);
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(id,e);
+            }
+          
+        }
+
+        private bool BookingLogExists(long id)
+        {
+            return _bookingLog.Any<BookingLog>(e => e.Id == id);
+        }
     }
 }
 

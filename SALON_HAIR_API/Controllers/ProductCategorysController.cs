@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using SALON_HAIR_API.ViewModels;
 using AutoMapper;
-
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -69,7 +69,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -87,7 +87,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                productCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                productCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _productCategory.EditAsync(productCategory);
                 return CreatedAtAction("GetProductCategory", new { id = productCategory.Id }, productCategory);
             }
@@ -106,7 +106,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(productCategory,e);
             }
         }
 
@@ -121,16 +121,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                productCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
-                productCategory.Created = DateTime.Now;
-              
+                productCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _productCategory.AddAsync(productCategory);
                 return CreatedAtAction("GetProductCategory", new { id = productCategory.Id }, productCategory);
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(productCategory,e);
             }
           
         }
@@ -160,7 +158,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

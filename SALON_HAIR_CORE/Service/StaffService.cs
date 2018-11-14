@@ -33,29 +33,29 @@ namespace SALON_HAIR_CORE.Service
             
 
 
-            var listService = staff.StaffService.Select(e => e.ServiceId);
-            var listOldStaffService = _salon_hairContext.StaffService.Where(e => e.StaffId == staff.Id).AsNoTracking();
-            IEnumerable<SALON_HAIR_ENTITY.Entities.StaffService> listNewStaffService;
-            if (staff.IsWorkAllService.Value)
-            {
+            //var listService = staff.StaffService.Select(e => e.ServiceId);
+            //var listOldStaffService = _salon_hairContext.StaffService.Where(e => e.StaffId == staff.Id).AsNoTracking();
+            //IEnumerable<SALON_HAIR_ENTITY.Entities.StaffService> listNewStaffService;
+            //if (staff.IsWorkAllService.Value)
+            //{
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
+                
+            //}
+            //listNewStaffService = staff.StaffService.Select(e => new SALON_HAIR_ENTITY.Entities.StaffService
+            //{
+            //    Created = e.Created,
+            //    CreatedBy = e.CreatedBy,
+            //    StaffId = staff.Id,
+            //    ServiceId = e.ServiceId,
+            //    Status = e.Status,               
+            //    UpdatedBy = e.UpdatedBy,                
+            //});
+            //_salon_hairContext.StaffService.RemoveRange(listOldStaffService);
 
-            }
-            listNewStaffService = staff.StaffService.Select(e => new SALON_HAIR_ENTITY.Entities.StaffService
-            {
-                Created = e.Created,
-                CreatedBy = e.CreatedBy,
-                StaffId = staff.Id,
-                ServiceId = e.ServiceId,
-                Status = e.Status,               
-                UpdatedBy = e.UpdatedBy,                
-            });
-            _salon_hairContext.StaffService.RemoveRange(listOldStaffService);
-
-            _salon_hairContext.StaffService.AddRange(listNewStaffService);
+            //_salon_hairContext.StaffService.AddRange(listNewStaffService);
             staff.Updated = DateTime.Now;
          
             return await _salon_hairContext.SaveChangesAsync();          

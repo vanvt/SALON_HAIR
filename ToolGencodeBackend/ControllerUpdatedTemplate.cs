@@ -16,6 +16,7 @@ using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
+using SALON_HAIR_API.Exceptions;
 namespace SALON_HAIR_API.Controllers
 {
     [Route(""[controller]"")]
@@ -36,7 +37,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult Get{ClassName}(int page = 1, int rowPerPage = 50, string keyword = """", string orderBy = """", string orderType = """")
         {
-            return OkList(_{InstanceName}.Paging( _{InstanceName}.SearchAllFileds(keyword),page,rowPerPage).Include(e=>e.Status));
+            var data = _{InstanceName}.SearchAllFileds(keyword);
+            var dataReturn =   _{InstanceName}.LoadAllInclude(data);
+            return OkList(dataReturn);
         }
         // GET: api/{ClassName}s/5
         [HttpGet(""{id}"")]
@@ -59,7 +62,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException(id, e);
             }
         }
 
@@ -77,7 +80,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                {InstanceName}.UpdatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                {InstanceName}.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(""http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress""));
                 await _{InstanceName}.EditAsync({InstanceName});
                 return CreatedAtAction(""Get{ClassName}"", new { id = {InstanceName}.Id }, {InstanceName});
             }
@@ -96,7 +99,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                  throw new UnexpectedException({InstanceName},e);
             }
         }
 
@@ -111,14 +114,14 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                {InstanceName}.CreatedBy = _user.FindBy(e => e.Id == JwtHelper.GetIdFromToken(User.Claims)).FirstOrDefault().Email;
+                {InstanceName}.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(""http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress""));
                 await _{InstanceName}.AddAsync({InstanceName});
                 return CreatedAtAction(""Get{ClassName}"", new { id = {InstanceName}.Id }, {InstanceName});
             }
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException({InstanceName},e);
             }
           
         }
@@ -148,7 +151,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw;
+                throw new UnexpectedException(id,e);
             }
           
         }

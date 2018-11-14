@@ -30,9 +30,11 @@ namespace SALON_HAIR_ENTITY.Entities
         public string LastName { get; set; }
         public long? SalonId { get; set; }
         public long? SalonBranchId { get; set; }
+        public long? SalonBranchCurrentId { get; set; }
 
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
+        public SalonBranch SalonBranchCurrent { get; set; }
         public ICollection<UserAuthority> UserAuthority { get; set; }
     }
 }
