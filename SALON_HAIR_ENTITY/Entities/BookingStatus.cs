@@ -17,7 +17,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Status { get; set; }
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; set; }
-        public string Name { get; set; }
+        public string Code { get; set; }
+        public string Display { get; set; }
 
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }

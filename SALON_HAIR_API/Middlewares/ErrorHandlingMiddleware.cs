@@ -22,7 +22,7 @@ namespace SALON_HAIR_API.Middlewares
         private  ILogHelper _logHelper;
         public ErrorHandlingMiddleware(RequestDelegate next)
         {
-            _next = next;
+             _next = next;
            
         }
         public async Task Invoke(HttpContext context, ILogHelper logHelper /* other scoped dependencies */)
@@ -39,21 +39,11 @@ namespace SALON_HAIR_API.Middlewares
             catch (BadRequestException ex)
             {
                 await HandleExceptionDetailAsync(context, ex);
-            }
-            catch(DbUpdateException ex)
-            {
-                await HandleExceptionDetailAsync(context, ex);
-            }
-            catch(MySqlException x)
-            {
-                await HandleExceptionDetailAsync(context, x);
-            }
-         
+            }          
             catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex);
-            }
-           
+            }           
             finally
             {
 
@@ -62,7 +52,7 @@ namespace SALON_HAIR_API.Middlewares
         }
         private async Task HandleExceptionDetailAsync(HttpContext context, BadRequestException exception)
         {
-            string message = exception.Message;
+            string message = exception.InnerException == null ? exception.Message : exception.InnerException.Message;
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = exception.HttpCode ;
             var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
@@ -73,20 +63,7 @@ namespace SALON_HAIR_API.Middlewares
             }));
             try
             {
-                await _logHelper.LogAsync(new
-                {
-                    _method = context.Request.Method,
-                    _url = context.Request.Path.Value,
-                    _data = new
-                    {
-                        //_body = FormatRequest(context.Request),
-                        //_respone = context.Response,
-                        _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
-                        _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                        _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
-                        _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
-                    }
-                });
+                await LogAsync(context, exception);
             }
             catch (Exception e)
             {
@@ -97,7 +74,7 @@ namespace SALON_HAIR_API.Middlewares
         private async Task HandleExceptionDetailAsync(HttpContext context, UnexpectedException unexpectedException)
         {
             Exception exception = unexpectedException.exception;
-            string message = exception.Message;
+            string message = exception.InnerException == null ? exception.Message : exception.InnerException.Message;
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = context.Response.StatusCode;
             var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
@@ -107,22 +84,7 @@ namespace SALON_HAIR_API.Middlewares
             }));
             try
             {
-           
-                await _logHelper.LogAsync(new
-                {
-                    _method = context.Request.Method,
-                    _url = context.Request.Path.Value,
-                    _tooken = context.Request.Headers.Where(e=>e.Key.Equals("Authorization")).Select(e => e.Value).FirstOrDefault(),
-                    _data = new
-                    {
-                        //_body = FormatRequest(context.Request),
-                        //_respone = context.Response,
-                        _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
-                        _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                        _Data = unexpectedException.DataLog,
-                        _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
-                    }
-                });
+                await LogAsync(context, unexpectedException);
             }
             catch (Exception e)
             {
@@ -151,65 +113,7 @@ namespace SALON_HAIR_API.Middlewares
             }));
             try
             {
-                await _logHelper.LogAsync(new
-                {
-                    _method = context.Request.Method,
-                    _url = context.Request.Path.Value,
-                    _data = new
-                    {
-                        //_body = FormatRequest(context.Request),
-                        //_respone = context.Response,
-                       _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
-                       _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                       _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
-                       _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message ,
-                      
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-
-            }          
-            await respone;
-        }
-        private async Task HandleExceptionDetailAsync(HttpContext context, MySqlException exception)
-        {
-            string message = "";
-            if (exception.InnerException != null)
-            {
-                message = exception.InnerException.Message;
-            }
-            else
-            {
-                message = exception.Message;
-            }
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = 500;
-            var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
-            {
-                //error = message,
-                errorCode = 500,
-                errorDesc = "Định hack của bố mầy à",
-            }));
-            try
-            {
-                await _logHelper.LogAsync(new
-                {
-                    _method = context.Request.Method,
-                    _url = context.Request.Path.Value,
-                    _data = new
-                    {
-                        //_body = FormatRequest(context.Request),
-                        //_respone = context.Response,
-                        _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
-                        _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                        _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
-                        _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
-
-                    }
-                });
+               await LogAsync(context, exception);
             }
             catch (Exception e)
             {
@@ -217,73 +121,57 @@ namespace SALON_HAIR_API.Middlewares
             }
             await respone;
         }
-        private async Task HandleExceptionDetailAsync(HttpContext context,DbUpdateException exception)
+        private async Task LogAsync(HttpContext context, Exception exception)
         {
-            string message = "";
-            if (exception.InnerException != null)
-            {
-                message = exception.InnerException.Message;
-            }
-            else
-            {
-                message = exception.Message;
-            }
+            var _data = new
+            {           
+                _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
+                _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
+                _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
+                _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
 
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = 500;
-            var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
-            {
-                //error = message,
-                errorCode = 500,
-                errorDesc = message
-            }));
-            try
-            {
-                await _logHelper.LogAsync(new
-                {
-                    _method = context.Request.Method,
-                    _url = context.Request.Path.Value,
-                    _data = new
-                    {
-                        //_body = FormatRequest(context.Request),
-                        //_respone = context.Response,
-                        _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
-                        _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                        _Data = exception.InnerException == null ? exception.Data : exception.InnerException.Data,
-                        _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
-
-                    }
-                });
-            }
-            catch (Exception e)
-            {
-
-            }
-            await respone;
+            };
+            await LogAsync(context, _data);
         }
-        private async Task<string> FormatRequest(HttpRequest request)
+        private async Task LogAsync(HttpContext context, UnexpectedException exception)
         {
-            var body = request.Body;
+            var _data = new
+            {
+                _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
+                _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
+                _Data = exception.DataLog,
+                _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
 
-            //This line allows us to set the reader for the request back at the beginning of its stream.
-            request.EnableRewind();
-
-            //We now need to read the request stream.  First, we create a new byte[] with the same length as the request stream...
-            var buffer = new byte[Convert.ToInt32(request.ContentLength)];
-
-            //...Then we copy the entire request stream into the new buffer.
-            await request.Body.ReadAsync(buffer, 0, buffer.Length);
-
-            //We convert the byte[] into a string using UTF8 encoding...
-            var bodyAsText = Encoding.UTF8.GetString(buffer);
-
-            //..and finally, assign the read body back to the request body, which is allowed because of EnableRewind()
-            request.Body = body;
-
-            return $"{request.Scheme} {request.Host}{request.Path} {request.QueryString} {bodyAsText}";
+            };
+            await LogAsync(context, _data);
         }
+        private async Task LogAsync(HttpContext context, BadRequestException exception)
+        {
+            var _data = new
+            {
+                _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
+                _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
+                _Data = exception.DataLog,
+                _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
+
+            };
+            await LogAsync(context, _data);
+        }
+        private async Task LogAsync(HttpContext context, object data)
+        {
+
+            await _logHelper.LogAsync(new
+            {
+                context.TraceIdentifier,
+                _method = context.Request.Method,
+                _url = context.Request.Path.Value,
+                _tooken = context.Request.Headers.Where(e => e.Key.Equals("Authorization")).Select(e => e.Value).FirstOrDefault(),
+                _data = data
+                
+            }, "wwwroot", "exception");
+        }
+
     }
-
     //Extension method used to add the middleware to the HTTP request pipeline.
     public static class ErrorHandlingMiddlewareExtensions
     {

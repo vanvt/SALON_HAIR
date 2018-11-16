@@ -5,6 +5,11 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class InvoiceDetail
     {
+        public InvoiceDetail()
+        {
+            InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
+        }
+
         public long Id { get; set; }
         public DateTime? Created { get; set; }
         public string Status { get; set; }
@@ -22,5 +27,6 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public CommissionUnit DiscountUnit { get; set; }
         public Invoice Invoice { get; set; }
+        public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
     }
 }

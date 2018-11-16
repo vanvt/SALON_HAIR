@@ -152,6 +152,7 @@ namespace WebApplication4
             services.AddScoped<ICustomer, CustomerService>();
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
+            services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
             services.AddScoped<IUser ,UserService> ();
             services.AddScoped<IUserAuthority, UserAuthorityService>();          
             services.AddScoped<IWarehouse, WarehouseService>();
@@ -167,6 +168,8 @@ namespace WebApplication4
             services.AddScoped<ICommissionDetail, CommissionDetailService>();
             services.AddScoped<IStaffCommissionGroup, StaffCommissionGroupService>();
             services.AddScoped<ICommissionUnit, CommissionUnitService>();
+
+
 
             #endregion
             services.AddDirectoryBrowser();

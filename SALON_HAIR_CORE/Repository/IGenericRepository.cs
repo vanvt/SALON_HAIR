@@ -21,6 +21,7 @@ namespace SALON_HAIR_CORE.Repository
         //IEnumerable<T> SearchAllFileds(string keyword);
         IQueryable<T> Paging(IQueryable<T> query, int currentPage, int rowPerPage);
         Task<T> FindAsync(params object[] keyValues);
+        T Find(params object[] keyValues);
         Task<int> AddAsync(T entity);
         Task<int> DeleteAsync(T entity);
         Task<int> EditAsync(T entity);

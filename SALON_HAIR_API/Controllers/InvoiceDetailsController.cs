@@ -18,10 +18,15 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly IInvoiceDetail _invoiceDetail;
         private readonly IUser _user;
-
-        public InvoiceDetailsController(IInvoiceDetail invoiceDetail, IUser user)
+        private readonly IService _service;
+        private readonly IProduct _product;
+        private readonly Package _package;
+        public InvoiceDetailsController(Package package,IProduct product,IService service,IInvoiceDetail invoiceDetail, IUser user)
         {
-            _invoiceDetail = invoiceDetail;
+            _service = service;
+            _product = product;
+            _package = package;
+               _invoiceDetail = invoiceDetail;
             _user = user;
         }
 
@@ -73,7 +78,25 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
-                await _invoiceDetail.EditAsync(invoiceDetail);
+                string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
+                //invoiceDetail.ObjectName = objectName;
+                switch (invoiceDetail.ObjectType)
+                {
+                    case "SERVICE":
+                        await _invoiceDetail.EditAsServiceAsync(invoiceDetail);
+                        break;
+                    case "PRODUCT":
+                        await _invoiceDetail.EditAsync(invoiceDetail);
+                        break;
+                    case "PACKAGE":
+                        await _invoiceDetail.EditAsPackgeAsync(invoiceDetail);
+                        break;
+                    case "EXTRA":
+                        await _invoiceDetail.EditAsync(invoiceDetail);
+                        break;
+                    default:
+                        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);
+                }
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
 
@@ -107,7 +130,25 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
-                await _invoiceDetail.AddAsync(invoiceDetail);
+                string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
+                invoiceDetail.ObjectName = objectName;
+                switch (invoiceDetail.ObjectType)
+                {
+                    case "SERVICE":                     
+                        await _invoiceDetail.AddAsServiceAsync(invoiceDetail);
+                        break;
+                    case "PRODUCT":
+                        await _invoiceDetail.AddAsync(invoiceDetail);
+                        break;
+                    case "PACKAGE":
+                        await _invoiceDetail.AddAsPackgeAsync(invoiceDetail);
+                        break;
+                    case "EXTRA":
+                        await _invoiceDetail.AddAsync(invoiceDetail);
+                        break;
+                    default:
+                        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);                        
+                }
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
             catch (Exception e)
@@ -152,6 +193,7 @@ namespace SALON_HAIR_API.Controllers
         {
             return _invoiceDetail.Any<InvoiceDetail>(e => e.Id == id);
         }
+        
     }
 }
 

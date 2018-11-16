@@ -130,14 +130,12 @@ namespace SALON_HAIR_API.Controllers
                     OriginalName = fileImage.Name,
                     Path = Path.Combine( _configuration["URLAPI:value"],path),
                     Url = Path.Combine(_configuration["URLAPI:value"], "upload", "frontend", fileStore),
-
                 };
                 await _photo.AddAsync(photo);
                 return CreatedAtAction("GetPhoto", new { id = photo.Id }, photo);
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(fileImageCollect, e);
             }
           

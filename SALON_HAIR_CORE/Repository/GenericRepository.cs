@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using MySql.Data.MySqlClient;
+using SALON_HAIR_CORE.Utilities;
 using SALON_HAIR_ENTITY.Entities;
 using SALON_HAIR_ENTITY.Extensions;
 using System;
@@ -200,7 +202,7 @@ namespace SALON_HAIR_CORE.Repository
         public async Task<T> FindAsync(params object[] keyValues)
         {
             var  entity = await _easyspaContext.Set<T>().FindAsync(keyValues);
-            entity = LoadAllReference(entity);
+            //entity = LoadAllReference(entity);
             return entity;
         }
 
@@ -442,6 +444,12 @@ namespace SALON_HAIR_CORE.Repository
             //rs += " EXECUTE stmt; ";
             //rs += " DEALLOCATE PREPARE stmt;   ";
             //return rs;
-        }     
+        }
+
+        public T Find(params object[] keyValues)
+        {
+            var entity = _easyspaContext.Set<T>().Find(keyValues);
+            return entity;
+        }
     }
 }

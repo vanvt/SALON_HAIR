@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public User()
         {
+            Invoice = new HashSet<Invoice>();
             UserAuthority = new HashSet<UserAuthority>();
         }
 
@@ -35,6 +36,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public SalonBranch SalonBranchCurrent { get; set; }
+        public ICollection<Invoice> Invoice { get; set; }
         public ICollection<UserAuthority> UserAuthority { get; set; }
     }
 }

@@ -27,9 +27,13 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Invoices
         [HttpGet]
-        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false)
         {
             var data = _invoice.SearchAllFileds(keyword);
+            if (isDisplay)
+            {
+                data = data.Where(e => e.IsDisplay.Value).Where(e => e.Created.Value.Date == DateTime.Now.Date);
+            }
             var dataReturn =   _invoice.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -74,6 +78,7 @@ namespace SALON_HAIR_API.Controllers
             {
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _invoice.EditAsync(invoice);
+                
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
             }
 

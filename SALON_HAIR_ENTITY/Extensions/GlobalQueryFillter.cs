@@ -11,6 +11,7 @@ namespace SALON_HAIR_ENTITY.Extensions
     {
         public static ModelBuilder BuilCustomFillter( ModelBuilder  builder)
         {
+            builder.Entity<InvoiceStaffArrangement>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<AuthorityRouter>().HasQueryFilter(e => !e.Status.Equals("DELETED"));          
             builder.Entity<Product>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
@@ -34,6 +35,9 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<Commission>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));           
             builder.Entity<CommissionUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<Customer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<Invoice>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<InvoiceDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             return builder;
         }
     }
