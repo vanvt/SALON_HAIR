@@ -132,42 +132,49 @@ namespace WebApplication4
             });
             #endregion
             #region Dependency injection
-            services.AddScoped<IGeneric, GenericService>();
             services.AddScoped<IAuthority, AuthorityService>();
             services.AddScoped<IAuthorityRouter, AuthorityRouterService>();
-            services.AddScoped<IPhoto, PhotoService>();
-            services.AddScoped<IProduct, ProductService>();
-            services.AddScoped<IProductUnit, ProductUnitService>();
-            services.AddScoped<IProductCategory, ProductCategoryService>();
-            services.AddScoped<IStatus, StatusService>();
-            services.AddScoped<IProductPictures, ProductPicturesService>();
-            services.AddScoped<IRouter,RouterService> ();
-            services.AddScoped<ISalon, SalonService>();
-            services.AddScoped<ISalonBranch ,SalonBranchService> ();
-            services.AddScoped<IService, ServiceService>();
-            services.AddScoped<IPackage, PackageService>();
-            services.AddScoped<IServiceCategory, ServiceCategoryService>();
-            services.AddScoped<IServicePackage ,ServicePackageService> ();
-            services.AddScoped<IServiceProduct, ServiceProductService>();
-            services.AddScoped<ICustomer, CustomerService>();
-            services.AddScoped<IInvoice, InvoiceService>();
-            services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
-            services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
-            services.AddScoped<IUser ,UserService> ();
-            services.AddScoped<IUserAuthority, UserAuthorityService>();          
-            services.AddScoped<IWarehouse, WarehouseService>();
-            services.AddScoped<IStaffService, StaffServiceService>();
-         
-            services.AddScoped<IStaff, SALON_HAIR_CORE.Service.StaffService>();
-            services.AddScoped<IStaffTitle, StaffTitleService>();
             services.AddScoped<IBooking, BookingService>();
-            services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingDetail, BookingDetailService>();
+            services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();
             services.AddScoped<ICommission, CommissionService>();
             services.AddScoped<ICommissionDetail, CommissionDetailService>();
-            services.AddScoped<IStaffCommissionGroup, StaffCommissionGroupService>();
             services.AddScoped<ICommissionUnit, CommissionUnitService>();
+            services.AddScoped<ICustomer, CustomerService>();
+            services.AddScoped<IInvoice, InvoiceService>();
+            services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
+            services.AddScoped<IInvoicePayment, InvoicePaymentService>();
+            services.AddScoped<IInvoicePaymentDetail, InvoicePaymentDetailService>();
+            services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
+            services.AddScoped<IInvoiceStatus, InvoiceStatusService>();
+            services.AddScoped<IPackage, PackageService>();
+            services.AddScoped<IPaymentBanking, PaymentBankingService>();
+            services.AddScoped<IPaymentMethod, PaymentMethodService>();
+            services.AddScoped<IPhoto, PhotoService>();
+            services.AddScoped<IProduct, ProductService>();
+            services.AddScoped<IProductCategory, ProductCategoryService>();
+            services.AddScoped<IProductControl, ProductControlService>();
+            services.AddScoped<IProductPictures, ProductPicturesService>();
+            services.AddScoped<IProductUnit, ProductUnitService>();
+            services.AddScoped<IRouter, RouterService>();
+            services.AddScoped<ISalon, SalonService>();
+            services.AddScoped<ISalonBranch, SalonBranchService>();
+            services.AddScoped<IService, ServiceService>();
+            services.AddScoped<IServiceCategory, ServiceCategoryService>();
+            services.AddScoped<IServicePackage, ServicePackageService>();
+            services.AddScoped<IServiceProduct, ServiceProductService>();
+            services.AddScoped<ISetting, SettingService>();
+            services.AddScoped<IStaff, SALON_HAIR_CORE.Service.StaffService>();
+            services.AddScoped<IStaffCommisonGroup, StaffCommisonGroupService>();
+            services.AddScoped<IStaffService, StaffServiceService>();
+            services.AddScoped<IStaffTitle, StaffTitleService>();
+            services.AddScoped<IStatus, StatusService>();
+            services.AddScoped<IUser, UserService>();
+            services.AddScoped<IUserAuthority, UserAuthorityService>();
+            services.AddScoped<IUserSalonBranch, UserSalonBranchService>();
+            services.AddScoped<IWarehouse, WarehouseService>();
+
 
 
 

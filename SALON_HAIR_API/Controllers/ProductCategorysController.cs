@@ -44,9 +44,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProductCategory(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var firstQuery  = _productCategory.SearchAllFileds(keyword, orderBy, orderType);
-            var seccondsQuery = _productCategory.Paging(firstQuery, page, rowPerPage).Include(e => e.Product).ThenInclude(e=>e.Unit);                  
-            return OkList(seccondsQuery);
+            var data  = _productCategory.SearchAllFileds(keyword, orderBy, orderType);         
+            var dataReturn = _productCategory.LoadAllCollecttion(data);
+            return OkList(dataReturn);            
         }
         // GET: api/ProductCategorys/5
         [HttpGet("{id}")]

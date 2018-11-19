@@ -79,7 +79,7 @@ namespace SALON_HAIR_API.Middlewares
             context.Response.StatusCode = context.Response.StatusCode;
             var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
             {            
-                errorCode = context.Response.StatusCode,
+                errorCode = unexpectedException.HttpCode,
                 errorDesc = message,
             }));
             try

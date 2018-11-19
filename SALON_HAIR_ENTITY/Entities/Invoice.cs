@@ -8,6 +8,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Invoice()
         {
             InvoiceDetail = new HashSet<InvoiceDetail>();
+            InvoicePayment = new HashSet<InvoicePayment>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
         }
 
@@ -28,6 +29,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? SalesmanId { get; set; }
         public bool? IsDisplay { get; set; }
         public string Note { get; set; }
+        public decimal? Total { get; set; }
 
         public User Cashier { get; set; }
         public Customer Customer { get; set; }
@@ -35,6 +37,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public InvoiceStatus InvoiceStatus { get; set; }
         public Staff Salesman { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
+        public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
     }
 }

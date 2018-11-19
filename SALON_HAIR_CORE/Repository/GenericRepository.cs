@@ -402,6 +402,17 @@ namespace SALON_HAIR_CORE.Repository
             
             return rs;
         }
+
+        public IQueryable<T> LoadAllCollecttion(IQueryable<T> rs)
+        {
+            var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).Collections.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;
+            refs.ToList().ForEach(e =>
+            {
+                rs = rs.Include(e);
+            });
+
+            return rs;
+        }
         public async Task<IEnumerable<T>> LoadAllIncludeEnumAsync(IQueryable<T> rs)
         {
             var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).References.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;

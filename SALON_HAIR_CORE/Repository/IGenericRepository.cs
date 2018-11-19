@@ -36,6 +36,7 @@ namespace SALON_HAIR_CORE.Repository
         T LoadAllReference(T entity);
         T LoadAllCollecttion(T entity);
         IQueryable<T> LoadAllInclude(IQueryable<T> entity);
+        IQueryable<T> LoadAllCollecttion(IQueryable<T> entity);        
         Task<IEnumerable<T>> LoadAllIncludeEnumAsync(IQueryable<T> rs);
     }
 }

@@ -11,7 +11,10 @@ namespace SALON_HAIR_ENTITY.Entities
             BookingLog = new HashSet<BookingLog>();
             Commission = new HashSet<Commission>();
             Customer = new HashSet<Customer>();
+            PaymentBanking = new HashSet<PaymentBanking>();
+            PaymentMethod = new HashSet<PaymentMethod>();
             Product = new HashSet<Product>();
+            ProductControl = new HashSet<ProductControl>();
             SalonBranch = new HashSet<SalonBranch>();
             Service = new HashSet<Service>();
             Staff = new HashSet<Staff>();
@@ -43,7 +46,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<BookingLog> BookingLog { get; set; }
         public ICollection<Commission> Commission { get; set; }
         public ICollection<Customer> Customer { get; set; }
+        public ICollection<PaymentBanking> PaymentBanking { get; set; }
+        public ICollection<PaymentMethod> PaymentMethod { get; set; }
         public ICollection<Product> Product { get; set; }
+        public ICollection<ProductControl> ProductControl { get; set; }
         public ICollection<SalonBranch> SalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
         public ICollection<Staff> Staff { get; set; }

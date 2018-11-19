@@ -4,7 +4,7 @@ using SALON_HAIR_ENTITY.Entities;
 
 namespace SALON_HAIR_CORE.Interface
 {
-    public interface IStaffService: IGenericRepository<StaffService>
+    public interface IProductStatus
     {
 
     }

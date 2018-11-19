@@ -28,8 +28,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetServiceCategory(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _serviceCategory.SearchAllFileds(keyword);
-            var dataReturn =   _serviceCategory.LoadAllInclude(data);
+            var data = _serviceCategory.SearchAllFileds(keyword,orderBy,orderType);
+            var dataReturn =   _serviceCategory.LoadAllCollecttion(data);
+
             return OkList(dataReturn);
         }
         // GET: api/ServiceCategorys/5

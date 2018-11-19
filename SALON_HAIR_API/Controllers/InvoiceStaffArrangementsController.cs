@@ -35,7 +35,8 @@ namespace SALON_HAIR_API.Controllers
         {
 
             var data = _invoiceStaffArrangement.GetAll().Where(e=>e.InvoiceId==invoiceId);
-            var dataReturn =   _invoiceStaffArrangement.LoadAllInclude(data);
+            var dataReturn =   _invoiceStaffArrangement.LoadAllCollecttion(data);
+            dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
             var invoice= _invoice.Find(invoiceId);
 
             InvoiceStaffArrangementVM invoiceStaffArrangementVM = new InvoiceStaffArrangementVM {
@@ -47,9 +48,9 @@ namespace SALON_HAIR_API.Controllers
             };
 
             return Ok(invoiceStaffArrangementVM);
-        }       
+        }
         // PUT: api/InvoiceStaffArrangements/5
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoiceStaffArrangement([FromRoute] long id, [FromBody] InvoiceStaffArrangementVMPut invoiceStaffArrangement)
         {
             if (!ModelState.IsValid)
@@ -68,8 +69,13 @@ namespace SALON_HAIR_API.Controllers
                 invoice.SalesmanId = invoiceStaffArrangement.SalesmanId;
                 await _invoice.EditAsync(invoice);
                 await _invoiceStaffArrangement.EditRangeAsync(invoiceStaffArrangement.InvoiceStaffArrangements);
+
+                var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id);
+                var dataReturn = _invoiceStaffArrangement.LoadAllCollecttion(data);
+                dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
+                invoiceStaffArrangement.InvoiceStaffArrangements = dataReturn.ToList() ;
                 return CreatedAtAction("GetInvoiceStaffArrangement", new { id = invoiceStaffArrangement.Id }, invoiceStaffArrangement);
-            }            
+            }
             catch (Exception e)
             {
                   throw new UnexpectedException(invoiceStaffArrangement,e);

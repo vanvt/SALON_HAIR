@@ -20,10 +20,12 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? ObjectId { get; set; }
         public string ObjectType { get; set; }
         public string ObjectName { get; set; }
-        public int? Number { get; set; }
+        public string ObjectCode { get; set; }
+        public decimal? ObjectPrice { get; set; }
         public long? DiscountUnitId { get; set; }
         public long? DiscountValue { get; set; }
         public double? Total { get; set; }
+        public int? Quantity { get; set; }
 
         public CommissionUnit DiscountUnit { get; set; }
         public Invoice Invoice { get; set; }

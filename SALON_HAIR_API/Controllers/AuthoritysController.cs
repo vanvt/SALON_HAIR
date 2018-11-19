@@ -31,7 +31,7 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetAuthority(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _authority.SearchAllFileds(keyword);
-            var dataReturn =   _authority.LoadAllInclude(data);
+            var dataReturn = _authority.LoadAllCollecttion(data);
             return OkList(dataReturn);
         }
         // GET: api/Authoritys/5
@@ -113,7 +113,6 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(authority,e);
             }
           

@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Product()
         {
+            ProductControl = new HashSet<ProductControl>();
             ProductPictures = new HashSet<ProductPictures>();
             ServiceProduct = new HashSet<ServiceProduct>();
             Warehouse = new HashSet<Warehouse>();
@@ -39,6 +40,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public ProductUnit Unit { get; set; }
+        public ICollection<ProductControl> ProductControl { get; set; }
         public ICollection<ProductPictures> ProductPictures { get; set; }
         public ICollection<ServiceProduct> ServiceProduct { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }

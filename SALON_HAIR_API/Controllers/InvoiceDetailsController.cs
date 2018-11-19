@@ -20,8 +20,8 @@ namespace SALON_HAIR_API.Controllers
         private readonly IUser _user;
         private readonly IService _service;
         private readonly IProduct _product;
-        private readonly Package _package;
-        public InvoiceDetailsController(Package package,IProduct product,IService service,IInvoiceDetail invoiceDetail, IUser user)
+        private readonly IPackage _package;
+        public InvoiceDetailsController(IPackage package,IProduct product,IService service,IInvoiceDetail invoiceDetail, IUser user)
         {
             _service = service;
             _product = product;
@@ -32,9 +32,13 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/InvoiceDetails
         [HttpGet]
-        public IActionResult GetInvoiceDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetInvoiceDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", long invoiceId = 0)
         {
             var data = _invoiceDetail.SearchAllFileds(keyword);
+            if (invoiceId!= 0)
+            {
+                data = data.Where(e => e.InvoiceId == invoiceId);
+            }
             var dataReturn =   _invoiceDetail.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -78,7 +82,8 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
-                string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
+                // string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
+                invoiceDetail.Updated = DateTime.Now;
                 //invoiceDetail.ObjectName = objectName;
                 switch (invoiceDetail.ObjectType)
                 {
@@ -131,7 +136,8 @@ namespace SALON_HAIR_API.Controllers
                 }
                 invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
-                invoiceDetail.ObjectName = objectName;
+                invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
+                invoiceDetail.Created = DateTime.Now;
                 switch (invoiceDetail.ObjectType)
                 {
                     case "SERVICE":                     

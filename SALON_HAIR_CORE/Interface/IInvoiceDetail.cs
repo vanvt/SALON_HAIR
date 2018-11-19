@@ -12,6 +12,7 @@ namespace SALON_HAIR_CORE.Interface
         string GetObjectName(InvoiceDetail invoiceDetail);
         Task EditAsServiceAsync(InvoiceDetail invoiceDetail);
         Task EditAsPackgeAsync(InvoiceDetail invoiceDetail);
+        InvoiceDetail GetObjectDetail(InvoiceDetail invoiceDetail);
     }
 }
 
