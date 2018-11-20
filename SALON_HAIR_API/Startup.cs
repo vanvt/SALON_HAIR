@@ -36,8 +36,7 @@ namespace WebApplication4
         public ISecurityHelper SecurityHelper { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-        
+        {        
             services.AddUtilHelperCTNET();
             services.AddMvc(options =>
             {             
@@ -97,10 +96,7 @@ namespace WebApplication4
                     In = "header",
                     Type = "apiKey"
                 });
-
-                c.AddSecurityRequirement(security);
-             
-                
+                c.AddSecurityRequirement(security);                
             });
             #endregion
             #region Authentication JWT

@@ -29,6 +29,7 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(Invoice invoice)
         {
             invoice.Created = DateTime.Now;
+            invoice.Code = "ES" + invoice.Id.ToString("0000000");
             return await base.AddAsync(invoice);
         }
         public new void Add(Invoice invoice)

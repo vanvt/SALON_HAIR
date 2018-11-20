@@ -31,7 +31,8 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetPackage(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _package.SearchAllFileds(keyword);
-            var dataReturn =   _package.LoadAllCollecttion(data);
+            var dataReturn =   _package.LoadAllCollecttion(data).Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);
+           
             return OkList(dataReturn);
         }
         // GET: api/Packages/5

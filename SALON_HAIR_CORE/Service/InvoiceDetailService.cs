@@ -63,6 +63,7 @@ namespace SALON_HAIR_CORE.Service
                         invoiceDetail.Id, invoiceDetail.InvoiceId, invoiceDetail.ObjectId, invoiceDetail.CreatedBy));
             }
             await _salon_hairContext.InvoiceStaffArrangement.AddRangeAsync(InvoiceStaffArrangements);
+            
             await _salon_hairContext.SaveChangesAsync();
         }
 
@@ -110,14 +111,14 @@ namespace SALON_HAIR_CORE.Service
 
         public async Task EditAsServiceAsync(InvoiceDetail invoiceDetail)
         {
-            invoiceDetail.Updated = DateTime.Now;
-            var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
+                var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
             if (oldInvoiceDetail > invoiceDetail.Quantity)
             {
                 var numberItemRemove = oldInvoiceDetail.Value - invoiceDetail.Quantity;
                 //Remove {numberItemRemove} last InvoiceStaffArrangement
                 var listInvoiceStaffArrangement = _salon_hairContext.InvoiceStaffArrangement.
                     Where(e => e.InvoiceDetailId == invoiceDetail.Id).OrderByDescending(e => e.Id).Take(numberItemRemove.Value);
+
                 _salon_hairContext.InvoiceStaffArrangement.RemoveRange(listInvoiceStaffArrangement);
             }
             if (oldInvoiceDetail < invoiceDetail.Quantity)
@@ -132,7 +133,8 @@ namespace SALON_HAIR_CORE.Service
                         invoiceDetail.Id, invoiceDetail.InvoiceId, invoiceDetail.ObjectId, invoiceDetail.CreatedBy));
                 }
             }
-            _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
+
+      
             await _salon_hairContext.SaveChangesAsync();
             //throw new NotImplementedException();
         }
@@ -150,7 +152,7 @@ namespace SALON_HAIR_CORE.Service
 
         public async Task EditAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
-            invoiceDetail.Updated = DateTime.Now;
+         
             var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
             if (oldInvoiceDetail > invoiceDetail.Quantity)
             {
@@ -172,13 +174,14 @@ namespace SALON_HAIR_CORE.Service
                         invoiceDetail.Id, invoiceDetail.InvoiceId, invoiceDetail.ObjectId, invoiceDetail.CreatedBy));
                 }
             }
-            _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
+         
             await _salon_hairContext.SaveChangesAsync();
         }
 
         public InvoiceDetail GetObjectDetail(InvoiceDetail invoiceDetail)
         {
-         
+           
+            
             switch (invoiceDetail.ObjectType)
             {
                 case "SERVICE":
@@ -199,9 +202,12 @@ namespace SALON_HAIR_CORE.Service
                     invoiceDetail.ObjectPrice = package.Price;                
                     break;
                 case "EXTRA":                   
-                    break;
-            
+                    break;            
             }
+
+            var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice.Value;
+            var discount = invoiceDetail.DiscountUnitId == 1 ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
+            invoiceDetail.Total = total - discount;
             return invoiceDetail;
 
         }

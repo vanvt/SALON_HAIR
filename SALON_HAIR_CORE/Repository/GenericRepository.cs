@@ -462,5 +462,6 @@ namespace SALON_HAIR_CORE.Repository
             var entity = _easyspaContext.Set<T>().Find(keyValues);
             return entity;
         }
+
     }
 }

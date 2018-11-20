@@ -76,7 +76,7 @@ namespace SALON_HAIR_API.Middlewares
             Exception exception = unexpectedException.exception;
             string message = exception.InnerException == null ? exception.Message : exception.InnerException.Message;
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = context.Response.StatusCode;
+            context.Response.StatusCode = unexpectedException.HttpCode;
             var respone = context.Response.WriteAsync(JsonConvert.SerializeObject(new
             {            
                 errorCode = unexpectedException.HttpCode,

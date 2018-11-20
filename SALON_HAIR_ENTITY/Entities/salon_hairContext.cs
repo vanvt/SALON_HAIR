@@ -7,9 +7,9 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class salon_hairContext : DbContext
     {
-        public salon_hairContext()
-        {
-        }
+        //public salon_hairContext()
+        //{
+        //}
 
         public salon_hairContext(DbContextOptions<salon_hairContext> options)
             : base(options)
@@ -68,7 +68,6 @@ namespace SALON_HAIR_ENTITY.Entities
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySql("Server=dev-db-sv.easyspa.vn;Database=salon_hair;uid=easyspavn;pwd=Easyspavn@2017;");
             }
-            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -955,7 +954,8 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.DiscountUnitId)
                     .HasColumnName("discount_unit_id")
-                    .HasColumnType("bigint(20)");
+                    .HasColumnType("bigint(20)")
+                    .HasDefaultValueSql("'2'");
 
                 entity.Property(e => e.DiscountValue)
                     .HasColumnName("discount_value")
@@ -996,7 +996,9 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnType("varchar(250)")
                     .HasDefaultValueSql("'ENABLE'");
 
-                entity.Property(e => e.Total).HasColumnName("total");
+                entity.Property(e => e.Total)
+                    .HasColumnName("total")
+                    .HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")
@@ -1005,11 +1007,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
-
-                entity.HasOne(d => d.DiscountUnit)
-                    .WithMany(p => p.InvoiceDetail)
-                    .HasForeignKey(d => d.DiscountUnitId)
-                    .HasConstraintName("invoice_detail_commission_unit");
 
                 entity.HasOne(d => d.Invoice)
                     .WithMany(p => p.InvoiceDetail)
@@ -1095,6 +1092,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("status")
                     .HasColumnType("varchar(250)")
                     .HasDefaultValueSql("'ENABLE'");
+
+                entity.Property(e => e.Total)
+                    .HasColumnName("total")
+                    .HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")

@@ -12,6 +12,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public long InvoicePaymentId { get; set; }
         public long InvoiceMethodId { get; set; }
+        public decimal? Total { get; set; }
 
         public PaymentMethod InvoiceMethod { get; set; }
         public InvoicePayment InvoicePayment { get; set; }

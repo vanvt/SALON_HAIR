@@ -85,6 +85,8 @@ namespace SALON_HAIR_API.Controllers
                 // string objectName = _invoiceDetail.GetObjectName(invoiceDetail);
                 invoiceDetail.Updated = DateTime.Now;
                 //invoiceDetail.ObjectName = objectName;
+                invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
+                await _invoiceDetail.EditAsync(invoiceDetail);
                 switch (invoiceDetail.ObjectType)
                 {
                     case "SERVICE":

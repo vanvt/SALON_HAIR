@@ -9,6 +9,9 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -24,7 +27,6 @@ namespace SALON_HAIR_API.Controllers
             _invoice = invoice;
             _user = user;
         }
-
         // GET: api/Invoices
         [HttpGet]
         public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false)
@@ -33,9 +35,10 @@ namespace SALON_HAIR_API.Controllers
             if (isDisplay)
             {
                 data = data.Where(e => e.IsDisplay.Value).Where(e => e.Created.Value.Date == DateTime.Now.Date);
+                var dataReturn = _invoice.LoadAllInclude(data);
+                return OkList(dataReturn);
             }
-            var dataReturn =   _invoice.LoadAllInclude(data);
-            return OkList(dataReturn);
+            return OkList(data);          
         }
         // GET: api/Invoices/5
         [HttpGet("{id}")]
@@ -53,6 +56,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return NotFound();
                 }
+              
                 return Ok(invoice);
             }
             catch (Exception e)
@@ -61,7 +65,6 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(id, e);
             }
         }
-
         // PUT: api/Invoices/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoice([FromRoute] long id, [FromBody] Invoice invoice)
@@ -99,7 +102,6 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(invoice,e);
             }
         }
-
         // POST: api/Invoices
         [HttpPost]
         public async Task<IActionResult> PostInvoice([FromBody] Invoice invoice)
@@ -122,7 +124,6 @@ namespace SALON_HAIR_API.Controllers
             }
           
         }
-
         // DELETE: api/Invoices/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice([FromRoute] long id)
@@ -151,6 +152,26 @@ namespace SALON_HAIR_API.Controllers
                 throw new UnexpectedException(id,e);
             }
           
+        }
+        [HttpPut("show-invoice")]
+        public async Task<IActionResult> ShowInvoice([FromBody] ICollection<long>  invoiceids)
+        {
+            //return null;
+            try
+            {
+               var invoces = _invoice.FindBy(e=> invoiceids.Contains(e.Id));
+               var t1 = invoces.ForEachAsync(e => e.IsDisplay = true);
+               var t2 =  _invoice.EditRangeAsync(invoces);
+                 await Task.WhenAll(t1,t2);
+                return Ok(invoces);
+
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(invoiceids, e);
+            }
+
         }
 
         private bool InvoiceExists(long id)
