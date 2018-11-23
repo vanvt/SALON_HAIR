@@ -7,7 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public PaymentMethod()
         {
-            InvoicePaymentDetail = new HashSet<InvoicePaymentDetail>();
+            InvoicePayment = new HashSet<InvoicePayment>();
             PaymentBanking = new HashSet<PaymentBanking>();
         }
 
@@ -21,7 +21,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? SalonId { get; set; }
 
         public Salon Salon { get; set; }
-        public ICollection<InvoicePaymentDetail> InvoicePaymentDetail { get; set; }
+        public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<PaymentBanking> PaymentBanking { get; set; }
     }
 }

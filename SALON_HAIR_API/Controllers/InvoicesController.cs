@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,9 +21,10 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly IInvoice _invoice;
         private readonly IUser _user;
-
-        public InvoicesController(IInvoice invoice, IUser user)
+        private readonly ICustomerPackage _customerPackage;
+        public InvoicesController(ICustomerPackage customerPackage,IInvoice invoice, IUser user)
         {
+            _customerPackage = customerPackage;
             _invoice = invoice;
             _user = user;
         }
@@ -31,11 +32,12 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false)
         {
-            var data = _invoice.SearchAllFileds(keyword);
+            var data = _invoice.SearchAllFileds("");
             if (isDisplay)
             {
                 data = data.Where(e => e.IsDisplay.Value).Where(e => e.Created.Value.Date == DateTime.Now.Date);
                 var dataReturn = _invoice.LoadAllInclude(data);
+                //dataReturn = _invoice.LoadAllCollecttion(dataReturn);
                 return OkList(dataReturn);
             }
             return OkList(data);          
@@ -56,8 +58,12 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return NotFound();
                 }
-              
-                return Ok(invoice);
+
+             
+                var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e => e.Package);
+                var dataReturn = _invoice.LoadAllCollecttion(invoice);
+                dataReturn.CustomerPackage = customerPackge.ToList();
+                return Ok(dataReturn);
             }
             catch (Exception e)
             {
@@ -81,8 +87,10 @@ namespace SALON_HAIR_API.Controllers
             {
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
                 await _invoice.EditAsync(invoice);
-                
-                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
+                var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e=>e.Package);
+                var dataReturn = _invoice.LoadAllCollecttion(invoice);
+                dataReturn.CustomerPackage = customerPackge.ToList();
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataReturn);
             }
 
             catch (DbUpdateConcurrencyException)
@@ -162,8 +170,8 @@ namespace SALON_HAIR_API.Controllers
                var invoces = _invoice.FindBy(e=> invoiceids.Contains(e.Id));
                var t1 = invoces.ForEachAsync(e => e.IsDisplay = true);
                var t2 =  _invoice.EditRangeAsync(invoces);
-                 await Task.WhenAll(t1,t2);
-                return Ok(invoces);
+               await Task.WhenAll(t1,t2);
+               return Ok(invoces);
 
             }
             catch (Exception e)
@@ -174,6 +182,48 @@ namespace SALON_HAIR_API.Controllers
 
         }
 
+        [HttpPut("pay-invoice/{id}")]
+        public async Task<IActionResult> PayInvoice([FromRoute] long id, [FromBody] Invoice invoice)
+        {
+            //return null;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != invoice.Id)
+            {
+                return BadRequest();
+            }
+            if (invoice.InvoiceStatusId == 2)
+            {
+                throw new UnexpectedException(invoice, new Exception("Hóa  đơn này đã được thanh toán rồi."));
+            }
+            try
+            {
+                var dataUpdate = _invoice.Find(id);               
+                dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                dataUpdate.IsDisplay = false;
+                dataUpdate.NotePayment = invoice.NotePayment;
+                dataUpdate.Total = invoice.Total;
+                dataUpdate.InvoicePayment = invoice.InvoicePayment;
+                dataUpdate.DiscountUnitId = invoice.DiscountUnitId;
+                dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
+                //status 2 : cancel
+                dataUpdate.InvoiceStatusId = 2;
+               var t1 =   _invoice.EditAsync(dataUpdate);
+                dataUpdate = _invoice.LoadAllReference(dataUpdate);
+                await t1;
+                
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataUpdate);
+
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(invoice, e);
+            }
+
+        }
         private bool InvoiceExists(long id)
         {
             return _invoice.Any<Invoice>(e => e.Id == id);

@@ -69,6 +69,21 @@ namespace SALON_HAIR_CORE.Service
 
         public async Task AddAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
+            var customerID = _salon_hairContext.Invoice.Find(invoiceDetail.InvoiceId).CustomerId;
+            if (customerID.HasValue)
+            {
+                CustomerPackage customerPackage = new CustomerPackage
+                {
+                    InoveId = invoiceDetail.InvoiceId,
+                    Created = DateTime.Now,
+                    CustomerId = customerID.Value,
+                    NumberUse = invoiceDetail.Quantity,
+                    PackageId = invoiceDetail.ObjectId.Value,
+                   // NumberUsed = invoiceDetail.Quantity,
+                };
+                await _salon_hairContext.CustomerPackage.AddAsync(customerPackage);
+            }
+
             await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
             var serviceIds = _salon_hairContext.ServicePackage.Where(e => e.PackageId == invoiceDetail.ObjectId).Select(e => e.ServiceId);
             List<InvoiceStaffArrangement> InvoiceStaffArrangements = new List<InvoiceStaffArrangement>();
@@ -82,6 +97,7 @@ namespace SALON_HAIR_CORE.Service
             });
             await _salon_hairContext.InvoiceStaffArrangement.AddRangeAsync(InvoiceStaffArrangements);
             await _salon_hairContext.SaveChangesAsync();
+            //await Task.WhenAll( t2, t3, t4, t5);
         }
 
         public string GetObjectName(InvoiceDetail invoiceDetail)
@@ -153,6 +169,11 @@ namespace SALON_HAIR_CORE.Service
         public async Task EditAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
          
+
+
+
+
+
             var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
             if (oldInvoiceDetail > invoiceDetail.Quantity)
             {
@@ -181,7 +202,7 @@ namespace SALON_HAIR_CORE.Service
         public InvoiceDetail GetObjectDetail(InvoiceDetail invoiceDetail)
         {
            
-            
+     
             switch (invoiceDetail.ObjectType)
             {
                 case "SERVICE":

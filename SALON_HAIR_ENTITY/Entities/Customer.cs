@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
+            CustomerPackage = new HashSet<CustomerPackage>();
             Invoice = new HashSet<Invoice>();
         }
 
@@ -34,6 +35,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public SalonBranch SalonBranch { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<Invoice> Invoice { get; set; }
     }
 }

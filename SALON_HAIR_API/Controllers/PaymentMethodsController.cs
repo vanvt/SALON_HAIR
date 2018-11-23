@@ -30,7 +30,7 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetPaymentMethod(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _paymentMethod.SearchAllFileds(keyword);
-            var dataReturn =   _paymentMethod.LoadAllInclude(data);
+            var dataReturn =   _paymentMethod.LoadAllCollecttion(data);
             return OkList(dataReturn);
         }
         // GET: api/PaymentMethods/5

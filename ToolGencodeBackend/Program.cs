@@ -70,6 +70,7 @@ namespace ToolGencodeBackend
                 WriteFile(InterfaceTemlate.tempalteInterface.Replace("{nameSpaceEntity}", nameSpaceEntity), nameEnity, $"I{nameEnity}.cs", @"C:\Users\votha\OneDrive\Desktop\test\Interface");
                 WriteFile(ServiceTemplateUpdate.tmp.Replace("{nameSpaceEntity}", nameSpaceEntity), nameEnity, $"{nameEnity}Service.cs", @"C:\Users\votha\OneDrive\Desktop\test\Service");
                 WriteFile(ControllerUpdatedTemplate.tempalte, nameEnity, $"{nameEnity}sController.cs", @"C:\Users\votha\OneDrive\Desktop\test\Controller");
+                WriteFile(UnitTestTemplage.template, nameEnity, $"{nameEnity}sController.cs", @"C:\Users\votha\OneDrive\Desktop\test\UnitTest");
                 //WriteFile(InterfaceTemlate.tempalteInterface, nameEnity, $"I{nameEnity}.cs", @"C:\Users\votha\source\repos\ADMIN_EASYSPA\ADMIN_EASYSPA_CORE\Interface");
 
                 //depen += $"services.AddScoped<I{nameEnity}, {nameEnity}Service>();\n";

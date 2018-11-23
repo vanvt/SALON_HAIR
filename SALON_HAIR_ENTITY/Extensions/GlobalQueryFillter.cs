@@ -16,10 +16,10 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<CommissionDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Customer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CustomerPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Invoice>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<InvoiceDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<InvoiceDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));          
             builder.Entity<InvoicePayment>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<InvoicePaymentDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceStaffArrangement>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Package>().HasQueryFilter(e => !e.Status.Equals("DELETED"));

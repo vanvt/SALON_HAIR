@@ -100,7 +100,9 @@ namespace SALON_HAIR_AUTHENTICATION.Controllers
                 audience: _config["Jwt:Issuer"],
                 claims: claims,
                 expires: DateTime.Now.AddDays(999),
+                
                 signingCredentials: creds);
+           
             var tokenReturn = new JwtSecurityTokenHandler().WriteToken(token);
 
             //Add Refresh_Token

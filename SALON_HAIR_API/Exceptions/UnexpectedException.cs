@@ -8,6 +8,8 @@ namespace SALON_HAIR_API.Exceptions
 {
     public class UnexpectedException : Exception
     {
+        private Invoice invoice;
+
         public Exception exception { get; set; }
         public int HttpCode { get; set; }
         public object DataLog { get; set; }
@@ -19,5 +21,7 @@ namespace SALON_HAIR_API.Exceptions
             DataLog = data;
             exception = e;
         }
+
+   
     }
 }

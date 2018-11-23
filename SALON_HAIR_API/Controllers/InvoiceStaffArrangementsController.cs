@@ -30,21 +30,23 @@ namespace SALON_HAIR_API.Controllers
         }
 
         // GET: api/InvoiceStaffArrangements
-        [HttpGet]
-        public IActionResult GetInvoiceStaffArrangement(long invoiceId)
+        [HttpGet("{id}")]
+        public IActionResult GetInvoiceStaffArrangement(long id)
         {
 
-            var data = _invoiceStaffArrangement.GetAll().Where(e=>e.InvoiceId==invoiceId);
-            var dataReturn =   _invoiceStaffArrangement.LoadAllCollecttion(data);
-            dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
-            var invoice= _invoice.Find(invoiceId);
+            var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id && !e.InvoiceDetail.Status.Equals("DELETED"));
+
+            var dataReturn =   _invoiceStaffArrangement.LoadAllInclude(data);
+            //dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
+            var invoice= _invoice.Find(id);
 
             InvoiceStaffArrangementVM invoiceStaffArrangementVM = new InvoiceStaffArrangementVM {
-                Id = invoiceId,
+                Id = id,
                 InvoiceStaffArrangements = dataReturn,               
                 Salesman = invoice.Salesman,
                 Note = invoice.Note,
                 SalesmanId = invoice.SalesmanId
+
             };
 
             return Ok(invoiceStaffArrangementVM);
@@ -70,11 +72,12 @@ namespace SALON_HAIR_API.Controllers
                 await _invoice.EditAsync(invoice);
                 await _invoiceStaffArrangement.EditRangeAsync(invoiceStaffArrangement.InvoiceStaffArrangements);
 
-                var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id);
+                var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id && !e.InvoiceDetail.Status.Equals("DELETED"));
                 var dataReturn = _invoiceStaffArrangement.LoadAllCollecttion(data);
                 dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
                 invoiceStaffArrangement.InvoiceStaffArrangements = dataReturn.ToList() ;
                 return CreatedAtAction("GetInvoiceStaffArrangement", new { id = invoiceStaffArrangement.Id }, invoiceStaffArrangement);
+
             }
             catch (Exception e)
             {

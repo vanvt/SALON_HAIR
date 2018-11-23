@@ -81,9 +81,7 @@ namespace WebApplication4
                         Email = "vothanhvan711@gmail.com",
                         Url = "vothanhvan.com"
                     }
-                });
-
-              
+                });              
                 ;
 
                 var security = new Dictionary<string, IEnumerable<string>>
@@ -109,7 +107,7 @@ namespace WebApplication4
             {
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     SecurityHelper.Base64UrlDecode(Configuration["Jwt:Key"])),
@@ -140,10 +138,11 @@ namespace WebApplication4
             services.AddScoped<ICommissionDetail, CommissionDetailService>();
             services.AddScoped<ICommissionUnit, CommissionUnitService>();
             services.AddScoped<ICustomer, CustomerService>();
+            services.AddScoped<ICustomerPackage, CustomerPackageService>();
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
+            services.AddScoped<IStaffCommissionGroup, StaffCommissionGroupService>();
             services.AddScoped<IInvoicePayment, InvoicePaymentService>();
-            services.AddScoped<IInvoicePaymentDetail, InvoicePaymentDetailService>();
             services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
             services.AddScoped<IInvoiceStatus, InvoiceStatusService>();
             services.AddScoped<IPackage, PackageService>();
