@@ -160,15 +160,53 @@ namespace SALON_HAIR_API.Middlewares
         private async Task LogAsync(HttpContext context, object data)
         {
 
-            await _logHelper.LogAsync(new
+
+
+            object datalog = new
             {
                 context.TraceIdentifier,
                 _method = context.Request.Method,
                 _url = context.Request.Path.Value,
                 _tooken = context.Request.Headers.Where(e => e.Key.Equals("Authorization")).Select(e => e.Value).FirstOrDefault(),
                 _data = data
-                
-            }, "wwwroot", "exception");
+
+            };
+          //  , "wwwroot", "exception");
+
+
+            var setting = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+            string json = "";
+            try
+            {
+                 json = JsonConvert.SerializeObject(datalog);
+
+            }catch(Exception xx)
+            {
+                try
+                {
+                    json = JsonConvert.SerializeObject(
+             new
+             {
+                 context.TraceIdentifier,
+                 _method = context.Request.Method,
+                 _url = context.Request.Path.Value,
+                 _tooken = context.Request.Headers.Where(e => e.Key.Equals("Authorization")).Select(e => e.Value).FirstOrDefault(),
+
+             }
+             );
+                }
+                catch(Exception cc)
+                {
+
+                }
+         
+            }
+          
+           await _logHelper.LogAsync(json, "wwwroot", "exception");
+
         }
 
     }

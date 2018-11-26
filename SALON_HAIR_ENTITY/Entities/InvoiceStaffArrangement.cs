@@ -17,6 +17,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? InvoiceId { get; set; }
         public long? ServiceId { get; set; }
         public long? StaffId { get; set; }
+
         [JsonIgnore]
         [IgnoreDataMember]
         public Invoice Invoice { get; set; }

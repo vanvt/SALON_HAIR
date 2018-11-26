@@ -89,7 +89,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                productCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                productCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _productCategory.EditAsync(productCategory);
                 return CreatedAtAction("GetProductCategory", new { id = productCategory.Id }, productCategory);
             }
@@ -123,7 +123,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                productCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                productCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _productCategory.AddAsync(productCategory);
                 return CreatedAtAction("GetProductCategory", new { id = productCategory.Id }, productCategory);
             }

@@ -5,6 +5,7 @@ using SALON_HAIR_CORE.Interface;
 using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -28,9 +29,30 @@ namespace SALON_HAIR_CORE.Service
         }
         public new async Task<int> AddAsync(Invoice invoice)
         {
+            var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == invoice.SalonId && e.ObjectName.Equals("Invoice")).FirstOrDefault();
+         
+            if(indexObject == null)
+            {
+                indexObject = new SysObjectAutoIncreament
+                {
+                    SpaId = invoice.SalonId,
+                    ObjectIndex = 1,
+                    ObjectName = "Invoice"
+                };
+                await _salon_hairContext.SysObjectAutoIncreament.AddAsync(
+                 indexObject
+                    );
+            }
+            else
+            {
+                indexObject.ObjectIndex++;
+                _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
+            }
             invoice.Created = DateTime.Now;
-            invoice.Code = "ES" + invoice.Id.ToString("0000000");
-            return await base.AddAsync(invoice);
+            invoice.Code = "ES" + indexObject.ObjectIndex.ToString("000000");
+            //invoice = LoadAllReference(invoice);
+            await  _salon_hairContext.Invoice.AddAsync(invoice);
+            return await _salon_hairContext.SaveChangesAsync();
         }
         public new void Add(Invoice invoice)
         {

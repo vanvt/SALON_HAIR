@@ -39,8 +39,9 @@ namespace SALON_HAIR_API.Middlewares
 
                     _logHelper.LogAsync(json, "wwwroot", "respone");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {                  
+
                 }
                               
             }                      

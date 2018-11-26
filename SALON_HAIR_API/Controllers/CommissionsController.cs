@@ -132,7 +132,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                commission.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                commission.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _commission.AddAsync(commission);
 
                 var data = await _commission.FindBy(e => e.Id == commission.Id).Include(e => e.RetailCommisionUnit)

@@ -74,7 +74,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                  package.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                  package.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 //await _package.EditAsync(package);
                 //return CreatedAtAction("GetPackage", new { id = package.Id }, package);
 
@@ -125,7 +125,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                package.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                package.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _package.AddAsync(package);
                 var servicePackge = _servicePackage.FindBy(e => e.PackageId == package.Id).Include(e=>e.Service);
                 package.ServicePackage = servicePackge.ToList();

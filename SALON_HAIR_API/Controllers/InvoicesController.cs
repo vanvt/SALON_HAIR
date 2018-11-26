@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using SALON_HAIR_API.ViewModels;
 
 namespace SALON_HAIR_API.Controllers
 {
@@ -30,17 +32,25 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/Invoices
         [HttpGet]
-        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false)
+        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="")
         {
-            var data = _invoice.SearchAllFileds("");
+             date += "";
+            var datetime = DateTime.Now;            
+            var data = _invoice.SearchAllFileds(keyword);           
+            DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
+            if (datetime == new DateTime())
+            {
+                datetime = DateTime.Now;
+            }
+            data = data.Where(e => e.Created.Value.Date == datetime.Date);
+           
             if (isDisplay)
             {
-                data = data.Where(e => e.IsDisplay.Value).Where(e => e.Created.Value.Date == DateTime.Now.Date);
-                var dataReturn = _invoice.LoadAllInclude(data);
-                //dataReturn = _invoice.LoadAllCollecttion(dataReturn);
-                return OkList(dataReturn);
+                data = data.Where(e => e.IsDisplay.Value);                        
             }
-            return OkList(data);          
+            var dataReturn = _invoice.LoadAllCollecttion(data).Include(e=>e.Customer);
+            
+            return OkList(dataReturn);          
         }
         // GET: api/Invoices/5
         [HttpGet("{id}")]
@@ -60,9 +70,10 @@ namespace SALON_HAIR_API.Controllers
                 }
 
              
-                var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e => e.Package);
+               // var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e => e.Package);
                 var dataReturn = _invoice.LoadAllCollecttion(invoice);
-                dataReturn.CustomerPackage = customerPackge.ToList();
+                dataReturn = _invoice.LoadAllReference(dataReturn);
+                //dataReturn.CustomerPackage = customerPackge.ToList();
                 return Ok(dataReturn);
             }
             catch (Exception e)
@@ -85,7 +96,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _invoice.EditAsync(invoice);
                 var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e=>e.Package);
                 var dataReturn = _invoice.LoadAllCollecttion(invoice);
@@ -121,8 +132,10 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                invoice.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                invoice.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                invoice.SalonId =  long.Parse( JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("salonId")));
                 await _invoice.AddAsync(invoice);
+                invoice = _invoice.LoadAllReference(invoice);
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
             }
             catch (Exception e)
@@ -162,15 +175,15 @@ namespace SALON_HAIR_API.Controllers
           
         }
         [HttpPut("show-invoice")]
-        public async Task<IActionResult> ShowInvoice([FromBody] ICollection<long>  invoiceids)
+        public async Task<IActionResult> ShowInvoice([FromBody] ListInvoiceIdVM invoiceids)
         {
             //return null;
             try
             {
-               var invoces = _invoice.FindBy(e=> invoiceids.Contains(e.Id));
-               var t1 = invoces.ForEachAsync(e => e.IsDisplay = true);
-               var t2 =  _invoice.EditRangeAsync(invoces);
-               await Task.WhenAll(t1,t2);
+               var invoces = _invoice.FindBy(e=> invoiceids.Ids.Contains(e.Id));
+                await invoces.ForEachAsync(e => e.IsDisplay = true);
+                await _invoice.EditRangeAsync(invoces);
+               //await Task.WhenAll(t1,t2);
                return Ok(invoces);
 
             }
@@ -181,7 +194,6 @@ namespace SALON_HAIR_API.Controllers
             }
 
         }
-
         [HttpPut("pay-invoice/{id}")]
         public async Task<IActionResult> PayInvoice([FromRoute] long id, [FromBody] Invoice invoice)
         {
@@ -201,7 +213,7 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 var dataUpdate = _invoice.Find(id);               
-                dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 dataUpdate.IsDisplay = false;
                 dataUpdate.NotePayment = invoice.NotePayment;
                 dataUpdate.Total = invoice.Total;
@@ -210,10 +222,10 @@ namespace SALON_HAIR_API.Controllers
                 dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
                 //status 2 : cancel
                 dataUpdate.InvoiceStatusId = 2;
-               var t1 =   _invoice.EditAsync(dataUpdate);
+                var t1 =   _invoice.EditAsync(dataUpdate);              
+             
                 dataUpdate = _invoice.LoadAllReference(dataUpdate);
                 await t1;
-                
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataUpdate);
 
             }

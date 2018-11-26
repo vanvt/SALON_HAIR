@@ -2736,21 +2736,22 @@ namespace SALON_HAIR_ENTITY.Entities
 
             modelBuilder.Entity<SysObjectAutoIncreament>(entity =>
             {
-                entity.HasKey(e => new { e.ObjectId, e.ObjectName });
+                entity.HasKey(e => new { e.ObjectName, e.SpaId });
 
                 entity.ToTable("sys_object_auto_increament");
-
-                entity.Property(e => e.ObjectId)
-                    .HasColumnName("object_id")
-                    .HasColumnType("varchar(45)");
 
                 entity.Property(e => e.ObjectName)
                     .HasColumnName("object_name")
                     .HasColumnType("varchar(50)");
 
-                entity.Property(e => e.ObjectValue)
-                    .HasColumnName("object_value")
+                entity.Property(e => e.SpaId)
+                    .HasColumnName("spa_id")
                     .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.ObjectIndex)
+                    .HasColumnName("object_index")
+                    .HasColumnType("bigint(20)")
+                    .HasDefaultValueSql("'0'");
             });
 
             modelBuilder.Entity<User>(entity =>

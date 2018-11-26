@@ -89,7 +89,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw new BadRequestException("Không thể tạo nhân có hai sản dịch vụ nhau được babe");
                 }
-                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _staff.EditMany2ManyAsync(staff);
                 staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);

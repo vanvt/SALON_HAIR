@@ -65,7 +65,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoiceStaffArrangement.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                invoiceStaffArrangement.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 var invoice = _invoice.Find(invoiceStaffArrangement.Id);
                 invoice.Note = invoiceStaffArrangement.Note;
                 invoice.SalesmanId = invoiceStaffArrangement.SalesmanId;

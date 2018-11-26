@@ -71,7 +71,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                salonBranch.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                salonBranch.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _salonBranch.EditAsync(salonBranch);
                 return CreatedAtAction("GetSalonBranch", new { id = salonBranch.Id }, salonBranch);
             }
@@ -105,7 +105,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                salonBranch.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                salonBranch.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _salonBranch.AddAsync(salonBranch);
                 return CreatedAtAction("GetSalonBranch", new { id = salonBranch.Id }, salonBranch);
             }

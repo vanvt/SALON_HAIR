@@ -80,7 +80,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                product.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                product.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _product.EditAsync(product);
 
                 product.Unit = await _productUnit.FindAsync(product.UnitId);
@@ -117,7 +117,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 product.Unit = await _productUnit.FindAsync(product.UnitId);
                 product.Photo = await _photo.FindAsync(product.PhotoId);
                 await _product.AddAsync(product);
