@@ -138,7 +138,7 @@ namespace WebApplication4
             services.AddScoped<ICommissionDetail, CommissionDetailService>();
             services.AddScoped<ICommissionUnit, CommissionUnitService>();
             services.AddScoped<ICustomer, CustomerService>();
-            services.AddScoped<ICustomerPackage, CustomerPackageService>();
+          
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
             services.AddScoped<IStaffCommissionGroup, StaffCommissionGroupService>();

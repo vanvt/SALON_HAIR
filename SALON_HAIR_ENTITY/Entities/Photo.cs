@@ -12,6 +12,7 @@ namespace SALON_HAIR_ENTITY.Entities
             ProductPictures = new HashSet<ProductPictures>();
             Staff = new HashSet<Staff>();
             StaffCommisonGroup = new HashSet<StaffCommisonGroup>();
+            User = new HashSet<User>();
         }
 
         public long Id { get; set; }
@@ -29,5 +30,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<ProductPictures> ProductPictures { get; set; }
         public ICollection<Staff> Staff { get; set; }
         public ICollection<StaffCommisonGroup> StaffCommisonGroup { get; set; }
+        public ICollection<User> User { get; set; }
     }
 }

@@ -32,7 +32,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? SalonId { get; set; }
         public long? SalonBranchId { get; set; }
         public long? SalonBranchCurrentId { get; set; }
+        public long? PhotoId { get; set; }
 
+        public Photo Photo { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public SalonBranch SalonBranchCurrent { get; set; }

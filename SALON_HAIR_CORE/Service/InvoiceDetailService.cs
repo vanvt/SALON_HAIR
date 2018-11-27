@@ -69,20 +69,7 @@ namespace SALON_HAIR_CORE.Service
 
         public async Task AddAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
-            var customerID = _salon_hairContext.Invoice.Find(invoiceDetail.InvoiceId).CustomerId;
-            if (customerID.HasValue)
-            {
-                CustomerPackage customerPackage = new CustomerPackage
-                {
-                    InoveId = invoiceDetail.InvoiceId,
-                    Created = DateTime.Now,
-                    CustomerId = customerID.Value,
-                    NumberUse = invoiceDetail.Quantity,
-                    PackageId = invoiceDetail.ObjectId.Value,
-                   // NumberUsed = invoiceDetail.Quantity,
-                };
-                await _salon_hairContext.CustomerPackage.AddAsync(customerPackage);
-            }
+ 
 
             await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
             var serviceIds = _salon_hairContext.ServicePackage.Where(e => e.PackageId == invoiceDetail.ObjectId).Select(e => e.ServiceId);

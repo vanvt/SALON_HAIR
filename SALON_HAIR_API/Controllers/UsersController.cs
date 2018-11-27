@@ -62,6 +62,39 @@ namespace SALON_HAIR_API.Controllers
             }
            // return null;
         }
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var Idtoken = JwtHelper.GetIdFromToken(User.Claims);
+                if (Idtoken == 0)
+                {
+                    return BadRequest();
+                }
+                //var jbtUser = await _jbtUser.FindBy(e => e.Id == id).Include(x => x.JbtUserAuthority).FirstOrDefaultAsync();
+
+                //var user = await _user.FindBy(e => e.Id == Idtoken).Include(x => x.Salon).Include(e=>e.p) FirstOrDefaultAsync();
+                var user = await _user.FindBy(e => e.Id == Idtoken).Include(x => x.Salon).Include(e=>e.Photo) .FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(User.Claims, e);
+            }
+            // return null;
+        }
+
 
         // PUT: api/Users/5
         [HttpPut("{id}")]

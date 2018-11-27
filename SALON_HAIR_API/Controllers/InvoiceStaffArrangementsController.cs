@@ -33,7 +33,6 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetInvoiceStaffArrangement(long id)
         {
-
             var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id && !e.InvoiceDetail.Status.Equals("DELETED"));
 
             var dataReturn =   _invoiceStaffArrangement.LoadAllInclude(data);

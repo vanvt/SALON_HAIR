@@ -7,7 +7,6 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Invoice()
         {
-            CustomerPackage = new HashSet<CustomerPackage>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
             InvoicePayment = new HashSet<InvoicePayment>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
@@ -40,7 +39,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public CommissionUnit DiscountUnit { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
         public Staff Salesman { get; set; }
-        public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }

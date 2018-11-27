@@ -22,11 +22,15 @@ namespace SALON_HAIR_API.Controllers
     public class InvoicesController : CustomControllerBase
     {
         private readonly IInvoice _invoice;
+        private readonly IPackage _package;
+        private readonly IInvoiceDetail _invoiceDetail;
         private readonly IUser _user;
-        private readonly ICustomerPackage _customerPackage;
-        public InvoicesController(ICustomerPackage customerPackage,IInvoice invoice, IUser user)
+      
+        public InvoicesController(IPackage package,IInvoiceDetail invoiceDetail,IInvoice invoice, IUser user)
         {
-            _customerPackage = customerPackage;
+            _package = package;
+            _invoiceDetail = invoiceDetail;
+        
             _invoice = invoice;
             _user = user;
         }
@@ -62,19 +66,16 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var invoice = await _invoice.FindAsync(id);
+                Invoice invoice = await _invoice.FindAsync(id);
 
                 if (invoice == null)
                 {
                     return NotFound();
-                }
-
-             
-               // var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e => e.Package);
-                var dataReturn = _invoice.LoadAllCollecttion(invoice);
-                dataReturn = _invoice.LoadAllReference(dataReturn);
-                //dataReturn.CustomerPackage = customerPackge.ToList();
-                return Ok(dataReturn);
+                }         
+                invoice = _invoice.LoadAllCollecttion(invoice);
+                invoice = _invoice.LoadAllReference(invoice);
+                var PackgeAvailables =  GetPackgeAvailablesByCustomerId(invoice.CustomerId);
+                return Ok(new { invoice, PackgeAvailables });
             }
             catch (Exception e)
             {
@@ -98,10 +99,9 @@ namespace SALON_HAIR_API.Controllers
             {
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _invoice.EditAsync(invoice);
-                var customerPackge = _customerPackage.FindBy(e => e.Inove.InvoiceStatusId == 2 && e.NumberRemaining  > 0).Include(e=>e.Package);
-                var dataReturn = _invoice.LoadAllCollecttion(invoice);
-                dataReturn.CustomerPackage = customerPackge.ToList();
-                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataReturn);
+                invoice = _invoice.LoadAllCollecttion(invoice) ;
+                var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id },  new { invoice, PackgeAvailables });
             }
 
             catch (DbUpdateConcurrencyException)
@@ -239,6 +239,29 @@ namespace SALON_HAIR_API.Controllers
         private bool InvoiceExists(long id)
         {
             return _invoice.Any<Invoice>(e => e.Id == id);
+        }
+        private IQueryable<PackgeAvailable> GetPackgeAvailablesByCustomerId(long? customerId)
+        {
+            if (customerId == 0)
+                return null;
+            var listInvoiceDetail = _invoiceDetail.GetAll().Where(
+                e => e.Invoice.CustomerId == customerId && 
+                e.Invoice.InvoiceStatusId == 2 && 
+                e.ObjectType.Equals("PACKAGE") 
+                       
+                );
+            var listPackage = from a in listInvoiceDetail
+                              join c in _package.GetAll() on a.ObjectId equals c.Id
+                              group a by c into b
+                              select new PackgeAvailable
+                              {
+                                  NumberOfPayed = b.Sum(e => e.Quantity),
+                                  NumberOfUsed = b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
+                                  NumberRemaining = b.Sum(e => e.Quantity) - b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
+                                  Package = b.Key
+                              };
+            listPackage = listPackage.Where(e => e.NumberRemaining > 0);
+            return listPackage;
         }
     }
 }
