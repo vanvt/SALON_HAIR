@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.Entities
             BookingDetail = new HashSet<BookingDetail>();
             Invoice = new HashSet<Invoice>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
+            StaffSalonBranch = new HashSet<StaffSalonBranch>();
             StaffService = new HashSet<StaffService>();
         }
 
@@ -20,7 +21,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public DateTime? Dob { get; set; }
         public string Mobile { get; set; }
         public string Name { get; set; }
-        public long SalonBranchId { get; set; }
         public long SalonId { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
@@ -32,12 +32,12 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public Photo Photo { get; set; }
         public Salon Salon { get; set; }
-        public SalonBranch SalonBranch { get; set; }
         public StaffCommisonGroup StaffCommisionGroup { get; set; }
         public StaffTitle StaffTitle { get; set; }
         public ICollection<BookingDetail> BookingDetail { get; set; }
         public ICollection<Invoice> Invoice { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
+        public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
         public ICollection<StaffService> StaffService { get; set; }
     }
 }

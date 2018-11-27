@@ -14,8 +14,9 @@ namespace SALON_HAIR_ENTITY.Entities
             Product = new HashSet<Product>();
             ProductControl = new HashSet<ProductControl>();
             Service = new HashSet<Service>();
-            Staff = new HashSet<Staff>();
+            ServiceSalonBranch = new HashSet<ServiceSalonBranch>();
             StaffCommisonGroup = new HashSet<StaffCommisonGroup>();
+            StaffSalonBranch = new HashSet<StaffSalonBranch>();
             StaffTitle = new HashSet<StaffTitle>();
             UserSalonBranch = new HashSet<User>();
             UserSalonBranchCurrent = new HashSet<User>();
@@ -53,8 +54,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductControl> ProductControl { get; set; }
         public ICollection<Service> Service { get; set; }
-        public ICollection<Staff> Staff { get; set; }
+        public ICollection<ServiceSalonBranch> ServiceSalonBranch { get; set; }
         public ICollection<StaffCommisonGroup> StaffCommisonGroup { get; set; }
+        public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
         public ICollection<StaffTitle> StaffTitle { get; set; }
         public ICollection<User> UserSalonBranch { get; set; }
         public ICollection<User> UserSalonBranchCurrent { get; set; }

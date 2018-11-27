@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
-    public partial class ProductCategory
+    public partial class ProductSource
     {
-        public ProductCategory()
+        public ProductSource()
         {
             Product = new HashSet<Product>();
         }

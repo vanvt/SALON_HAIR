@@ -11,12 +11,17 @@ namespace SALON_HAIR_ENTITY.Entities
             BookingLog = new HashSet<BookingLog>();
             Commission = new HashSet<Commission>();
             Customer = new HashSet<Customer>();
+            CustomerChannel = new HashSet<CustomerChannel>();
             PaymentBanking = new HashSet<PaymentBanking>();
             PaymentMethod = new HashSet<PaymentMethod>();
             Product = new HashSet<Product>();
+            ProductCategory = new HashSet<ProductCategory>();
             ProductControl = new HashSet<ProductControl>();
+            ProductSource = new HashSet<ProductSource>();
+            ProductStatus = new HashSet<ProductStatus>();
             SalonBranch = new HashSet<SalonBranch>();
             Service = new HashSet<Service>();
+            ServiceCategory = new HashSet<ServiceCategory>();
             Staff = new HashSet<Staff>();
             StaffCommisonGroup = new HashSet<StaffCommisonGroup>();
             StaffTitle = new HashSet<StaffTitle>();
@@ -46,12 +51,17 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<BookingLog> BookingLog { get; set; }
         public ICollection<Commission> Commission { get; set; }
         public ICollection<Customer> Customer { get; set; }
+        public ICollection<CustomerChannel> CustomerChannel { get; set; }
         public ICollection<PaymentBanking> PaymentBanking { get; set; }
         public ICollection<PaymentMethod> PaymentMethod { get; set; }
         public ICollection<Product> Product { get; set; }
+        public ICollection<ProductCategory> ProductCategory { get; set; }
         public ICollection<ProductControl> ProductControl { get; set; }
+        public ICollection<ProductSource> ProductSource { get; set; }
+        public ICollection<ProductStatus> ProductStatus { get; set; }
         public ICollection<SalonBranch> SalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
+        public ICollection<ServiceCategory> ServiceCategory { get; set; }
         public ICollection<Staff> Staff { get; set; }
         public ICollection<StaffCommisonGroup> StaffCommisonGroup { get; set; }
         public ICollection<StaffTitle> StaffTitle { get; set; }

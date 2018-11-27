@@ -11,6 +11,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public DateTime? Updated { get; set; }
         public DateTime? Created { get; set; }
+        public string Status { get; set; }
 
         public Authority Authority { get; set; }
         public User User { get; set; }

@@ -80,7 +80,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                {InstanceName}.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(""http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress""));
+                {InstanceName}.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(""emailAddress""));
                 await _{InstanceName}.EditAsync({InstanceName});
                 return CreatedAtAction(""Get{ClassName}"", new { id = {InstanceName}.Id }, {InstanceName});
             }

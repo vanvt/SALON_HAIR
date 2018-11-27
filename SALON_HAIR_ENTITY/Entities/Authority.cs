@@ -13,6 +13,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public long Id { get; set; }
         public string Name { get; set; }
+        public string Status { get; set; }
 
         public ICollection<AuthorityRouter> AuthorityRouter { get; set; }
         public ICollection<UserAuthority> UserAuthority { get; set; }

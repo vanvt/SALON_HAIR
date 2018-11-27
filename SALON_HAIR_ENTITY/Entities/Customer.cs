@@ -28,10 +28,14 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public long? PhotoId { get; set; }
+        public long? SoucreCustomerId { get; set; }
+        public long? ChannelCustomerId { get; set; }
 
+        public CustomerChannel ChannelCustomer { get; set; }
         public Photo Photo { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
+        public CustomerSource SoucreCustomer { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
         public ICollection<Invoice> Invoice { get; set; }

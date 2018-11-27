@@ -24,6 +24,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Path { get; set; }
         public string Url { get; set; }
         public float? Width { get; set; }
+        public string Status { get; set; }
 
         public ICollection<Customer> Customer { get; set; }
         public ICollection<Product> Product { get; set; }

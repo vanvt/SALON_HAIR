@@ -21,11 +21,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Description { get; set; }
         public string Label { get; set; }
         public string Name { get; set; }
-        public byte[] Picture { get; set; }
-        public string PictureContentType { get; set; }
         public decimal Price { get; set; }
         public string PriceText { get; set; }
-        public long SalonBranchId { get; set; }
+        public long SalonBranchCreateId { get; set; }
         public long SalonId { get; set; }
         public long? UnitId { get; set; }
         public long? ProductCategoryId { get; set; }
@@ -34,11 +32,15 @@ namespace SALON_HAIR_ENTITY.Entities
         public bool? IsLimit { get; set; }
         public float? Volume { get; set; }
         public long? PhotoId { get; set; }
+        public long? SourceId { get; set; }
+        public long? ProductStatusId { get; set; }
 
         public Photo Photo { get; set; }
         public ProductCategory ProductCategory { get; set; }
+        public ProductStatus ProductStatus { get; set; }
         public Salon Salon { get; set; }
-        public SalonBranch SalonBranch { get; set; }
+        public SalonBranch SalonBranchCreate { get; set; }
+        public ProductSource Source { get; set; }
         public ProductUnit Unit { get; set; }
         public ICollection<ProductControl> ProductControl { get; set; }
         public ICollection<ProductPictures> ProductPictures { get; set; }

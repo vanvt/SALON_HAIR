@@ -18,5 +18,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public int? TableId { get; set; }
         public string FieldType { get; set; }
         public string TableType { get; set; }
+        public string Status { get; set; }
     }
 }

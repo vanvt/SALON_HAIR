@@ -18,6 +18,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Name { get; set; }
         public int? OrderDisplay { get; set; }
         public bool? IsSystemFunction { get; set; }
+        public string Status { get; set; }
 
         public ICollection<AuthorityRouter> AuthorityRouter { get; set; }
     }

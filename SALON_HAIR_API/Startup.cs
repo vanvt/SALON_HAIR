@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using SALON_HAIR_API.BackGround;
 using SALON_HAIR_API.Middlewares;
 using SALON_HAIR_API.ViewModels;
 using SALON_HAIR_CORE.Interface;
@@ -38,7 +37,7 @@ namespace WebApplication4
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHostedService<TimedHostedService>();
+         
             services.AddUtilHelperCTNET();
             services.AddMvc(options =>
             {             
@@ -138,10 +137,10 @@ namespace WebApplication4
             services.AddScoped<ICommissionDetail, CommissionDetailService>();
             services.AddScoped<ICommissionUnit, CommissionUnitService>();
             services.AddScoped<ICustomer, CustomerService>();
-          
+            services.AddScoped<ICustomerChannel, CustomerChannelService>();
+            services.AddScoped<ICustomerSource, CustomerSourceService>();
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
-            services.AddScoped<IStaffCommissionGroup, StaffCommissionGroupService>();
             services.AddScoped<IInvoicePayment, InvoicePaymentService>();
             services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
             services.AddScoped<IInvoiceStatus, InvoiceStatusService>();
@@ -153,6 +152,9 @@ namespace WebApplication4
             services.AddScoped<IProductCategory, ProductCategoryService>();
             services.AddScoped<IProductControl, ProductControlService>();
             services.AddScoped<IProductPictures, ProductPicturesService>();
+            services.AddScoped<IProductSalonBranch, ProductSalonBranchService>();
+            services.AddScoped<IProductSource, ProductSourceService>();
+            services.AddScoped<IProductStatus, ProductStatusService>();
             services.AddScoped<IProductUnit, ProductUnitService>();
             services.AddScoped<IRouter, RouterService>();
             services.AddScoped<ISalon, SalonService>();
@@ -161,9 +163,11 @@ namespace WebApplication4
             services.AddScoped<IServiceCategory, ServiceCategoryService>();
             services.AddScoped<IServicePackage, ServicePackageService>();
             services.AddScoped<IServiceProduct, ServiceProductService>();
+            services.AddScoped<IServiceSalonBranch, ServiceSalonBranchService>();
             services.AddScoped<ISetting, SettingService>();
             services.AddScoped<IStaff, SALON_HAIR_CORE.Service.StaffService>();
             services.AddScoped<IStaffCommisonGroup, StaffCommisonGroupService>();
+            services.AddScoped<IStaffSalonBranch, StaffSalonBranchService>();
             services.AddScoped<IStaffService, StaffServiceService>();
             services.AddScoped<IStaffTitle, StaffTitleService>();
             services.AddScoped<IStatus, StatusService>();
@@ -171,6 +175,7 @@ namespace WebApplication4
             services.AddScoped<IUserAuthority, UserAuthorityService>();
             services.AddScoped<IUserSalonBranch, UserSalonBranchService>();
             services.AddScoped<IWarehouse, WarehouseService>();
+
 
 
 
