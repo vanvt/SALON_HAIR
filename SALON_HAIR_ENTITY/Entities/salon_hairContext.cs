@@ -1128,8 +1128,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.ObjectPrice)
                     .HasColumnName("object_price")
-                    .HasColumnType("decimal(10,2)")
-                    .HasDefaultValueSql("'0.00'");
+                    .HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.ObjectType)
                     .IsRequired()
