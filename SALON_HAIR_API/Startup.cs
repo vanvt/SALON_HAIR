@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using SALON_HAIR_API.BackGround;
 using SALON_HAIR_API.Middlewares;
 using SALON_HAIR_API.ViewModels;
 using SALON_HAIR_CORE.Interface;

@@ -21,12 +21,12 @@ namespace SALON_HAIR_API.Controllers
         private readonly IService _service;
         private readonly IProduct _product;
         private readonly IPackage _package;
-        public InvoiceDetailsController(IPackage package,IProduct product,IService service,IInvoiceDetail invoiceDetail, IUser user)
+        public InvoiceDetailsController(IPackage package, IProduct product, IService service, IInvoiceDetail invoiceDetail, IUser user)
         {
             _service = service;
             _product = product;
             _package = package;
-               _invoiceDetail = invoiceDetail;
+            _invoiceDetail = invoiceDetail;
             _user = user;
         }
 
@@ -35,11 +35,11 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetInvoiceDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", long invoiceId = 0)
         {
             var data = _invoiceDetail.SearchAllFileds(keyword);
-            if (invoiceId!= 0)
+            if (invoiceId != 0)
             {
                 data = data.Where(e => e.InvoiceId == invoiceId);
             }
-            var dataReturn =   _invoiceDetail.LoadAllInclude(data);
+            var dataReturn = _invoiceDetail.LoadAllInclude(data);
             return OkList(dataReturn);
         }
         // GET: api/InvoiceDetails/5
@@ -63,7 +63,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -81,11 +81,12 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));          
-                invoiceDetail.Updated = DateTime.Now;             
+                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                invoiceDetail.Updated = DateTime.Now;
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;
                 await _invoiceDetail.EditAsync(invoiceDetail);
+                //just for invoice_staff_arrangement
                 switch (invoiceDetail.ObjectType)
                 {
                     case "SERVICE":
@@ -116,11 +117,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(invoiceDetail,e);
+                throw new UnexpectedException(invoiceDetail, e);
             }
         }
 
@@ -135,12 +136,12 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));            
+                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 invoiceDetail.Created = DateTime.Now;
                 switch (invoiceDetail.ObjectType)
                 {
-                    case "SERVICE":                     
+                    case "SERVICE":
                         await _invoiceDetail.AddAsServiceAsync(invoiceDetail);
                         break;
                     case "PRODUCT":
@@ -153,16 +154,16 @@ namespace SALON_HAIR_API.Controllers
                         await _invoiceDetail.AddAsync(invoiceDetail);
                         break;
                     default:
-                        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);                        
+                        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);
                 }
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
             catch (Exception e)
             {
 
-                throw new UnexpectedException(invoiceDetail,e);
+                throw new UnexpectedException(invoiceDetail, e);
             }
-          
+
         }
 
         // DELETE: api/InvoiceDetails/5
@@ -190,16 +191,16 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(id,e);
+                throw new UnexpectedException(id, e);
             }
-          
+
         }
 
         private bool InvoiceDetailExists(long id)
         {
             return _invoiceDetail.Any<InvoiceDetail>(e => e.Id == id);
         }
-        
+
     }
 }
 

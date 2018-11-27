@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="BackGround\" />
     <Folder Include="Extension\" />
     <Folder Include="wwwroot\upload\frontend\" />
   </ItemGroup>
