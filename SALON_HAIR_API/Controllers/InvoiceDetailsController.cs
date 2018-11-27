@@ -81,12 +81,11 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));          
+                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));          
                 invoiceDetail.Updated = DateTime.Now;             
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;
                 await _invoiceDetail.EditAsync(invoiceDetail);
-                //just for invoice_staff_arrangement
                 switch (invoiceDetail.ObjectType)
                 {
                     case "SERVICE":
@@ -136,7 +135,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));            
+                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));            
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 invoiceDetail.Created = DateTime.Now;
                 switch (invoiceDetail.ObjectType)
