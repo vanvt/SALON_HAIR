@@ -7,7 +7,6 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public ServiceCategory()
         {
-            Commission = new HashSet<Commission>();
             Service = new HashSet<Service>();
         }
 
@@ -23,7 +22,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
 
         public Salon Salon { get; set; }
-        public ICollection<Commission> Commission { get; set; }
         public ICollection<Service> Service { get; set; }
     }
 }

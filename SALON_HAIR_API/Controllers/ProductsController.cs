@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using SALON_HAIR_API.ViewModels;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -21,24 +23,30 @@ namespace SALON_HAIR_API.Controllers
         private readonly IProductUnit _productUnit;
         private readonly IStatus _status;
         private readonly IPhoto _photo;
-        public ProductsController(IStatus status,IProductUnit productUnit,IProduct product, IUser user, IPhoto photo)
+        private readonly IProductStatus _productStatus;
+        public ProductsController(IProductStatus productStatus, IStatus status,IProductUnit productUnit,IProduct product, IUser user, IPhoto photo)
         {
+            _productStatus = productStatus;
             _photo = photo;
             _status = status;
             _product = product;
             _user = user;
             _productUnit = productUnit;
         }
-
         // GET: api/Products
         [HttpGet]
-        public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId =0)
+        public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId =0 , long productStatusId = 0)
         {
             var data = _product.SearchAllFileds(keyword);
             if (productCategoryId != 0)
             {
                 data = data.Where(e => e.ProductCategoryId == productCategoryId);
             }
+            if (productStatusId != 0)
+            {
+                data = data.Where(e => e.ProductStatusId == productStatusId);
+            }
+            data = data.OrderByDescending(e => e.Id);
             return OkList(_product.Paging( data,page,rowPerPage).Include(e=>e.Unit).Include(e=>e.Photo));
         }
         // GET: api/Products/5
@@ -65,7 +73,6 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(id, e);
             }
         }
-
         // PUT: api/Products/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct([FromRoute] long id, [FromBody] Product product)
@@ -105,7 +112,6 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(product,e);
             }
         }
-
         // POST: api/Products
         [HttpPost]
         public async Task<IActionResult> PostProduct([FromBody] Product product)
@@ -125,12 +131,10 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(product,e);
             }
           
         }
-
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] long id)
@@ -160,7 +164,6 @@ namespace SALON_HAIR_API.Controllers
             }
           
         }
-
         private bool ProductExists(long id)
         {
             return _product.Any<Product>(e => e.Id == id);
@@ -194,6 +197,74 @@ namespace SALON_HAIR_API.Controllers
 
                 throw;
             }
+        }
+        [HttpPut("change-status-mutiple")]
+        public async Task<IActionResult> ChangeStatusMutiple([FromBody] ProductIdsVM productsVM)
+        {
+            //return null;
+            try
+            {
+                var productStatus = _productStatus.FindBy(e => e.Status.Equals(productsVM.StatusCode)).FirstOrDefault();
+                if(productStatus == null)
+                {
+                    return BadRequest($"Can't not found status code {productsVM}");
+                }
+                var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
+                await products.ForEachAsync(e => e.ProductStatusId = productStatus.Id);
+                await _product.EditRangeAsync(products);
+                //await Task.WhenAll(t1,t2);
+                //return Ok(productsVM);
+                return Ok(productsVM);
+               
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(productsVM, e);
+            }
+
+        }
+        [HttpDelete("delete-mutiple")]
+        public async Task<IActionResult> ShowInvoice([FromBody] ProductIdsDelete productsVM)
+        {          
+            try
+            {
+                var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
+                await products.ForEachAsync(e => e.Status = "DELETED");
+                await _product.EditRangeAsync(products);
+              
+                return Ok(productsVM);
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(productsVM, e);
+            }
+
+        }
+        [HttpPut("stop-selling")]
+        public async Task<IActionResult> StopSelling([FromBody] ProductIdsDelete productsVM)
+        {
+            //return null;
+            try
+            {
+                var productStatus = _productStatus.FindBy(e => e.Status.Equals("STOP")).FirstOrDefault();
+                if (productStatus == null)
+                {
+                    return BadRequest($"Can't not found status code {productsVM}");
+                }
+                var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
+                await products.ForEachAsync(e => e.ProductStatusId = productStatus.Id);
+                await _product.EditRangeAsync(products);            
+                return Ok(productsVM);
+
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(productsVM, e);
+            }
+
         }
     }
 }

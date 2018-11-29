@@ -192,20 +192,17 @@ namespace SALON_HAIR_CORE.Repository
             return kq;
         }
         */
-
         public IQueryable<T> Paging(IQueryable<T> query, int currentPage, int rowPerPage)
         {
             //query = query.Include("Status");
             return query.Skip((currentPage - 1) * rowPerPage).Take(rowPerPage);
         }
-
         public async Task<T> FindAsync(params object[] keyValues)
         {
             var  entity = await _easyspaContext.Set<T>().FindAsync(keyValues);
             //entity = LoadAllReference(entity);
             return entity;
         }
-
         public bool Any<Tsoure>(Expression<Func<T, bool>> predicate)
         {
             return _easyspaContext.Set<T>().Any(predicate);
@@ -287,7 +284,12 @@ namespace SALON_HAIR_CORE.Repository
         public IQueryable<T> SearchAllFileds(string keyword, string field, string type)
         {
             IQueryable<T> rs;
+            if(string.IsNullOrEmpty(keyword) && string.IsNullOrEmpty(field) && string.IsNullOrEmpty(type))
+            {
+                return _easyspaContext.Set<T>();
+            }
             string query = GennerateSQL(typeof(T), keyword, field, type);
+
             if (string.IsNullOrEmpty(keyword))
             {
                 rs = _easyspaContext.Set<T>().FromSql(query);
@@ -298,7 +300,6 @@ namespace SALON_HAIR_CORE.Repository
             }
             return rs;
         }
-      
         public string GennerateSQL(Type type, string keyword, string field, string typeOrder)
         {
             string sqlRaw = "";
@@ -402,7 +403,6 @@ namespace SALON_HAIR_CORE.Repository
             
             return rs;
         }
-
         public IQueryable<T> LoadAllCollecttion(IQueryable<T> rs)
         {
             var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).Collections.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;
@@ -411,6 +411,43 @@ namespace SALON_HAIR_CORE.Repository
                 rs = rs.Include(e);
             });
 
+            return rs;
+        }
+        public IQueryable<T> LoadAllCollecttion(IQueryable<T> rs, params string[] excludes)
+        {
+            var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).Collections.Select(e => e.Metadata.Name)
+                .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
+                .Where(e=> !excludes.Contains(e)); ;
+            //refs.ToList().ForEach(e =>
+            //{
+            //    rs = rs.Include(e);
+            //});
+
+            foreach (var e in refs)
+            {
+                rs = rs.Include(e);
+
+            }
+            return rs;
+        }
+        public IQueryable<T> LoadMany2Many(IQueryable<T> rs, params string[] excludes)
+        {
+            var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).Collections.Select(e => e.Metadata.Name)
+                 .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
+                 .Where(e => !excludes.Contains(e));
+
+             
+            //refs.ToList().ForEach(e =>
+            //{
+            //    rs = rs.Include(e);
+            //});
+
+            foreach (var e in refs)
+            {
+                Type subObject = typeof( T);
+              
+
+            }
             return rs;
         }
         public async Task<IEnumerable<T>> LoadAllIncludeEnumAsync(IQueryable<T> rs)
@@ -456,7 +493,6 @@ namespace SALON_HAIR_CORE.Repository
             //rs += " DEALLOCATE PREPARE stmt;   ";
             //return rs;
         }
-
         public T Find(params object[] keyValues)
         {
             var entity = _easyspaContext.Set<T>().Find(keyValues);

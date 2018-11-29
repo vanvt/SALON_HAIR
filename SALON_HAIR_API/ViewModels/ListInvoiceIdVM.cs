@@ -8,5 +8,6 @@ namespace SALON_HAIR_API.ViewModels
     public class ListInvoiceIdVM
     {
         public List<long> Ids { get; set; }
+       
     }
 }

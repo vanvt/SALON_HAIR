@@ -74,8 +74,8 @@ namespace SALON_HAIR_API.Controllers
                 }         
                 invoice = _invoice.LoadAllCollecttion(invoice);
                 invoice = _invoice.LoadAllReference(invoice);
-                var PackgeAvailables =  GetPackgeAvailablesByCustomerId(invoice.CustomerId);
-                return Ok(new { invoice, PackgeAvailables });
+                //var PackgeAvailables =  GetPackgeAvailablesByCustomerId(invoice.CustomerId);
+                return Ok(invoice);
             }
             catch (Exception e)
             {
@@ -100,8 +100,8 @@ namespace SALON_HAIR_API.Controllers
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _invoice.EditAsync(invoice);
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
-                var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
-                return CreatedAtAction("GetInvoice", new { id = invoice.Id },  new { invoice, PackgeAvailables });
+                //var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id } , invoice );
             }
 
             catch (DbUpdateConcurrencyException)

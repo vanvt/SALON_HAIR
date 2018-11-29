@@ -21,14 +21,14 @@ namespace SALON_HAIR_API.Controllers
         private readonly IPhoto _photo;
         private readonly IStaff _staff;
         private readonly IUser _user;
-        private readonly IStaffTitle _staffTitle;
+      
         private readonly IStaffService _staffService;
-        private readonly IStaffCommissionGroup _commissionGroup;
-        public StaffsController(IPhoto photo, IStaffCommissionGroup commissionGroup,IStaff staff, IStaffTitle staffTitle,IUser user, IStaffService staffService)
+       
+        public StaffsController(IPhoto photo,IStaff staff, IUser user, IStaffService staffService)
         {
             _photo = photo;
-            _commissionGroup = commissionGroup;
-            _staffTitle = staffTitle;
+          
+        
                _staffService = staffService;
             _staff = staff;
             _user = user;
@@ -128,19 +128,20 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw new BadRequestException("Không thể tạo nhân có hai sản dịch vụ nhau được babe");
                 }
-                staff.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
-                await _staff.AddMany2ManyAsync(staff);
-                var title = await _staffTitle.FindAsync( staff.StaffTitleId.Value);
-                staff.StaffTitle = title;
-                var groupCommision = await  _commissionGroup.FindAsync(staff.StaffCommisionGroupId);
-                staff.StaffCommisionGroup = groupCommision;
-                staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
-                if(staff.PhotoId!= default)
-                {
-                    staff.Photo =await _photo.FindAsync(staff.PhotoId);
-                }
-            
+                //staff.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                //await _staff.AddMany2ManyAsync(staff);
+                //var title = await _staffTitle.FindAsync( staff.StaffTitleId.Value);
+                //staff.StaffTitle = title;
+                //var groupCommision = await  _commissionGroup.FindAsync(staff.StaffCommisionGroupId);
+                //staff.StaffCommisionGroup = groupCommision;
+                //staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
+                //if(staff.PhotoId!= default)
+                //{
+                //    staff.Photo =await _photo.FindAsync(staff.PhotoId);
+                //}
+
                 //_staff.Entry()
+                await  _staff.AddAsync(staff);
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
             }
             catch (Exception e)

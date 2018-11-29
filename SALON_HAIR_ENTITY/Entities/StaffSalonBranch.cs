@@ -5,6 +5,7 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class StaffSalonBranch
     {
+        public long Id { get; set; }
         public long StaffId { get; set; }
         public long SalonBranchId { get; set; }
         public DateTime? Created { get; set; }

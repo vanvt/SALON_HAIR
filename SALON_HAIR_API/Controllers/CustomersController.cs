@@ -9,6 +9,9 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using SALON_HAIR_API.ViewModels;
+using System.Collections.Generic;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -17,10 +20,15 @@ namespace SALON_HAIR_API.Controllers
     public class CustomersController : CustomControllerBase
     {
         private readonly ICustomer _customer;
+              private readonly IPackage _package;
         private readonly IUser _user;
-
-        public CustomersController(ICustomer customer, IUser user)
+        private readonly IInvoice _invoice;
+        private readonly IInvoiceDetail _invoiceDetail;
+        public CustomersController(IPackage package, IInvoiceDetail invoiceDetail,IInvoice invoice,ICustomer customer, IUser user)
         {
+            _package = package;
+            _invoiceDetail = invoiceDetail;
+            _invoice = invoice;
             _customer = customer;
             _user = user;
         }
@@ -146,6 +154,31 @@ namespace SALON_HAIR_API.Controllers
                 throw new UnexpectedException(id,e);
             }
           
+        }
+        [HttpGet("get-package-available/{id}")]
+        public IActionResult GetPackgeAvailablesByCustomerId(long? id)
+        {
+
+            if (id == 0)
+                return OkList(new List<PackgeAvailable>().AsQueryable());
+            var listInvoiceDetail = _invoiceDetail.GetAll().Where(
+                e => e.Invoice.CustomerId == id &&
+                e.Invoice.InvoiceStatusId == 2 &&
+                e.ObjectType.Equals("PACKAGE")
+
+                );
+            var listPackage = from a in listInvoiceDetail
+                              join c in _package.GetAll() on a.ObjectId equals c.Id
+                              group a by c into b
+                              select new PackgeAvailable
+                              {
+                                  NumberOfPayed = b.Sum(e => e.Quantity),
+                                  NumberOfUsed = b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
+                                  NumberRemaining = b.Sum(e => e.Quantity) - b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
+                                  Package = b.Key
+                              };
+            listPackage = listPackage.Where(e => e.NumberRemaining > 0);
+            return OkList(listPackage);
         }
 
         private bool CustomerExists(long id)

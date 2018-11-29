@@ -13,7 +13,7 @@ namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    
     public class ProductStatussController : CustomControllerBase
     {
         private readonly IProductStatus _productStatus;
@@ -31,127 +31,130 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _productStatus.SearchAllFileds(keyword);
             var dataReturn =   _productStatus.LoadAllInclude(data);
-            return OkList(dataReturn);
+            return  OkList(dataReturn);
         }
-        // GET: api/ProductStatuss/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductStatus([FromRoute] long id)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                var productStatus = await _productStatus.FindAsync(id);
+        //// GET: api/ProductStatuss/5
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetProductStatus([FromRoute] long id)
+        //{
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return BadRequest(ModelState);
+        //        }
+        //        var productStatus = await _productStatus.FindAsync(id);
 
-                if (productStatus == null)
-                {
-                    return NotFound();
-                }
-                return Ok(productStatus);
-            }
-            catch (Exception e)
-            {
+        //        if (productStatus == null)
+        //        {
+        //            return NotFound();
+        //        }
+        //        return Ok(productStatus);
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                  throw new UnexpectedException(id, e);
-            }
-        }
+        //          throw new UnexpectedException(id, e);
+        //    }
+        //}
 
-        // PUT: api/ProductStatuss/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProductStatus([FromRoute] long id, [FromBody] ProductStatus productStatus)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            if (id != productStatus.Id)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                productStatus.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                await _productStatus.EditAsync(productStatus);
-                return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
-            }
+        //// PUT: api/ProductStatuss/5
+        //[HttpPut("{id}")]
+        //[Authorize]
+        //public async Task<IActionResult> PutProductStatus([FromRoute] long id, [FromBody] ProductStatus productStatus)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    if (id != productStatus.Id)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    try
+        //    {
+        //        productStatus.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+        //        await _productStatus.EditAsync(productStatus);
+        //        return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
+        //    }
 
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductStatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }           
-            catch (Exception e)
-            {
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ProductStatusExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }           
+        //    catch (Exception e)
+        //    {
 
-                  throw new UnexpectedException(productStatus,e);
-            }
-        }
+        //          throw new UnexpectedException(productStatus,e);
+        //    }
+        //}
 
-        // POST: api/ProductStatuss
-        [HttpPost]
-        public async Task<IActionResult> PostProductStatus([FromBody] ProductStatus productStatus)
-        {
+        //// POST: api/ProductStatuss
+        //[HttpPost]
+        //[Authorize]
+        //public async Task<IActionResult> PostProductStatus([FromBody] ProductStatus productStatus)
+        //{
 
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-                productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
-                await _productStatus.AddAsync(productStatus);
-                return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
-            }
-            catch (Exception e)
-            {
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return BadRequest(ModelState);
+        //        }
+        //        productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+        //        await _productStatus.AddAsync(productStatus);
+        //        return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                throw new UnexpectedException(productStatus,e);
-            }
+        //        throw new UnexpectedException(productStatus,e);
+        //    }
           
-        }
+        //}
 
-        // DELETE: api/ProductStatuss/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductStatus([FromRoute] long id)
-        {
+        //// DELETE: api/ProductStatuss/5
+        //[HttpDelete("{id}")]
+        //[Authorize]
+        //public async Task<IActionResult> DeleteProductStatus([FromRoute] long id)
+        //{
 
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+        //    try
+        //    {
+        //        if (!ModelState.IsValid)
+        //        {
+        //            return BadRequest(ModelState);
+        //        }
 
-                var productStatus = await _productStatus.FindAsync(id);
-                if (productStatus == null)
-                {
-                    return NotFound();
-                }
+        //        var productStatus = await _productStatus.FindAsync(id);
+        //        if (productStatus == null)
+        //        {
+        //            return NotFound();
+        //        }
 
-                await _productStatus.DeleteAsync(productStatus);
+        //        await _productStatus.DeleteAsync(productStatus);
 
-                return Ok(productStatus);
-            }
-            catch (Exception e)
-            {
+        //        return Ok(productStatus);
+        //    }
+        //    catch (Exception e)
+        //    {
 
-                throw new UnexpectedException(id,e);
-            }
+        //        throw new UnexpectedException(id,e);
+        //    }
           
-        }
+        //}
 
-        private bool ProductStatusExists(long id)
-        {
-            return _productStatus.Any<ProductStatus>(e => e.Id == id);
-        }
+        //private bool ProductStatusExists(long id)
+        //{
+        //    return _productStatus.Any<ProductStatus>(e => e.Id == id);
+        //}
     }
 }
 

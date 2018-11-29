@@ -36,7 +36,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public User Cashier { get; set; }
         public Customer Customer { get; set; }
-        public CommissionUnit DiscountUnit { get; set; }
+        public DiscountUnit DiscountUnit { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
         public Staff Salesman { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }

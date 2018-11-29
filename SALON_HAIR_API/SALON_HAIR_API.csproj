@@ -23,7 +23,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="4.0.1" />
-    <PackageReference Include="ULTIL_HELPER" Version="1.0.9" />
+    <PackageReference Include="ULTIL_HELPER" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
