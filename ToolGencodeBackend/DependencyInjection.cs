@@ -27,6 +27,7 @@ namespace ToolGencodeBackend
                 builer += $@"    services.AddScoped<I{nameEnity}, {nameEnity}Service>();" + Environment.NewLine;
             }
             rs.Replace("{buidlerString}", builer);
+
             return rs;
 
         }

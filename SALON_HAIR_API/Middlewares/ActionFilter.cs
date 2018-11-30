@@ -20,6 +20,9 @@ namespace SALON_HAIR_API.Middlewares
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
+            var start = DateTime.Now;
+            Console.WriteLine("OnActionExecuted");
+            Console.WriteLine("-----------------------------------------------------------------------------");
             bool LogAllRespone = false;
             bool.TryParse( _configuration["LogAllRespone:value"], out LogAllRespone);
             if (LogAllRespone)
@@ -44,7 +47,10 @@ namespace SALON_HAIR_API.Middlewares
 
                 }
                               
-            }                      
+            }
+            var end = DateTime.Now;
+            Console.WriteLine($"Finished in {(end-start).TotalMilliseconds} miliseconds");
+            Console.WriteLine("-----------------------------------------------------------------------------");
         }
         public void OnActionExecuting(ActionExecutingContext context)
         {

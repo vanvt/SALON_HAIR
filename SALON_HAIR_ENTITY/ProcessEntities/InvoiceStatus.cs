@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using SALON_HAIR_ENTITY.Entities;
 
-namespace SALON_HAIR_ENTITY.Entities
+namespace SALON_HAIR_ENTITY.ProcessEntities
 {
     public partial class InvoiceStatus
     {

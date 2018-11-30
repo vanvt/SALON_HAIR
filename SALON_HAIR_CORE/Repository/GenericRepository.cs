@@ -393,6 +393,18 @@ namespace SALON_HAIR_CORE.Repository
             return entity;
           
         }
+        public T LoadAllReference(T entity, params string[] excludes)
+        {
+
+            var refs = _easyspaContext.Entry(entity).References.Select(e => e.Metadata.Name)
+                .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
+                .Where(e => !excludes.Contains(e)); 
+            refs.ToList().ForEach(e => {
+                _easyspaContext.Entry(entity).Reference(e).Load();
+            });
+            return entity;
+
+        }
         public IQueryable<T> LoadAllInclude(IQueryable<T> rs)
         {
             var refs =  _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).References.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e)); ;        
@@ -401,6 +413,18 @@ namespace SALON_HAIR_CORE.Repository
                 rs = rs.Include(e);
             });
             
+            return rs;
+        }
+        public IQueryable<T> LoadAllInclude(IQueryable<T> rs, params string[] excludes)
+        {
+            var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).References.Select(e => e.Metadata.Name)
+                .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
+                .Where(e => !excludes.Contains(e)); ;
+            refs.ToList().ForEach(e =>
+            {
+                rs = rs.Include(e);
+            });
+
             return rs;
         }
         public IQueryable<T> LoadAllCollecttion(IQueryable<T> rs)
@@ -417,7 +441,7 @@ namespace SALON_HAIR_CORE.Repository
         {
             var refs = _easyspaContext.Entry(Activator.CreateInstance(typeof(T))).Collections.Select(e => e.Metadata.Name)
                 .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
-                .Where(e=> !excludes.Contains(e)); ;
+                .Where(e=> !excludes.Contains(e)); 
             //refs.ToList().ForEach(e =>
             //{
             //    rs = rs.Include(e);
@@ -464,6 +488,18 @@ namespace SALON_HAIR_CORE.Repository
         {
 
             var refs = _easyspaContext.Entry(entity).Collections.Select(e => e.Metadata.Name).Where(e => !GlobalReferenceCustom.ListReference.Contains(e));
+            refs.ToList().ForEach(e => {
+                _easyspaContext.Entry(entity).Collection(e).Load();
+            });
+            return entity;
+
+        }
+        public T LoadAllCollecttion(T entity, params string[] excludes)
+        {
+
+            var refs = _easyspaContext.Entry(entity).Collections.Select(e => e.Metadata.Name)
+                .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
+                .Where(e => !excludes.Contains(e)); 
             refs.ToList().ForEach(e => {
                 _easyspaContext.Entry(entity).Collection(e).Load();
             });

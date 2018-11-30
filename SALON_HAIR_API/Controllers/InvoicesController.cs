@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using SALON_HAIR_API.ViewModels;
+using SALON_HAIR_API.Measure;
 
 namespace SALON_HAIR_API.Controllers
 {
@@ -38,7 +39,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="")
         {
-             date += "";
+          
+            date += "";
+         
             var datetime = DateTime.Now;            
             var data = _invoice.SearchAllFileds(keyword);           
             DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
@@ -51,38 +54,41 @@ namespace SALON_HAIR_API.Controllers
             if (isDisplay)
             {
                 data = data.Where(e => e.IsDisplay.Value);                        
-            }
-            var dataReturn = _invoice.LoadAllCollecttion(data).Include(e=>e.Customer);
-            
-            return OkList(dataReturn);          
+            }         
+            var dataReturn = _invoice.LoadAllInclude(data);
+           
+           
+            return OkList(dataReturn);
         }
         // GET: api/Invoices/5
+        [MeasureController("GetInvoice")]
+    
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice([FromRoute] long id)
         {
             try
             {
+              
+                var start = DateTime.Now;
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-                Invoice invoice = await _invoice.FindAsync(id);
-
-                if (invoice == null)
-                {
+                var invoices =  _invoice.FindBy(e=>e.Id==id);
+                invoices = _invoice.LoadAllCollecttion(invoices, nameof(InvoiceStaffArrangement));
+                invoices = _invoice.LoadAllInclude(invoices);              
+                var dataturn = await invoices.FirstOrDefaultAsync();           
+                var end = DateTime.Now;
+                if (dataturn == null)
                     return NotFound();
-                }         
-                invoice = _invoice.LoadAllCollecttion(invoice);
-                invoice = _invoice.LoadAllReference(invoice);
-                //var PackgeAvailables =  GetPackgeAvailablesByCustomerId(invoice.CustomerId);
-                return Ok(invoice);
+                return Ok(dataturn);
             }
             catch (Exception e)
             {
-
                   throw new UnexpectedException(id, e);
             }
         }
+      
         // PUT: api/Invoices/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoice([FromRoute] long id, [FromBody] Invoice invoice)

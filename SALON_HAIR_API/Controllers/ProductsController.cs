@@ -204,7 +204,7 @@ namespace SALON_HAIR_API.Controllers
             //return null;
             try
             {
-                var productStatus = _productStatus.FindBy(e => e.Status.Equals(productsVM.StatusCode)).FirstOrDefault();
+                var productStatus = _productStatus.FindBy(e => e.Code.Equals(productsVM.StatusCode)).FirstOrDefault();
                 if(productStatus == null)
                 {
                     return BadRequest($"Can't not found status code {productsVM}");
@@ -248,7 +248,7 @@ namespace SALON_HAIR_API.Controllers
             //return null;
             try
             {
-                var productStatus = _productStatus.FindBy(e => e.Status.Equals("STOP")).FirstOrDefault();
+                var productStatus = _productStatus.FindBy(e => e.Code.Equals("STOP")).FirstOrDefault();
                 if (productStatus == null)
                 {
                     return BadRequest($"Can't not found status code {productsVM}");

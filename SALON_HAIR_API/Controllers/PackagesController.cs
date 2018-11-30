@@ -30,9 +30,15 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPackage(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
+            var start = DateTime.Now;
+            Console.WriteLine("GetPackage");
+            Console.WriteLine("-----------------------------------------------------------------------------");
             var data = _package.SearchAllFileds(keyword);
             var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);
-           
+            //var dataReturn = data.Include(e => e.ServicePackage);
+            var end = DateTime.Now;
+            Console.WriteLine($"Finished in {(end - start).TotalMilliseconds} miliseconds");
+            Console.WriteLine("-----------------------------------------------------------------------------");
             return OkList(dataReturn);
         }
         // GET: api/Packages/5

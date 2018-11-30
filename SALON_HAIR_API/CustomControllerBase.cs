@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SALON_HAIR_API.ViewModels;
 using SALON_HAIR_CORE.Interface;
+using System;
 using System.Linq;
 using ULTIL_HELPER;
 
@@ -51,14 +52,17 @@ namespace SALON_HAIR_API
             page = page == 0 ? 1 : page;
             rowPerPage = rowPerPage == 0 ? 50 : rowPerPage;
             var data = rs.Skip((page - 1) * rowPerPage).Take(rowPerPage);
+            Console.WriteLine("Count list object");
+            Console.WriteLine("-----------------------------------------------------------------------------");
             var response = new BaseViewModel
             {
                 Data = data,
                 Meta = new MetaViewModel
-                {
+                {                 
                     TotalItem = rs.Count()
                 }
-            };
+            };       
+            Console.WriteLine("-----------------------------------------------------------------------------");
             return Ok(response);
         }
 

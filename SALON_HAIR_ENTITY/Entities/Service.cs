@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
@@ -33,11 +35,23 @@ namespace SALON_HAIR_ENTITY.Entities
         public Salon Salon { get; set; }
         public SalonBranch SalonBranchCreate { get; set; }
         public ServiceCategory ServiceCategory { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<BookingDetail> BookingDetail { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<ServicePackage> ServicePackage { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<ServiceProduct> ServiceProduct { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<ServiceSalonBranch> ServiceSalonBranch { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<StaffService> StaffService { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace SALON_HAIR_API.Controllers
         private readonly IService _service;
         private readonly IProduct _product;
         private readonly IPackage _package;
+
         public InvoiceDetailsController(IPackage package, IProduct product, IService service, IInvoiceDetail invoiceDetail, IUser user)
         {
             _service = service;
@@ -39,7 +40,7 @@ namespace SALON_HAIR_API.Controllers
             {
                 data = data.Where(e => e.InvoiceId == invoiceId);
             }
-            var dataReturn = _invoiceDetail.LoadAllInclude(data);
+            var dataReturn = _invoiceDetail.LoadAllInclude(data,nameof(Invoice),nameof(InvoiceStaffArrangement));
             return OkList(dataReturn);
         }
         // GET: api/InvoiceDetails/5

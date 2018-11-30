@@ -40,5 +40,8 @@ namespace SALON_HAIR_CORE.Repository
         Task<IEnumerable<T>> LoadAllIncludeEnumAsync(IQueryable<T> rs);
         IQueryable<T> LoadAllCollecttion(IQueryable<T> rs, params string[] excludes);
         IQueryable<T> LoadMany2Many(IQueryable<T> rs, params string[] excludes);
+        IQueryable<T> LoadAllInclude(IQueryable<T> rs, params string[] excludes);
+        T LoadAllCollecttion(T entity, params string[] excludes);
+        T LoadAllReference(T entity, params string[] excludes);
     }
 }

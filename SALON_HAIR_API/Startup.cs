@@ -150,7 +150,7 @@ namespace WebApplication4
             services.AddScoped<IPhoto, PhotoService>();
             services.AddScoped<IProduct, ProductService>();
             services.AddScoped<IProductCategory, ProductCategoryService>();
-      
+            services.AddScoped<IProductCountUnit, ProductCountUnitService>();
             services.AddScoped<IProductPictures, ProductPicturesService>();
             services.AddScoped<IProductSalonBranch, ProductSalonBranchService>();
             services.AddScoped<IProductSource, ProductSourceService>();
