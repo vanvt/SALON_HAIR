@@ -9,7 +9,7 @@ namespace XUnitTestProject1
         [Fact]
         public void invoice()
         {
-            var client = new RestClient(ConfigTest.url+"invoices/780");
+            var client = new RestClient(ConfigTest.url+"invoices");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");
@@ -23,6 +23,6 @@ namespace XUnitTestProject1
         Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
             Assert.True(actual <= ConfigTest.expectMiliseconds, $"Expected total milliseconds of less than or equal to {ConfigTest.expectMiliseconds} but was {actual}.");
         }
-}
+    }
 }
 

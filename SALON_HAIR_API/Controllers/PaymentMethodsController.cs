@@ -29,7 +29,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPaymentMethod(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _paymentMethod.SearchAllFileds(keyword);
+            var data = _paymentMethod.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             data = data.Include(e => e.PaymentBankingMethod).ThenInclude(e=>e.Banking);
             //var dataReturn =   _paymentMethod.LoadMany2Many(data, nameof(InvoicePayment));
             // dataReturn = _paymentMethod.LoadAllInclude(dataReturn);

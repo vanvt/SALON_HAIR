@@ -38,8 +38,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetStaff(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var user =   JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-            var data = _staff.SearchAllFileds(keyword);
+       
+            var data = _staff.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             var dataReturn =   _staff.LoadAllInclude(data);
             return OkList(dataReturn);
         }

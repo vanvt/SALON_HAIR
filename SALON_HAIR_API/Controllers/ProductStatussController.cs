@@ -29,7 +29,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProductStatus(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _productStatus.SearchAllFileds(keyword);
+            var data = _productStatus.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             var dataReturn =   _productStatus.LoadAllInclude(data);
             return  OkList(dataReturn);
         }

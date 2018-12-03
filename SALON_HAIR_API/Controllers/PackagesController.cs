@@ -33,7 +33,8 @@ namespace SALON_HAIR_API.Controllers
             var start = DateTime.Now;
             Console.WriteLine("GetPackage");
             Console.WriteLine("-----------------------------------------------------------------------------");
-            var data = _package.SearchAllFileds(keyword);
+            var data = _package.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);
             //var dataReturn = data.Include(e => e.ServicePackage);
             var end = DateTime.Now;

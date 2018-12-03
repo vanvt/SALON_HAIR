@@ -133,13 +133,14 @@ namespace SALON_HAIR_API.Middlewares
             };
             await LogAsync(context, _data);
         }
-        private async Task LogAsync(HttpContext context, UnexpectedException exception)
+        private async Task LogAsync(HttpContext context, UnexpectedException unexpectedException)
         {
+            var exception = unexpectedException.exception == null ? unexpectedException : unexpectedException.exception;
             var _data = new
             {
                 _Soure = exception.InnerException == null ? exception.Source : exception.InnerException.Source,
                 _StackTrace = exception.InnerException == null ? exception.StackTrace : exception.InnerException.StackTrace,
-                _Data = exception.DataLog,
+                _Data = unexpectedException.DataLog,
                 _Message = exception.InnerException == null ? exception.Message : exception.InnerException.Message,
 
             };

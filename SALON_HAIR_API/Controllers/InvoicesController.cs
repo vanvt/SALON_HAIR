@@ -37,13 +37,18 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/Invoices
         [HttpGet]
-        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="")
+        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="",long currentSalonBranchId = 0)
         {
           
             date += "";
          
-            var datetime = DateTime.Now;            
-            var data = _invoice.SearchAllFileds(keyword);           
+            var datetime = DateTime.Now;
+            var data = _invoice.SearchAllFileds(keyword)
+                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            if (currentSalonBranchId != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranchId);
+            }
             DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
             if (datetime == new DateTime())
             {

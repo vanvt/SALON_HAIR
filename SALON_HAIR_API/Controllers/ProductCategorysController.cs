@@ -44,7 +44,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProductCategory(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data  = _productCategory.SearchAllFileds(keyword, orderBy, orderType);
+            var data  = _productCategory.SearchAllFileds(keyword, orderBy, orderType).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             var dataReturn = data.Include(e => e.Product).ThenInclude(e => e.Photo);
             //var dataReturn = _productCategory.LoadAllCollecttion(data);
             //dataReturn = _productCategory.LoadAllInclude(dataReturn);

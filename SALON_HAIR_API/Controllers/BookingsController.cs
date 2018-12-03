@@ -29,7 +29,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _booking.SearchAllFileds(keyword);
+            var data = _booking.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")))
+                ;
             var dataReturn =   _booking.LoadAllInclude(data);
             return OkList(dataReturn);
         }

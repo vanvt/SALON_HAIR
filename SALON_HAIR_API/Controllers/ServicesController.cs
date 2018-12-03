@@ -31,7 +31,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetService(int page = 1, int rowPerPage = 50, string keyword = "",long serviceCategoryId = 0, string orderBy = "", string orderType = "")
         {
-            var data = _service.SearchAllFileds(keyword,orderBy,orderType).Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
+            var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
             if (serviceCategoryId != 0)
             {
                 data = data.Where(e => e.ServiceCategoryId == serviceCategoryId).Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);             

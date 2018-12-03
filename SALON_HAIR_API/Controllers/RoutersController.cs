@@ -28,7 +28,7 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetRouter(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _router.SearchAllFileds(keyword);
+            var data = _router.SearchAllFileds(keyword);              
             var dataReturn =   _router.LoadAllInclude(data);
             return OkList(dataReturn);
         }

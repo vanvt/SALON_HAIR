@@ -37,7 +37,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId =0 , long productStatusId = 0)
         {
-            var data = _product.SearchAllFileds(keyword);
+            var data = _product.SearchAllFileds(keyword).Where
+                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             if (productCategoryId != 0)
             {
                 data = data.Where(e => e.ProductCategoryId == productCategoryId);
