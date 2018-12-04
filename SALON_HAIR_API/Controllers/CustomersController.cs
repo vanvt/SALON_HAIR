@@ -174,8 +174,8 @@ namespace SALON_HAIR_API.Controllers
                               select new PackgeAvailable
                               {
                                   NumberOfPayed = b.Sum(e => e.Quantity),
-                                  NumberOfUsed = b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
-                                  NumberRemaining = b.Sum(e => e.Quantity) - b.Where(e => e.Status.Equals("PAYED")).Sum(e => e.Quantity),
+                                  NumberOfUsed = b.Where(e => e.Status.Equals("PAID")).Sum(e => e.Quantity),
+                                  NumberRemaining = b.Sum(e => e.Quantity) - b.Where(e => e.Status.Equals("PAID")).Sum(e => e.Quantity),
                                   Package = b.Key
                               };
             listPackage = listPackage.Where(e => e.NumberRemaining > 0);
