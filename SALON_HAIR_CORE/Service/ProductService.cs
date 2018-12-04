@@ -5,6 +5,7 @@ using SALON_HAIR_CORE.Interface;
 using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -29,11 +30,13 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(Product product)
         {
             product.Created = DateTime.Now;
+            product = AddToAllBranch(product);
             return await base.AddAsync(product);
         }
         public new void Add(Product product)
         {
             product.Created = DateTime.Now;
+            product = AddToAllBranch(product);
             base.Add(product);
         }
         public new void Delete(Product product)
@@ -45,6 +48,15 @@ namespace SALON_HAIR_CORE.Service
         {
             product.Status = "DELETED";
             return await base.EditAsync(product);
+        }
+        public Product AddToAllBranch(Product product)
+        {
+            var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == product.SalonId).ToList();
+            listBranch.ForEach(e =>
+            {
+                product.ProductSalonBranch.Add(new ProductSalonBranch { SalonBranchId = e.Id });
+            });
+            return product;
         }
     }
 }

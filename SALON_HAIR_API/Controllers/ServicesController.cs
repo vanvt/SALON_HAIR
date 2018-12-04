@@ -19,8 +19,8 @@ namespace SALON_HAIR_API.Controllers
         private readonly IService _service;
         private readonly IServiceProduct _serviceProduct;
         private readonly IUser _user;
-       
-        public ServicesController(IServiceProduct serviceProduct,IService service, IUser user)
+
+        public ServicesController(IServiceProduct serviceProduct, IService service, IUser user)
         {
             _service = service;
             _user = user;
@@ -29,16 +29,16 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Services
         [HttpGet]
-        public IActionResult GetService(int page = 1, int rowPerPage = 50, string keyword = "",long serviceCategoryId = 0, string orderBy = "", string orderType = "")
+        public IActionResult GetService(int page = 1, int rowPerPage = 50, string keyword = "", long serviceCategoryId = 0, string orderBy = "", string orderType = "")
         {
-            var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType)
+                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
             if (serviceCategoryId != 0)
             {
-                data = data.Where(e => e.ServiceCategoryId == serviceCategoryId).Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);             
+                data = data.Where(e => e.ServiceCategoryId == serviceCategoryId).Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
             }
-            return OkList(_service.Paging(data, page, rowPerPage));          
+            return OkList(_service.Paging(data, page, rowPerPage));
         }
         // GET: api/Services/5
         [HttpGet("{id}")]
@@ -61,7 +61,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -81,11 +81,11 @@ namespace SALON_HAIR_API.Controllers
             {
                 if (service.ServiceProduct.Select(e => e.ProductId).Count() != service.ServiceProduct.Select(e => e.ProductId).Distinct().Count())
                 {
-                    throw new BadRequestException("Không thể tạo serive có hai sản phẩm giống nhau được babe");
+                    throw new BadRequestException("Không th? t?o serive có hai s?n ph?m gi?ng nhau du?c babe");
                 }
-                service.UpdatedBy = JwtHelper.GetCurrentInformation(User,e=>e.Type.Equals("email"));
-                await _service.EditAsync(service);
-             
+                service.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
+                await _service.EditMany2ManyAsync(service);
+
                 var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x => x.Unit);
 
                 service.ServiceProduct = serviceProduct.ToList();
@@ -102,11 +102,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(service,e);
+                throw new UnexpectedException(service, e);
             }
         }
 
@@ -121,20 +121,20 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                
+
                 service.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-              
-                await _service.AddAsync(service);               
-                var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x=>x.Unit);
+               
+                await _service.AddAsync(service);
+                var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x => x.Unit);
                 service.ServiceProduct = serviceProduct.ToList();
                 return CreatedAtAction("GetService", new { id = service.Id }, service);
             }
             catch (Exception e)
             {
 
-                throw new UnexpectedException(service,e);
+                throw new UnexpectedException(service, e);
             }
-          
+
         }
 
         // DELETE: api/Services/5
@@ -162,9 +162,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(id,e);
+                throw new UnexpectedException(id, e);
             }
-          
+
         }
 
         private bool ServiceExists(long id)

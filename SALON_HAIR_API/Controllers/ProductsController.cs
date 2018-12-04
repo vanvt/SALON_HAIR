@@ -24,7 +24,7 @@ namespace SALON_HAIR_API.Controllers
         private readonly IStatus _status;
         private readonly IPhoto _photo;
         private readonly IProductStatus _productStatus;
-        public ProductsController(IProductStatus productStatus, IStatus status,IProductUnit productUnit,IProduct product, IUser user, IPhoto photo)
+        public ProductsController(IProductStatus productStatus, IStatus status, IProductUnit productUnit, IProduct product, IUser user, IPhoto photo)
         {
             _productStatus = productStatus;
             _photo = photo;
@@ -35,7 +35,7 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/Products
         [HttpGet]
-        public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId =0 , long productStatusId = 0)
+        public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId = 0, long productStatusId = 0)
         {
             var data = _product.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
@@ -48,7 +48,7 @@ namespace SALON_HAIR_API.Controllers
                 data = data.Where(e => e.ProductStatusId == productStatusId);
             }
             data = data.OrderByDescending(e => e.Id);
-            return OkList(_product.Paging( data,page,rowPerPage).Include(e=>e.Unit).Include(e=>e.Photo));
+            return OkList(_product.Paging(data, page, rowPerPage).Include(e => e.Unit).Include(e => e.Photo));
         }
         // GET: api/Products/5
         [HttpGet("{id}")]
@@ -60,7 +60,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var product = await _product.GetAll().Where(e=>e.Id==id).FirstOrDefaultAsync();
+                var product = await _product.GetAll().Where(e => e.Id == id).FirstOrDefaultAsync();
 
                 if (product == null)
                 {
@@ -71,7 +71,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
         // PUT: api/Products/5
@@ -106,11 +106,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(product,e);
+                throw new UnexpectedException(product, e);
             }
         }
         // POST: api/Products
@@ -124,17 +124,18 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                //product.SalonId = GetCurrentSalon();
                 product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                product.Unit = await _productUnit.FindAsync(product.UnitId);
-                product.Photo = await _photo.FindAsync(product.PhotoId);
+                //product.Unit = await _productUnit.FindAsync(product.UnitId);
+                //product.Photo = await _photo.FindAsync(product.PhotoId);
                 await _product.AddAsync(product);
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);
             }
             catch (Exception e)
             {
-                throw new UnexpectedException(product,e);
+                throw new UnexpectedException(product, e);
             }
-          
+
         }
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
@@ -163,7 +164,7 @@ namespace SALON_HAIR_API.Controllers
 
                 throw;
             }
-          
+
         }
         private bool ProductExists(long id)
         {
@@ -180,12 +181,12 @@ namespace SALON_HAIR_API.Controllers
                 }
 
                 var oldProduct = await _product.FindAsync(id);
-             
+
                 if (product == null)
                 {
                     return NotFound();
                 }
-                
+
                 oldProduct.Status = product.Status.ToUpper();
                 await _product.EditAsync(oldProduct);
                 //oldProduct.Unit = await _productUnit.FindAsync(oldProduct.UnitId);
@@ -206,7 +207,7 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 var productStatus = _productStatus.FindBy(e => e.Code.Equals(productsVM.StatusCode)).FirstOrDefault();
-                if(productStatus == null)
+                if (productStatus == null)
                 {
                     return BadRequest($"Can't not found status code {productsVM}");
                 }
@@ -216,7 +217,7 @@ namespace SALON_HAIR_API.Controllers
                 //await Task.WhenAll(t1,t2);
                 //return Ok(productsVM);
                 return Ok(productsVM);
-               
+
             }
             catch (Exception e)
             {
@@ -227,13 +228,13 @@ namespace SALON_HAIR_API.Controllers
         }
         [HttpDelete("delete-mutiple")]
         public async Task<IActionResult> ShowInvoice([FromBody] ProductIdsDelete productsVM)
-        {          
+        {
             try
             {
                 var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
                 await products.ForEachAsync(e => e.Status = "DELETED");
                 await _product.EditRangeAsync(products);
-              
+
                 return Ok(productsVM);
             }
             catch (Exception e)
@@ -256,7 +257,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
                 await products.ForEachAsync(e => e.ProductStatusId = productStatus.Id);
-                await _product.EditRangeAsync(products);            
+                await _product.EditRangeAsync(products);
                 return Ok(productsVM);
 
             }

@@ -32,6 +32,7 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(SALON_HAIR_ENTITY.Entities.Service service)
         {
             service.Created = DateTime.Now;
+            service = AddToAllBranch(service);
             return await base.AddAsync(service);
         }
         public new void Add(SALON_HAIR_ENTITY.Entities.Service service)
@@ -92,6 +93,31 @@ namespace SALON_HAIR_CORE.Service
             service.Created = DateTime.Now;
             return await base.AddAsync(service);
         }
+
+        public SALON_HAIR_ENTITY.Entities.Service AddToAllBranch(SALON_HAIR_ENTITY.Entities.Service service)
+        {
+            var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == service.SalonId).ToList();
+            listBranch.ForEach(e =>
+            {
+                service.ServiceSalonBranch.Add(new ServiceSalonBranch {SalonBranchId = e.Id });
+            });
+            return service;
+
+        }
+        public SALON_HAIR_ENTITY.Entities.Service AddToAllCommision(SALON_HAIR_ENTITY.Entities.Service service)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public SALON_HAIR_ENTITY.Entities.Service AddToAllCommision()
+        //{
+        //    var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == service.SalonId).ToList();
+        //    listBranch.ForEach(e =>
+        //    {
+        //        service.ServiceSalonBranch.Add(new ServiceSalonBranch { SalonBranchId = e.SalonId.Value });
+        //    });
+        //    return service;
+        //}
+
     }
 }
-    

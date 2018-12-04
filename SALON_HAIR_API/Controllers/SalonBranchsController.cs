@@ -135,6 +135,12 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return NotFound();
                 }
+                  var salonId =  JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")) ;
+                var user = _user.GetAll().Where(e => e.SalonId == salonId).Where(e => e.SalonBranchCurrentId == id).FirstOrDefault();
+                if (user != null)
+                {
+                    return BadRequest($"Can't deleted. This branch is used for {user.Name }" );
+                }
 
                 await _salonBranch.DeleteAsync(salonBranch);
 
@@ -142,7 +148,6 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(id,e);
             }
           

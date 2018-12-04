@@ -31,7 +31,8 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _productSource.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            var dataReturn =   _productSource.LoadAllInclude(data);
+            data = data.OrderBy(e => e.Name);
+            var dataReturn = _productSource.LoadAllInclude(data);
             return OkList(dataReturn);
         }
         // GET: api/ProductSources/5
@@ -55,7 +56,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -88,11 +89,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(productSource,e);
+                throw new UnexpectedException(productSource, e);
             }
         }
 
@@ -114,9 +115,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(productSource,e);
+                throw new UnexpectedException(productSource, e);
             }
-          
+
         }
 
         // DELETE: api/ProductSources/5
@@ -144,9 +145,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(id,e);
+                throw new UnexpectedException(id, e);
             }
-          
+
         }
 
         private bool ProductSourceExists(long id)

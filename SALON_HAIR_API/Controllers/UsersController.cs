@@ -49,7 +49,11 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest();
                 }
                 //var jbtUser = await _jbtUser.FindBy(e => e.Id == id).Include(x => x.JbtUserAuthority).FirstOrDefaultAsync();
-                var user = await _user.FindBy(e => e.Id == id).Include(x => x.Salon).Include(e => e.SalonBranch).FirstOrDefaultAsync();
+                var user = await _user.FindBy(e => e.Id == id)
+                    .Include(x => x.Salon)
+                     .Include(e => e.Photo)
+                    .Include(e => e.SalonBranchCurrent)
+                    .FirstOrDefaultAsync();
                 if (user == null)
                 {
                     return NotFound();
@@ -81,7 +85,11 @@ namespace SALON_HAIR_API.Controllers
                 //var jbtUser = await _jbtUser.FindBy(e => e.Id == id).Include(x => x.JbtUserAuthority).FirstOrDefaultAsync();
 
                 //var user = await _user.FindBy(e => e.Id == Idtoken).Include(x => x.Salon).Include(e=>e.p) FirstOrDefaultAsync();
-                var user = await _user.FindBy(e => e.Id == Idtoken).Include(x => x.Salon).Include(e=>e.Photo) .FirstOrDefaultAsync();
+                var user = await _user.FindBy(e => e.Id == Idtoken)
+                    .Include(x => x.Salon)
+                    .Include(e => e.SalonBranchCurrent)
+                    .Include(e=>e.Photo)
+                    .FirstOrDefaultAsync();
                 if (user == null)
                 {
                     return NotFound();

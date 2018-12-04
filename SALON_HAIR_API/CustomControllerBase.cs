@@ -76,7 +76,10 @@ namespace SALON_HAIR_API
             };
             return this.CreatedAtAction(actionName, (string)null, routeValues, response);
         }
-
+        //public  long GetCurrentSalon()
+        //{
+        //  return  JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
+        //}
 
     }
 }

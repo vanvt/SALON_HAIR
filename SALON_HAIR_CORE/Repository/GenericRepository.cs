@@ -460,11 +460,11 @@ namespace SALON_HAIR_CORE.Repository
                  .Where(e => !GlobalReferenceCustom.ListReference.Contains(e))
                  .Where(e => !excludes.Contains(e));
 
-             
-            //refs.ToList().ForEach(e =>
-            //{
-            //    rs = rs.Include(e);
-            //});
+
+            refs.ToList().ForEach(e =>
+            {
+                rs = rs.Include(e);
+            });
 
             foreach (var e in refs)
             {
