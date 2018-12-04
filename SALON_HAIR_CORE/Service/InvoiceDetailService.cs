@@ -206,27 +206,35 @@ namespace SALON_HAIR_CORE.Service
                 case "SERVICE":
                     var service = _salon_hairContext.Service.Find(invoiceDetail.ObjectId);
                     invoiceDetail.ObjectName = service.Name;
-                    invoiceDetail.ObjectPrice = service.Price;
+                    //invoiceDetail.ObjectPrice = service.Price;
                    
                     break;
                 case "PRODUCT":
                     var product = _salon_hairContext.Product.Find(invoiceDetail.ObjectId);                   
                     invoiceDetail.ObjectName = product.Name;
-                    invoiceDetail.ObjectPrice = product.Price;
+                    //invoiceDetail.ObjectPrice = product.Price;
                     invoiceDetail.ObjectCode = product.Code;
                     break;
                 case "PACKAGE":
                     var package = _salon_hairContext.Package.Find(invoiceDetail.ObjectId);
                     invoiceDetail.ObjectName = package.Name;
-                    invoiceDetail.ObjectPrice = package.Price;                
+                    //invoiceDetail.ObjectPrice = package.Price;                
                     break;
                 case "EXTRA":                   
                     break;            
             }
 
-            var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
-            var discount = invoiceDetail.DiscountUnitId == 1 ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
-            invoiceDetail.Total = total - discount;
+            if (!invoiceDetail.IsPaid.Value)
+            {
+                var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
+                var discount = invoiceDetail.DiscountUnitId == 1 ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
+                invoiceDetail.Total = total - discount;
+            }
+            else
+            {
+                invoiceDetail.Total = 0;
+            }
+         
             return invoiceDetail;
 
         }

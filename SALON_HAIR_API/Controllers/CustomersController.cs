@@ -166,16 +166,15 @@ namespace SALON_HAIR_API.Controllers
                 e => e.Invoice.CustomerId == id &&
                 e.Invoice.InvoiceStatusId == 2 &&
                 e.ObjectType.Equals("PACKAGE")
-
                 );
             var listPackage = from a in listInvoiceDetail
                               join c in _package.GetAll() on a.ObjectId equals c.Id
                               group a by c into b
                               select new PackgeAvailable
                               {
-                                  NumberOfPayed = b.Sum(e => e.Quantity),
-                                  NumberOfUsed = b.Where(e => e.Status.Equals("PAID")).Sum(e => e.Quantity),
-                                  NumberRemaining = b.Sum(e => e.Quantity) - b.Where(e => e.Status.Equals("PAID")).Sum(e => e.Quantity),
+                                  NumberOfPayed = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity),
+                                  NumberOfUsed = b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
+                                  NumberRemaining = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity) - b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
                                   Package = b.Key
                               };
             listPackage = listPackage.Where(e => e.NumberRemaining > 0);

@@ -1206,6 +1206,12 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("invoice_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.IsPaid)
+                    .IsRequired()
+                    .HasColumnName("is_paid")
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("'b\\'0\\''");
+
                 entity.Property(e => e.ObjectCode)
                     .HasColumnName("object_code")
                     .HasColumnType("varchar(450)");
@@ -2285,6 +2291,9 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("salon");
 
+                entity.HasIndex(e => e.PhotoId)
+                    .HasName("salon_photo_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
@@ -2292,12 +2301,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.Address)
                     .IsRequired()
                     .HasColumnName("address")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Cover).HasColumnName("cover");
-
-                entity.Property(e => e.CoverContentType)
-                    .HasColumnName("cover_content_type")
                     .HasColumnType("varchar(255)");
 
                 entity.Property(e => e.Created)
@@ -2318,12 +2321,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("email")
                     .HasColumnType("varchar(255)");
 
-                entity.Property(e => e.Logo).HasColumnName("logo");
-
-                entity.Property(e => e.LogoContentType)
-                    .HasColumnName("logo_content_type")
-                    .HasColumnType("varchar(255)");
-
                 entity.Property(e => e.Mobile)
                     .HasColumnName("mobile")
                     .HasColumnType("varchar(255)");
@@ -2333,13 +2330,9 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("name")
                     .HasColumnType("varchar(255)");
 
-                entity.Property(e => e.OpenHour)
-                    .HasColumnName("open_hour")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.SpaStatus)
-                    .HasColumnName("spa_status")
-                    .HasColumnType("varchar(255)");
+                entity.Property(e => e.PhotoId)
+                    .HasColumnName("photo_id")
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -2355,9 +2348,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
 
-                entity.Property(e => e.WebSite)
-                    .HasColumnName("web_site")
-                    .HasColumnType("varchar(255)");
+                entity.HasOne(d => d.Photo)
+                    .WithMany(p => p.Salon)
+                    .HasForeignKey(d => d.PhotoId)
+                    .HasConstraintName("salon_photo");
             });
 
             modelBuilder.Entity<SalonBranch>(entity =>

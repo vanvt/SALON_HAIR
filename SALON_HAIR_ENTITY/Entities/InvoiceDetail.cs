@@ -28,6 +28,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? DiscountValue { get; set; }
         public decimal? Total { get; set; }
         public int? Quantity { get; set; }
+        public bool? IsPaid { get; set; }
         [JsonIgnore]
         [IgnoreDataMember]
         public Invoice Invoice { get; set; }

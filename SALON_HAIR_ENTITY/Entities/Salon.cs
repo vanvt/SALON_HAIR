@@ -32,20 +32,15 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Status { get; set; }
         public DateTime? Updated { get; set; }
         public string Address { get; set; }
-        public byte[] Cover { get; set; }
-        public string CoverContentType { get; set; }
         public string Currency { get; set; }
         public string Email { get; set; }
-        public byte[] Logo { get; set; }
-        public string LogoContentType { get; set; }
         public string Mobile { get; set; }
         public string Name { get; set; }
-        public string OpenHour { get; set; }
-        public string SpaStatus { get; set; }
-        public string WebSite { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
+        public long? PhotoId { get; set; }
 
+        public Photo Photo { get; set; }
         public ICollection<Authority> Authority { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
