@@ -534,6 +534,180 @@ namespace SALON_HAIR_CORE.Repository
             var entity = _easyspaContext.Set<T>().Find(keyValues);
             return entity;
         }
+        public void RemoveLogic<TDel>(long id )
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"
+            UPDATE  {tableName}  SET
+
+            status = 'DELETED'
+
+            WHERE id  = {id} ; ";
+                ExcuteSQL(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+           
+        }
+        public void RemoveLogic<TDel>(long[] ids)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"
+            UPDATE  {tableName}  SET
+
+            status = 'DELETED'
+
+            WHERE id  in ({(string.Join(",", ids))}) ; ";
+                ExcuteSQL(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+          
+        }
+        public async Task RemoveLogicAsync<TDel>(long id)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"
+            UPDATE  {tableName}  SET
+
+            status = 'DELETED'
+
+            WHERE id  = {id} ; ";
+              await ExcuteSQLAsync(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        public async Task RemoveLogicAsync<TDel>(long[] ids)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"
+            UPDATE  {tableName}  SET
+
+            status = 'DELETED'
+
+             WHERE id  in ({(string.Join(",", ids))}) ; ";
+                await ExcuteSQLAsync(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        public void RemovePhysical<TDel>(long id)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"          
+                DELETE FROM {tableName} 
+                WHERE id  = {id} ; ";
+                ExcuteSQL(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        public void RemovePhysical<TDel>(long[] ids)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"          
+                DELETE FROM {tableName} 
+                WHERE id  in ({(string.Join(",", ids))}) ; ";
+                ExcuteSQL(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        public async Task RemovePhysicalAsync<TDel>(long[] ids)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"          
+                DELETE FROM {tableName} 
+                WHERE id  in ({(string.Join(",", ids))}) ; ";
+                 await  ExcuteSQLAsync(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        public async Task RemovePhysicalAsync<TDel>(long id)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"          
+                DELETE FROM {tableName} 
+                  WHERE id  = {id} ; ";
+                await ExcuteSQLAsync(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+        private void ExcuteSQL(string sql )
+        {
+            RawSqlString rawSqlString = new RawSqlString(sql);
+            _easyspaContext.Database.ExecuteSqlCommand(rawSqlString);
+        }
+        private async Task<int> ExcuteSQLAsync(string sql)
+        {
+           RawSqlString rawSqlString = new RawSqlString(sql);
+          return await _easyspaContext.Database.ExecuteSqlCommandAsync(rawSqlString);
+        }
 
     }
 }

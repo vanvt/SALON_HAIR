@@ -43,5 +43,14 @@ namespace SALON_HAIR_CORE.Repository
         IQueryable<T> LoadAllInclude(IQueryable<T> rs, params string[] excludes);
         T LoadAllCollecttion(T entity, params string[] excludes);
         T LoadAllReference(T entity, params string[] excludes);
+        void RemoveLogic<TDel>(long id);
+        void RemoveLogic<TDel>(long[] ids);
+        void RemovePhysical<TDel>(long id);
+        void RemovePhysical<TDel>(long[] ids);
+
+        Task RemoveLogicAsync<TDel>(long id);
+        Task RemoveLogicAsync<TDel>(long[] ids);
+        Task RemovePhysicalAsync<TDel>(long id);
+        Task RemovePhysicalAsync<TDel>(long[] ids);
     }
 }

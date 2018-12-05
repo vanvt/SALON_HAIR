@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using SALON_HAIR_API.ViewModels;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -110,7 +112,7 @@ namespace SALON_HAIR_API.Controllers
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser([FromRoute] long id, [FromBody] User user)
+        public async Task<IActionResult> PutUser([FromRoute] long id, [FromBody] UserVM user)
         {
             if (!ModelState.IsValid)
             {
@@ -123,8 +125,8 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                user.PasswordHash = string.IsNullOrEmpty(user.PasswordHash) ? _user.FindBy(e => e.Id == id).AsNoTracking().FirstOrDefault().PasswordHash :
-               SecurityHelper.BCryptPasswordEncoder(user.PasswordHash);
+                user.PasswordHash = string.IsNullOrEmpty(user.Password) ? _user.FindBy(e => e.Id == id).AsNoTracking().FirstOrDefault().PasswordHash :
+               SecurityHelper.BCryptPasswordEncoder(user.Password);
                 await _user.EditAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
@@ -149,7 +151,7 @@ namespace SALON_HAIR_API.Controllers
 
         // POST: api/Users
         [HttpPost]
-        public async Task<IActionResult> PostUser([FromBody] User user)
+        public async Task<IActionResult> PostUser([FromBody] UserVM user)
         {
 
             try
@@ -158,7 +160,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                user.PasswordHash = SecurityHelper.BCryptPasswordEncoder(user.PasswordHash);
+                user.PasswordHash = SecurityHelper.BCryptPasswordEncoder(user.Password);
                 user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _user.AddAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);

@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             Invoice = new HashSet<Invoice>();
             UserAuthority = new HashSet<UserAuthority>();
+            UserSalonBranch = new HashSet<UserSalonBranch>();
         }
 
         public long Id { get; set; }
@@ -28,5 +29,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public SalonBranch SalonBranchCurrent { get; set; }
         public ICollection<Invoice> Invoice { get; set; }
         public ICollection<UserAuthority> UserAuthority { get; set; }
+        public ICollection<UserSalonBranch> UserSalonBranch { get; set; }
     }
 }

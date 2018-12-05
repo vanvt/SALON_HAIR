@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
@@ -20,10 +22,18 @@ namespace SALON_HAIR_ENTITY.Entities
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; set; }
         public string Name { get; set; }
-
+        public string Code { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<CommissionPackge> CommissionPackge { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<CommissionService> CommissionService { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICollection<Invoice> Invoice { get; set; }
     }
 }

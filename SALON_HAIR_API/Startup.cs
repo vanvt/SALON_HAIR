@@ -134,11 +134,10 @@ namespace WebApplication4
             services.AddScoped<IBookingDetail, BookingDetailService>();
             services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();
-         
-        
             services.AddScoped<ICustomer, CustomerService>();
             services.AddScoped<ICustomerChannel, CustomerChannelService>();
             services.AddScoped<ICustomerSource, CustomerSourceService>();
+            services.AddScoped<IDiscountUnit, DiscountUnitService>();
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
             services.AddScoped<IInvoicePayment, InvoicePaymentService>();

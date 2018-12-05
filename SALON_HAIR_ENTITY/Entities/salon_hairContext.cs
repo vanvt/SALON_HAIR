@@ -1012,6 +1012,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasColumnType("varchar(45)");
+
                 entity.Property(e => e.Created)
                     .HasColumnName("created")
                     .HasColumnType("datetime");
@@ -3235,6 +3239,9 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.ToTable("user_salon_branch");
 
+                entity.HasIndex(e => e.UserId)
+                    .HasName("user_salon_branch_user_idx");
+
                 entity.Property(e => e.SpaBranchId)
                     .HasColumnName("spa_branch_id")
                     .HasColumnType("bigint(20)");
@@ -3263,6 +3270,18 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.SpaBranch)
+                    .WithMany(p => p.UserSalonBranch)
+                    .HasForeignKey(d => d.SpaBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("user_salon_branch_branch");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserSalonBranch)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("user_salon_branch_user");
             });
 
             modelBuilder.Entity<Warehouse>(entity =>

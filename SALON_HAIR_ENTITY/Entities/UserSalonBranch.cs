@@ -12,5 +12,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public DateTime? Created { get; set; }
         public string CreatedBy { get; set; }
         public string Status { get; set; }
+
+        public SalonBranch SpaBranch { get; set; }
+        public User User { get; set; }
     }
 }

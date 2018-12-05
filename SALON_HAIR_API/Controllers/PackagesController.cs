@@ -82,17 +82,13 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                   package.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                //await _package.EditAsync(package);
-                //return CreatedAtAction("GetPackage", new { id = package.Id }, package);
+             
 
                 if (package.ServicePackage.Select(e => e.ServiceId).Count() != package.ServicePackage.Select(e => e.ServiceId).Distinct().Count())
                 {
                     throw new BadRequestException("Không thể tạo gói dịch vụ có hai dịch vụ giống nhau được babe");
                 }
-                //service.ServiceProduct.ToList().ForEach(e =>
-                //{
-                //    e.Product = null;
-                //});
+     
                 package.UpdatedBy = ""+JwtHelper.GetIdFromToken(User.Claims);
                 await _package.EditAsync(package);
 
