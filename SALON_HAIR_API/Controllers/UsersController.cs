@@ -33,6 +33,8 @@ namespace SALON_HAIR_API.Controllers
             var data = _user.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             var dataReturn =   _user.LoadAllInclude(data);
+            dataReturn = dataReturn.Include(e => e.UserAuthority).ThenInclude(e => e.Authority);
+            dataReturn = dataReturn.Include(e => e.UserSalonBranch).ThenInclude(e => e.SpaBranch);
             return OkList(dataReturn);
         }
         // GET: api/Users/5
@@ -57,6 +59,8 @@ namespace SALON_HAIR_API.Controllers
                     .Include(e => e.Photo)
                     .Include(e => e.SalonBranchCurrent)
                     .Include(e=>e.Salon).ThenInclude(e=>e.Photo)
+                    .Include(e=>e.UserSalonBranch).ThenInclude(e=>e.SpaBranch)
+                    .Include(e => e.UserAuthority).ThenInclude(e => e.Authority)
                     .FirstOrDefaultAsync();
                 if (user == null)
                 {
@@ -94,6 +98,8 @@ namespace SALON_HAIR_API.Controllers
                     .Include(e => e.SalonBranchCurrent)
                     .Include(e=>e.Photo)
                     .Include(e => e.Salon).ThenInclude(e => e.Photo)
+                     .Include(e => e.UserSalonBranch).ThenInclude(e => e.SpaBranch)
+                    .Include(e => e.UserAuthority).ThenInclude(e => e.Authority)
                     .FirstOrDefaultAsync();
                 if (user == null)
                 {
@@ -127,7 +133,7 @@ namespace SALON_HAIR_API.Controllers
                 //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 user.PasswordHash = string.IsNullOrEmpty(user.Password) ? _user.FindBy(e => e.Id == id).AsNoTracking().FirstOrDefault().PasswordHash :
                SecurityHelper.BCryptPasswordEncoder(user.Password);
-                await _user.EditAsync(user);
+                await _user.EditMany2ManyAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
 

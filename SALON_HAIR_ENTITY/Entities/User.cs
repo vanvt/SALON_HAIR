@@ -16,7 +16,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Email { get; set; }
-        public string Login { get; set; }
         public string Name { get; set; }
         public string PasswordHash { get; set; }
         public string Status { get; set; }

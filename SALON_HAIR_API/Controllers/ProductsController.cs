@@ -117,17 +117,13 @@ namespace SALON_HAIR_API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostProduct([FromBody] Product product)
         {
-
             try
             {
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }
-                //product.SalonId = GetCurrentSalon();
-                product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                //product.Unit = await _productUnit.FindAsync(product.UnitId);
-                //product.Photo = await _photo.FindAsync(product.PhotoId);
+                }             
+                product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));              
                 await _product.AddAsync(product);
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);
             }
@@ -135,13 +131,11 @@ namespace SALON_HAIR_API.Controllers
             {
                 throw new UnexpectedException(product, e);
             }
-
         }
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] long id)
         {
-
             try
             {
                 if (!ModelState.IsValid)
@@ -212,6 +206,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest($"Can't not found status code {productsVM}");
                 }
                 var products = _product.FindBy(e => productsVM.Ids.Contains(e.Id));
+                products.Select(e => e.Code);
                 await products.ForEachAsync(e => e.ProductStatusId = productStatus.Id);
                 await _product.EditRangeAsync(products);
                 //await Task.WhenAll(t1,t2);

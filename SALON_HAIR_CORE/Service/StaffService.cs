@@ -25,56 +25,35 @@ namespace SALON_HAIR_CORE.Service
 
             base.Edit(staff);
         }
-        public async  Task<int> EditMany2ManyAsync(Staff staff)
+        public async Task<int> EditMany2ManyAsync(Staff staff)
         {
-            staff.Updated = DateTime.Now;
-            _salon_hairContext.Attach(staff);
-           // var d =   _salon_hairContext.Entry(staff);
-            
-
-
-            //var listService = staff.StaffService.Select(e => e.ServiceId);
-            //var listOldStaffService = _salon_hairContext.StaffService.Where(e => e.StaffId == staff.Id).AsNoTracking();
-            //IEnumerable<SALON_HAIR_ENTITY.Entities.StaffService> listNewStaffService;
-            //if (staff.IsWorkAllService.Value)
-            //{
-
-            //}
-            //else
-            //{
-                
-            //}
-            //listNewStaffService = staff.StaffService.Select(e => new SALON_HAIR_ENTITY.Entities.StaffService
-            //{
-            //    Created = e.Created,
-            //    CreatedBy = e.CreatedBy,
-            //    StaffId = staff.Id,
-            //    ServiceId = e.ServiceId,
-            //    Status = e.Status,               
-            //    UpdatedBy = e.UpdatedBy,                
-            //});
-            //_salon_hairContext.StaffService.RemoveRange(listOldStaffService);
-
-            //_salon_hairContext.StaffService.AddRange(listNewStaffService);
-            staff.Updated = DateTime.Now;
-         
-            return await _salon_hairContext.SaveChangesAsync();          
-            
-        }
-        public  async Task<int> AddMany2ManyAsync(Staff staff)
-        {
-            var list = staff.StaffService.Select(e => e.ServiceId);
-            var listService = from a in list
-                              select new SALON_HAIR_ENTITY.Entities.StaffService
-                              {
-                                  Created = DateTime.Now,
-                                  CreatedBy = staff.CreatedBy,
-                                  ServiceId = a,
-                              };
-            staff.StaffService = listService.ToList();
-            staff.Created = DateTime.Now;
-            return await base.AddAsync(staff);
-        }
+            //Remove Service
+            var listOldStaffService =
+                _salon_hairContext.StaffService.Where(e => e.StaffId == staff.Id).AsNoTracking().ToList();
+            _salon_hairContext.StaffService.RemoveRange(listOldStaffService);
+            var listnewUserSalonBranch = staff.StaffService.Select(e => new SALON_HAIR_ENTITY.Entities.StaffService
+            {
+              StaffId = staff.Id,
+              ServiceId = e.ServiceId,
+                Created = DateTime.Now,               
+            });
+            _salon_hairContext.StaffService.AddRange(listnewUserSalonBranch);
+            //Remove Authority
+            //Remove SalonBranch
+            var listOldStaffSalonBranch =
+                _salon_hairContext.StaffSalonBranch.Where(e => e.StaffId == staff.Id).AsNoTracking().ToList();
+            _salon_hairContext.StaffSalonBranch.RemoveRange(listOldStaffSalonBranch);
+            var listnewUseAuthority = staff.StaffSalonBranch.Select(e => new StaffSalonBranch
+            {
+              StaffId = staff.Id,
+              SalonBranchId = e.SalonBranchId,
+                Created = DateTime.Now,
+                Updated = DateTime.Now,
+            });
+            _salon_hairContext.StaffSalonBranch.AddRange(listnewUseAuthority);
+            _salon_hairContext.Entry(staff).State = EntityState.Modified;
+            return await _salon_hairContext.SaveChangesAsync();
+        }     
         public new void Add(Staff staff)
         {
             staff.Created = DateTime.Now;

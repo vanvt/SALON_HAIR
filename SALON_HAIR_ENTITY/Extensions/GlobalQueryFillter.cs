@@ -13,7 +13,7 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<BookingDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingLog>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-           
+            builder.Entity<CurrencyUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Customer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerChannel>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerSource>().HasQueryFilter(e => !e.Status.Equals("DELETED"));

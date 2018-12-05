@@ -7,9 +7,9 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class salon_hairContext : DbContext
     {
-        //public salon_hairContext()
-        //{
-        //}
+        public salon_hairContext()
+        {
+        }
 
         public salon_hairContext(DbContextOptions<salon_hairContext> options)
             : base(options)
@@ -3104,10 +3104,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasName("UK_b2snn5my1hi0lxvujtu3a4t35")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Login)
-                    .HasName("UK_p1u3ui9mrv3ia68thhyruocw3")
-                    .IsUnique();
-
                 entity.HasIndex(e => e.PhotoId)
                     .HasName("user_photo_idx");
 
@@ -3133,11 +3129,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
                     .HasColumnType("varchar(100)");
-
-                entity.Property(e => e.Login)
-                    .IsRequired()
-                    .HasColumnName("login")
-                    .HasColumnType("varchar(50)");
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")

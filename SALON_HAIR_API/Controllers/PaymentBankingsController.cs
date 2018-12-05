@@ -32,6 +32,7 @@ namespace SALON_HAIR_API.Controllers
             var data = _paymentBanking.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
             var dataReturn =   _paymentBanking.LoadAllInclude(data);
+            dataReturn = dataReturn.Include(e => e.PaymentBankingMethod).ThenInclude(e => e.PaymentMethod);
             return OkList(dataReturn);
         }
         // GET: api/PaymentBankings/5

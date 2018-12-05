@@ -56,7 +56,7 @@ namespace SALON_HAIR_AUTHENTICATION.Controllers
         }
         private User Authenticate(LoginViewModel login)
         {
-            var user = _supperUser.FindBy(e => e.Login.ToUpper().Equals(login.Username.Trim().ToUpper())
+            var user = _supperUser.FindBy(e => e.Email.ToUpper().Equals(login.Username.Trim().ToUpper())
          //&& e.PasswordHash.Equals(SecurityHelper.BCryptPasswordVerifier(login.Password.Trim(login.Password,)))
          ).FirstOrDefault();
 

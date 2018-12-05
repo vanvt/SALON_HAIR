@@ -92,7 +92,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _staff.EditMany2ManyAsync(staff);
-                staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
+                //staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
             }
 

@@ -578,6 +578,28 @@ namespace SALON_HAIR_CORE.Repository
            
           
         }
+        public void RemoveLogic<TDel,Tkey>(long[] ids, Expression<Func<TDel, Tkey>> predicate)
+        {
+            try
+            {
+                var entityType = _easyspaContext.Model.FindEntityType(typeof(TDel));
+                string tableName = entityType.Relational().TableName;
+                string sql = $@"
+            UPDATE  {tableName}  SET
+
+            status = 'DELETED'
+
+            WHERE id  in ({(string.Join(",", ids))}) ; ";
+                ExcuteSQL(sql);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
         public async Task RemoveLogicAsync<TDel>(long id)
         {
             try

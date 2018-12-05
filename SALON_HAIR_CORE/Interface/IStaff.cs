@@ -9,7 +9,7 @@ namespace SALON_HAIR_CORE.Interface
     {
         Task<int> EditMany2ManyAsync(Staff staff);
 
-        Task<int> AddMany2ManyAsync(Staff staff);
+      
     }
 }
 

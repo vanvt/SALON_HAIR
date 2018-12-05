@@ -89,20 +89,24 @@ namespace SALON_HAIR_CORE.Service
 
         public async Task<int> AddMany2ManyAsync(SALON_HAIR_ENTITY.Entities.Service service)
         {
+          
             service.Created = DateTime.Now;
             return await base.AddAsync(service);
         }
 
         public SALON_HAIR_ENTITY.Entities.Service AddToAllBranch(SALON_HAIR_ENTITY.Entities.Service service)
         {
+          
             var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == service.SalonId).ToList();
             listBranch.ForEach(e =>
             {
                 service.ServiceSalonBranch.Add(new ServiceSalonBranch {SalonBranchId = e.Id });
             });
             return service;
-
+            
         }
+        
+
         public SALON_HAIR_ENTITY.Entities.Service AddToAllCommision(SALON_HAIR_ENTITY.Entities.Service service)
         {
             throw new NotImplementedException();

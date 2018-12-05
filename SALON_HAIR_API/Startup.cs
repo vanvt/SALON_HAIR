@@ -137,6 +137,7 @@ namespace WebApplication4
             services.AddScoped<ICustomer, CustomerService>();
             services.AddScoped<ICustomerChannel, CustomerChannelService>();
             services.AddScoped<ICustomerSource, CustomerSourceService>();
+            services.AddScoped<ICurrencyUnit, CurrencyUnitService>();
             services.AddScoped<IDiscountUnit, DiscountUnitService>();
             services.AddScoped<IInvoice, InvoiceService>();
             services.AddScoped<IInvoiceDetail, InvoiceDetailService>();
