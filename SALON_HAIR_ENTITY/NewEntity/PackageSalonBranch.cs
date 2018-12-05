@@ -5,6 +5,11 @@ namespace SALON_HAIR_ENTITY.NewEntity
 {
     public partial class PackageSalonBranch
     {
+        public PackageSalonBranch()
+        {
+            CommissionPackge = new HashSet<CommissionPackge>();
+        }
+
         public long Id { get; set; }
         public long PackageId { get; set; }
         public long SalonId { get; set; }
@@ -13,5 +18,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public DateTime? Updated { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
+
+        public ICollection<CommissionPackge> CommissionPackge { get; set; }
     }
 }

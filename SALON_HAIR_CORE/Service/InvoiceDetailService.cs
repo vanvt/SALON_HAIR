@@ -201,6 +201,7 @@ namespace SALON_HAIR_CORE.Service
         {
            
      
+
             switch (invoiceDetail.ObjectType)
             {
                 case "SERVICE":

@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
             Customer = new HashSet<Customer>();
             Product = new HashSet<Product>();
             ProductPictures = new HashSet<ProductPictures>();
+            Salon = new HashSet<Salon>();
             User = new HashSet<User>();
         }
 
@@ -27,6 +28,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public ICollection<Customer> Customer { get; set; }
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductPictures> ProductPictures { get; set; }
+        public ICollection<Salon> Salon { get; set; }
         public ICollection<User> User { get; set; }
     }
 }

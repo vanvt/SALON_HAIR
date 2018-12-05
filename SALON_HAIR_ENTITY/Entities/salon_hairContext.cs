@@ -3110,23 +3110,12 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.SalonBranchCurrentId)
                     .HasName("user_salon_branch_default_idx");
 
-                entity.HasIndex(e => e.SalonBranchId)
-                    .HasName("user_salon_branch_idx");
-
                 entity.HasIndex(e => e.SalonId)
                     .HasName("user_salon_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.Activated)
-                    .HasColumnName("activated")
-                    .HasColumnType("bit(1)");
-
-                entity.Property(e => e.ActivationKey)
-                    .HasColumnName("activation_key")
-                    .HasColumnType("varchar(20)");
 
                 entity.Property(e => e.CreatedBy)
                     .IsRequired()
@@ -3140,30 +3129,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
                     .HasColumnType("varchar(100)");
-
-                entity.Property(e => e.FirstName)
-                    .HasColumnName("first_name")
-                    .HasColumnType("varchar(50)");
-
-                entity.Property(e => e.ImageUrl)
-                    .HasColumnName("image_url")
-                    .HasColumnType("varchar(256)");
-
-                entity.Property(e => e.LangKey)
-                    .HasColumnName("lang_key")
-                    .HasColumnType("varchar(5)");
-
-                entity.Property(e => e.LastModifiedBy)
-                    .HasColumnName("last_modified_by")
-                    .HasColumnType("varchar(50)");
-
-                entity.Property(e => e.LastModifiedDate)
-                    .HasColumnName("last_modified_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.LastName)
-                    .HasColumnName("last_name")
-                    .HasColumnType("varchar(50)");
 
                 entity.Property(e => e.Login)
                     .IsRequired()
@@ -3183,20 +3148,8 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("photo_id")
                     .HasColumnType("bigint(20)");
 
-                entity.Property(e => e.ResetDate)
-                    .HasColumnName("reset_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.ResetKey)
-                    .HasColumnName("reset_key")
-                    .HasColumnType("varchar(20)");
-
                 entity.Property(e => e.SalonBranchCurrentId)
                     .HasColumnName("salon_branch_current_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.SalonBranchId)
-                    .HasColumnName("salon_branch_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.SalonId)
@@ -3215,14 +3168,9 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasConstraintName("user_photo");
 
                 entity.HasOne(d => d.SalonBranchCurrent)
-                    .WithMany(p => p.UserSalonBranchCurrent)
+                    .WithMany(p => p.User)
                     .HasForeignKey(d => d.SalonBranchCurrentId)
                     .HasConstraintName("user_salon_branch_default");
-
-                entity.HasOne(d => d.SalonBranch)
-                    .WithMany(p => p.UserSalonBranch)
-                    .HasForeignKey(d => d.SalonBranchId)
-                    .HasConstraintName("user_salon_branch");
 
                 entity.HasOne(d => d.Salon)
                     .WithMany(p => p.User)

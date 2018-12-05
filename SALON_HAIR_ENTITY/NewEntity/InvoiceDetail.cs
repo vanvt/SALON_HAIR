@@ -26,6 +26,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public long? DiscountValue { get; set; }
         public decimal? Total { get; set; }
         public int? Quantity { get; set; }
+        public bool? IsPaid { get; set; }
 
         public Invoice Invoice { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }

@@ -16,10 +16,11 @@ namespace SALON_HAIR_API.Controllers
     [Authorize]
     public class UsersController : CustomControllerBase
     {
-        
+        private readonly ISecurityHelper SecurityHelper;
         private readonly IUser _user;
-        public UsersController(IUser user)
+        public UsersController(IUser user, ISecurityHelper SecurityHelper)
         {
+            this.SecurityHelper = SecurityHelper;
             _user = user;
         }
 
@@ -51,8 +52,9 @@ namespace SALON_HAIR_API.Controllers
                 //var jbtUser = await _jbtUser.FindBy(e => e.Id == id).Include(x => x.JbtUserAuthority).FirstOrDefaultAsync();
                 var user = await _user.FindBy(e => e.Id == id)
                     .Include(x => x.Salon)
-                     .Include(e => e.Photo)
+                    .Include(e => e.Photo)
                     .Include(e => e.SalonBranchCurrent)
+                    .Include(e=>e.Salon).ThenInclude(e=>e.Photo)
                     .FirstOrDefaultAsync();
                 if (user == null)
                 {
@@ -89,6 +91,7 @@ namespace SALON_HAIR_API.Controllers
                     .Include(x => x.Salon)
                     .Include(e => e.SalonBranchCurrent)
                     .Include(e=>e.Photo)
+                    .Include(e => e.Salon).ThenInclude(e => e.Photo)
                     .FirstOrDefaultAsync();
                 if (user == null)
                 {
@@ -120,6 +123,8 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                user.PasswordHash = string.IsNullOrEmpty(user.PasswordHash) ? _user.FindBy(e => e.Id == id).AsNoTracking().FirstOrDefault().PasswordHash :
+               SecurityHelper.BCryptPasswordEncoder(user.PasswordHash);
                 await _user.EditAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
@@ -153,6 +158,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                user.PasswordHash = SecurityHelper.BCryptPasswordEncoder(user.PasswordHash);
                 user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _user.AddAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);

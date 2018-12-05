@@ -56,7 +56,6 @@ namespace SALON_HAIR_CORE.Service
             var listProduct = service.ServiceProduct.Select(e => e.ProductId);
             var listOldServiceProduct = _salon_hairContext.ServiceProduct.Where(e => e.ServiceId == service.Id).Select(e => new ServiceProduct
             {
-
                 Created = e.Created,
                 ServiceId = service.Id,
                 CreatedBy = e.CreatedBy,
