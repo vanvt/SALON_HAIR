@@ -22,7 +22,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public virtual DbSet<BookingLog> BookingLog { get; set; }
         public virtual DbSet<BookingStatus> BookingStatus { get; set; }
         public virtual DbSet<CommissionPackge> CommissionPackge { get; set; }
-        public virtual DbSet<CommissionProduct> CommissionProduct { get; set; }
         public virtual DbSet<CommissionService> CommissionService { get; set; }
         public virtual DbSet<CurrencyUnit> CurrencyUnit { get; set; }
         public virtual DbSet<Customer> Customer { get; set; }
@@ -68,6 +67,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public virtual DbSet<Warehouse> Warehouse { get; set; }
 
         // Unable to generate entity type for table 'Areas'. Please see the warning messages.
+        // Unable to generate entity type for table 'commission_product'. Please see the warning messages.
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -481,19 +481,29 @@ namespace SALON_HAIR_ENTITY.NewEntity
 
             modelBuilder.Entity<CommissionPackge>(entity =>
             {
+                entity.HasKey(e => new { e.StaffId, e.PackgeId, e.SalonBranchId });
+
                 entity.ToTable("commission_packge");
 
                 entity.HasIndex(e => e.CommisonUnitId)
                     .HasName("commission_packge_commision_unit_idx");
 
-                entity.HasIndex(e => e.PackgeBranchId)
+                entity.HasIndex(e => e.PackgeId)
                     .HasName("commission_packge_package_idx");
 
-                entity.HasIndex(e => e.StaffBranchId)
-                    .HasName("commission_packge_staff_idx");
+                entity.HasIndex(e => e.SalonBranchId)
+                    .HasName("commission_packge_branch_idx");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
+                entity.Property(e => e.StaffId)
+                    .HasColumnName("staff_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.PackgeId)
+                    .HasColumnName("packge_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonBranchId)
+                    .HasColumnName("salon_branch_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.CommisonUnitId)
@@ -513,23 +523,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
                     .HasColumnType("varchar(500)");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.PackgeBranchId)
-                    .HasColumnName("packge_branch_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.SalonId)
-                    .HasColumnName("salon_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.StaffBranchId)
-                    .HasColumnName("staff_branch_id")
-                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.Status)
                     .IsRequired()
@@ -550,114 +543,53 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasForeignKey(d => d.CommisonUnitId)
                     .HasConstraintName("commission_packge_commision_unit");
 
-                entity.HasOne(d => d.PackgeBranch)
+                entity.HasOne(d => d.Packge)
                     .WithMany(p => p.CommissionPackge)
-                    .HasForeignKey(d => d.PackgeBranchId)
+                    .HasForeignKey(d => d.PackgeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("commission_packge_package");
 
-                entity.HasOne(d => d.StaffBranch)
+                entity.HasOne(d => d.SalonBranch)
                     .WithMany(p => p.CommissionPackge)
-                    .HasForeignKey(d => d.StaffBranchId)
+                    .HasForeignKey(d => d.SalonBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("commission_packge_branch");
+
+                entity.HasOne(d => d.Staff)
+                    .WithMany(p => p.CommissionPackge)
+                    .HasForeignKey(d => d.StaffId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("commission_packge_staff");
-            });
-
-            modelBuilder.Entity<CommissionProduct>(entity =>
-            {
-                entity.ToTable("commission_product");
-
-                entity.HasIndex(e => e.CommisonUnitId)
-                    .HasName("commission_product_commision_unit_idx");
-
-                entity.HasIndex(e => e.ProductBranchId)
-                    .HasName("commission_product_product_idx");
-
-                entity.HasIndex(e => e.StaffBranchId)
-                    .HasName("commission_product_staff_idx");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.CommisonUnitId)
-                    .HasColumnName("commison_unit_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.CommisonValue).HasColumnName("commison_value");
-
-                entity.Property(e => e.Created)
-                    .HasColumnName("created")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.CreatedBy)
-                    .HasColumnName("created_by")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Description)
-                    .HasColumnName("description")
-                    .HasColumnType("varchar(500)");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ProductBranchId)
-                    .HasColumnName("product_branch_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.SalonId)
-                    .HasColumnName("salon_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.StaffBranchId)
-                    .HasColumnName("staff_branch_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.Status)
-                    .IsRequired()
-                    .HasColumnName("status")
-                    .HasColumnType("varchar(250)")
-                    .HasDefaultValueSql("'ENABLE'");
-
-                entity.Property(e => e.Updated)
-                    .HasColumnName("updated")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.UpdatedBy)
-                    .HasColumnName("updated_by")
-                    .HasColumnType("varchar(255)");
-
-                entity.HasOne(d => d.CommisonUnit)
-                    .WithMany(p => p.CommissionProduct)
-                    .HasForeignKey(d => d.CommisonUnitId)
-                    .HasConstraintName("commission_product_commision_unit");
-
-                entity.HasOne(d => d.ProductBranch)
-                    .WithMany(p => p.CommissionProduct)
-                    .HasForeignKey(d => d.ProductBranchId)
-                    .HasConstraintName("commission_product_product");
-
-                entity.HasOne(d => d.StaffBranch)
-                    .WithMany(p => p.CommissionProduct)
-                    .HasForeignKey(d => d.StaffBranchId)
-                    .HasConstraintName("commission_product_staff");
             });
 
             modelBuilder.Entity<CommissionService>(entity =>
             {
+                entity.HasKey(e => new { e.StaffId, e.ServiceId, e.SalonBranchId });
+
                 entity.ToTable("commission_service");
 
                 entity.HasIndex(e => e.CommisonUnitId)
                     .HasName("commission_service_commision_unit_idx");
 
-                entity.HasIndex(e => e.ServiceBranchId)
+                entity.HasIndex(e => e.SalonBranchId)
+                    .HasName("commission_service_branch_idx");
+
+                entity.HasIndex(e => e.ServiceId)
                     .HasName("commission_service_service_idx");
 
-                entity.HasIndex(e => e.StaffBranchId)
+                entity.HasIndex(e => e.StaffId)
                     .HasName("commission_service_starff_idx");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
+                entity.Property(e => e.StaffId)
+                    .HasColumnName("staff_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.ServiceId)
+                    .HasColumnName("service_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonBranchId)
+                    .HasColumnName("salon_branch_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.CommisonUnitId)
@@ -680,19 +612,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasColumnName("description")
                     .HasColumnType("varchar(500)");
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasColumnType("varchar(255)");
-
-                entity.Property(e => e.ServiceBranchId)
-                    .HasColumnName("service_branch_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.StaffBranchId)
-                    .HasColumnName("staff_branch_id")
-                    .HasColumnType("bigint(20)");
-
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnName("status")
@@ -712,15 +631,23 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasForeignKey(d => d.CommisonUnitId)
                     .HasConstraintName("commission_service_commision_unit");
 
-                entity.HasOne(d => d.ServiceBranch)
+                entity.HasOne(d => d.SalonBranch)
                     .WithMany(p => p.CommissionService)
-                    .HasForeignKey(d => d.ServiceBranchId)
+                    .HasForeignKey(d => d.SalonBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("commission_service_branch");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.CommissionService)
+                    .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("commission_service_service");
 
-                entity.HasOne(d => d.StaffBranch)
+                entity.HasOne(d => d.Staff)
                     .WithMany(p => p.CommissionService)
-                    .HasForeignKey(d => d.StaffBranchId)
-                    .HasConstraintName("commission_service_starff");
+                    .HasForeignKey(d => d.StaffId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("commission_service_staff");
             });
 
             modelBuilder.Entity<CurrencyUnit>(entity =>
@@ -1009,6 +936,10 @@ namespace SALON_HAIR_ENTITY.NewEntity
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasColumnType("varchar(45)");
 
                 entity.Property(e => e.Created)
                     .HasColumnName("created")
@@ -3098,18 +3029,11 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasName("UK_b2snn5my1hi0lxvujtu3a4t35")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Login)
-                    .HasName("UK_p1u3ui9mrv3ia68thhyruocw3")
-                    .IsUnique();
-
                 entity.HasIndex(e => e.PhotoId)
                     .HasName("user_photo_idx");
 
                 entity.HasIndex(e => e.SalonBranchCurrentId)
                     .HasName("user_salon_branch_default_idx");
-
-                entity.HasIndex(e => e.SalonBranchId)
-                    .HasName("user_salon_branch_idx");
 
                 entity.HasIndex(e => e.SalonId)
                     .HasName("user_salon_idx");
@@ -3117,14 +3041,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.Activated)
-                    .HasColumnName("activated")
-                    .HasColumnType("bit(1)");
-
-                entity.Property(e => e.ActivationKey)
-                    .HasColumnName("activation_key")
-                    .HasColumnType("varchar(20)");
 
                 entity.Property(e => e.CreatedBy)
                     .IsRequired()
@@ -3139,35 +3055,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasColumnName("email")
                     .HasColumnType("varchar(100)");
 
-                entity.Property(e => e.FirstName)
-                    .HasColumnName("first_name")
-                    .HasColumnType("varchar(50)");
-
-                entity.Property(e => e.ImageUrl)
-                    .HasColumnName("image_url")
-                    .HasColumnType("varchar(256)");
-
-                entity.Property(e => e.LangKey)
-                    .HasColumnName("lang_key")
-                    .HasColumnType("varchar(5)");
-
-                entity.Property(e => e.LastModifiedBy)
-                    .HasColumnName("last_modified_by")
-                    .HasColumnType("varchar(50)");
-
-                entity.Property(e => e.LastModifiedDate)
-                    .HasColumnName("last_modified_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.LastName)
-                    .HasColumnName("last_name")
-                    .HasColumnType("varchar(50)");
-
-                entity.Property(e => e.Login)
-                    .IsRequired()
-                    .HasColumnName("login")
-                    .HasColumnType("varchar(50)");
-
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
                     .HasColumnType("varchar(150)");
@@ -3181,20 +3068,8 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasColumnName("photo_id")
                     .HasColumnType("bigint(20)");
 
-                entity.Property(e => e.ResetDate)
-                    .HasColumnName("reset_date")
-                    .HasColumnType("datetime");
-
-                entity.Property(e => e.ResetKey)
-                    .HasColumnName("reset_key")
-                    .HasColumnType("varchar(20)");
-
                 entity.Property(e => e.SalonBranchCurrentId)
                     .HasColumnName("salon_branch_current_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.SalonBranchId)
-                    .HasColumnName("salon_branch_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.SalonId)
@@ -3213,14 +3088,9 @@ namespace SALON_HAIR_ENTITY.NewEntity
                     .HasConstraintName("user_photo");
 
                 entity.HasOne(d => d.SalonBranchCurrent)
-                    .WithMany(p => p.UserSalonBranchCurrent)
+                    .WithMany(p => p.User)
                     .HasForeignKey(d => d.SalonBranchCurrentId)
                     .HasConstraintName("user_salon_branch_default");
-
-                entity.HasOne(d => d.SalonBranch)
-                    .WithMany(p => p.UserSalonBranch)
-                    .HasForeignKey(d => d.SalonBranchId)
-                    .HasConstraintName("user_salon_branch");
 
                 entity.HasOne(d => d.Salon)
                     .WithMany(p => p.User)
@@ -3285,6 +3155,9 @@ namespace SALON_HAIR_ENTITY.NewEntity
 
                 entity.ToTable("user_salon_branch");
 
+                entity.HasIndex(e => e.UserId)
+                    .HasName("user_salon_branch_user_idx");
+
                 entity.Property(e => e.SpaBranchId)
                     .HasColumnName("spa_branch_id")
                     .HasColumnType("bigint(20)");
@@ -3313,6 +3186,18 @@ namespace SALON_HAIR_ENTITY.NewEntity
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.SpaBranch)
+                    .WithMany(p => p.UserSalonBranch)
+                    .HasForeignKey(d => d.SpaBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("user_salon_branch_branch");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserSalonBranch)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("user_salon_branch_user");
             });
 
             modelBuilder.Entity<Warehouse>(entity =>

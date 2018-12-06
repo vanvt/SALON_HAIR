@@ -5,11 +5,6 @@ namespace SALON_HAIR_ENTITY.NewEntity
 {
     public partial class ProductSalonBranch
     {
-        public ProductSalonBranch()
-        {
-            CommissionProduct = new HashSet<CommissionProduct>();
-        }
-
         public long Id { get; set; }
         public long ProductId { get; set; }
         public long SalonBranchId { get; set; }
@@ -21,6 +16,5 @@ namespace SALON_HAIR_ENTITY.NewEntity
 
         public Product Product { get; set; }
         public SalonBranch SalonBranch { get; set; }
-        public ICollection<CommissionProduct> CommissionProduct { get; set; }
     }
 }

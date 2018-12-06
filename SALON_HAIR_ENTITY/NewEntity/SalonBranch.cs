@@ -9,14 +9,16 @@ namespace SALON_HAIR_ENTITY.NewEntity
         {
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
+            CommissionPackge = new HashSet<CommissionPackge>();
+            CommissionService = new HashSet<CommissionService>();
             Customer = new HashSet<Customer>();
             Product = new HashSet<Product>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
             Service = new HashSet<Service>();
             ServiceSalonBranch = new HashSet<ServiceSalonBranch>();
             StaffSalonBranch = new HashSet<StaffSalonBranch>();
-            UserSalonBranch = new HashSet<User>();
-            UserSalonBranchCurrent = new HashSet<User>();
+            User = new HashSet<User>();
+            UserSalonBranch = new HashSet<UserSalonBranch>();
         }
 
         public long Id { get; set; }
@@ -46,13 +48,15 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public Salon Salon { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<CommissionPackge> CommissionPackge { get; set; }
+        public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<Customer> Customer { get; set; }
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
         public ICollection<ServiceSalonBranch> ServiceSalonBranch { get; set; }
         public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
-        public ICollection<User> UserSalonBranch { get; set; }
-        public ICollection<User> UserSalonBranchCurrent { get; set; }
+        public ICollection<User> User { get; set; }
+        public ICollection<UserSalonBranch> UserSalonBranch { get; set; }
     }
 }

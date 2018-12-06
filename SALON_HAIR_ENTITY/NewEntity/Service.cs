@@ -8,6 +8,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public Service()
         {
             BookingDetail = new HashSet<BookingDetail>();
+            CommissionService = new HashSet<CommissionService>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
             ServicePackage = new HashSet<ServicePackage>();
             ServiceProduct = new HashSet<ServiceProduct>();
@@ -34,6 +35,7 @@ namespace SALON_HAIR_ENTITY.NewEntity
         public SalonBranch SalonBranchCreate { get; set; }
         public ServiceCategory ServiceCategory { get; set; }
         public ICollection<BookingDetail> BookingDetail { get; set; }
+        public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
         public ICollection<ServicePackage> ServicePackage { get; set; }
         public ICollection<ServiceProduct> ServiceProduct { get; set; }

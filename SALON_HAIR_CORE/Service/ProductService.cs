@@ -6,6 +6,7 @@ using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -57,6 +58,23 @@ namespace SALON_HAIR_CORE.Service
                 product.ProductSalonBranch.Add(new ProductSalonBranch { SalonBranchId = e.Id });
             });
             return product;
+        }
+
+        public async Task AddIncludeCommisionAsync(Product product)
+        {
+           // var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == product.SalonId).Select(e => e.Id);
+
+           // listBranch.ToList().ForEach(e => {
+           //     product.ProductSalonBranch.Add(new ProductSalonBranch {
+           //         ProductId = product.Id,
+           //         SalonBranchId = e,
+           //         CommissionProduct = _salon_hairContext.StaffSalonBranch.
+           //         Where(x => x.SalonBranchId == e).Select(x => new CommissionProduct {
+           //             StaffBranchId = x.Id,                        
+           //         }).ToList()
+           //     });
+           // });
+           //await _salon_hairContext.Product.AddAsync(product);            
         }
     }
 }

@@ -5,11 +5,6 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class ServiceSalonBranch
     {
-        public ServiceSalonBranch()
-        {
-            CommissionService = new HashSet<CommissionService>();
-        }
-
         public long Id { get; set; }
         public long ServiceId { get; set; }
         public long SalonBranchId { get; set; }
@@ -21,6 +16,5 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public SalonBranch SalonBranch { get; set; }
         public Service Service { get; set; }
-        public ICollection<CommissionService> CommissionService { get; set; }
     }
 }

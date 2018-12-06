@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
@@ -29,11 +27,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public decimal? Total { get; set; }
         public int? Quantity { get; set; }
         public bool? IsPaid { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
+
         public Invoice Invoice { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
     }
 }

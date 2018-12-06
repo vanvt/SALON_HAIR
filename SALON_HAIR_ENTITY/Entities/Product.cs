@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
@@ -7,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Product()
         {
+            CommissionProduct = new HashSet<CommissionProduct>();
             ProductPictures = new HashSet<ProductPictures>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
             ServiceProduct = new HashSet<ServiceProduct>();
@@ -44,6 +47,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public SalonBranch SalonBranchCreate { get; set; }
         public ProductSource Source { get; set; }
         public ProductUnit Unit { get; set; }
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<ProductPictures> ProductPictures { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }
         public ICollection<ServiceProduct> ServiceProduct { get; set; }

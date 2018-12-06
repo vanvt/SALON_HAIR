@@ -134,6 +134,9 @@ namespace WebApplication4
             services.AddScoped<IBookingDetail, BookingDetailService>();
             services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();
+            services.AddScoped<ICommissionPackage, CommissionPackageService>();
+            services.AddScoped<ICommissionProduct, CommissionProductService>();
+            services.AddScoped<ICommissionService, CommissionServiceService>();
             services.AddScoped<ICustomer, CustomerService>();
             services.AddScoped<ICustomerChannel, CustomerChannelService>();
             services.AddScoped<ICustomerSource, CustomerSourceService>();
@@ -166,7 +169,7 @@ namespace WebApplication4
             services.AddScoped<IServiceSalonBranch, ServiceSalonBranchService>();
             services.AddScoped<ISetting, SettingService>();
             services.AddScoped<IStaff, SALON_HAIR_CORE.Service.StaffService>();
-      
+            services.AddScoped<IStaffGroup, StaffGroupService>();
             services.AddScoped<IStaffSalonBranch, StaffSalonBranchService>();
             services.AddScoped<IStaffService, StaffServiceService>();
      
