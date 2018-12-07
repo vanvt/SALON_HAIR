@@ -42,6 +42,7 @@ namespace SALON_HAIR_API.Controllers
             var data = _staff.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             var dataReturn =   _staff.LoadAllInclude(data);
+            dataReturn = dataReturn.Include(e => e.StaffSalonBranch).ThenInclude(e => e.SalonBranch);
             return OkList(dataReturn);
         }
         // GET: api/Staffs/5

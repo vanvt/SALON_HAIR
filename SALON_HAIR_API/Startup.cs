@@ -172,7 +172,8 @@ namespace WebApplication4
             services.AddScoped<IStaffGroup, StaffGroupService>();
             services.AddScoped<IStaffSalonBranch, StaffSalonBranchService>();
             services.AddScoped<IStaffService, StaffServiceService>();
-     
+            services.AddScoped<ISettingAdvance, SettingAdvanceService>();
+         
             services.AddScoped<IStatus, StatusService>();
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IUserAuthority, UserAuthorityService>();

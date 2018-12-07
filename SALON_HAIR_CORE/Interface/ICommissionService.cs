@@ -9,6 +9,7 @@ namespace SALON_HAIR_CORE.Interface
     {
         Task EditLevelGroupAsync(CommissionService commissionService, long serviceCategoryId);
         Task EditLevelBranchAsync(CommissionService commissionService);
+        //Task EditLevelServiceAsync(CommissionService  commissionService);
     }
 }
 

@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Package()
         {
+            CommissionPackage = new HashSet<CommissionPackage>();
             ServicePackage = new HashSet<ServicePackage>();
         }
 
@@ -25,6 +26,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public decimal? OriginalPrice { get; set; }
 
+        public ICollection<CommissionPackage> CommissionPackage { get; set; }
         public ICollection<ServicePackage> ServicePackage { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace XUnitTestProject1
         [Fact]
         public void commissionProduct()
         {
-            var client = new RestClient(ConfigTest.url+"commissionProducts");
+            var client = new RestClient(ConfigTest.url+"commissionProducts/1/2");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");

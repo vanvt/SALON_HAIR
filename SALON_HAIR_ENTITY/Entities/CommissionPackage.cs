@@ -18,6 +18,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public float? CommisonValue { get; set; }
 
         public DiscountUnit CommisonUnit { get; set; }
+        public Package Package { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public Staff Staff { get; set; }
     }

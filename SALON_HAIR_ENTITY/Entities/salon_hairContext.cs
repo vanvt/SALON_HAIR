@@ -58,6 +58,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public virtual DbSet<ServiceProduct> ServiceProduct { get; set; }
         public virtual DbSet<ServiceSalonBranch> ServiceSalonBranch { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
+        public virtual DbSet<SettingAdvance> SettingAdvance { get; set; }
         public virtual DbSet<Staff> Staff { get; set; }
         public virtual DbSet<StaffGroup> StaffGroup { get; set; }
         public virtual DbSet<StaffSalonBranch> StaffSalonBranch { get; set; }
@@ -544,6 +545,12 @@ namespace SALON_HAIR_ENTITY.Entities
                     .WithMany(p => p.CommissionPackage)
                     .HasForeignKey(d => d.CommisonUnitId)
                     .HasConstraintName("commission_packge_commision_unit");
+
+                entity.HasOne(d => d.Package)
+                    .WithMany(p => p.CommissionPackage)
+                    .HasForeignKey(d => d.PackageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("commission_package_package");
 
                 entity.HasOne(d => d.SalonBranch)
                     .WithMany(p => p.CommissionPackage)
@@ -1262,6 +1269,12 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.DiscountUnit)
+                    .WithMany(p => p.InvoiceDetail)
+                    .HasForeignKey(d => d.DiscountUnitId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("invoice_detail_discount_unit");
 
                 entity.HasOne(d => d.Invoice)
                     .WithMany(p => p.InvoiceDetail)
@@ -2853,6 +2866,40 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnType("varchar(45)");
             });
 
+            modelBuilder.Entity<SettingAdvance>(entity =>
+            {
+                entity.ToTable("setting_advance");
+
+                entity.HasIndex(e => e.SalonId)
+                    .HasName("setting_advance_salon_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Enum)
+                    .HasColumnName("enum")
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Key)
+                    .HasColumnName("key")
+                    .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.SalonId)
+                    .HasColumnName("salon_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Value)
+                    .HasColumnName("value")
+                    .HasColumnType("varchar(500)");
+
+                entity.HasOne(d => d.Salon)
+                    .WithMany(p => p.SettingAdvance)
+                    .HasForeignKey(d => d.SalonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("setting_advance_salon");
+            });
+
             modelBuilder.Entity<Staff>(entity =>
             {
                 entity.ToTable("staff");
@@ -2926,12 +2973,13 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("staff_group");
 
-                entity.HasIndex(e => e.SalonId)
-                    .HasName("staff_group_salon_idx");
-
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasColumnType("varchar(45)");
 
                 entity.Property(e => e.Created)
                     .HasColumnName("created")
@@ -2946,10 +2994,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("name")
                     .HasColumnType("varchar(255)");
 
-                entity.Property(e => e.SalonId)
-                    .HasColumnName("salon_id")
-                    .HasColumnType("bigint(20)");
-
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnName("status")
@@ -2963,12 +3007,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
-
-                entity.HasOne(d => d.Salon)
-                    .WithMany(p => p.StaffGroup)
-                    .HasForeignKey(d => d.SalonId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("staff_group_salon");
             });
 
             modelBuilder.Entity<StaffSalonBranch>(entity =>

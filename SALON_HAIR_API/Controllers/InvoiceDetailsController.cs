@@ -40,7 +40,7 @@ namespace SALON_HAIR_API.Controllers
             {
                 data = data.Where(e => e.InvoiceId == invoiceId);
             }
-            var dataReturn = _invoiceDetail.LoadAllInclude(data,nameof(Invoice),nameof(InvoiceStaffArrangement));
+            var dataReturn = _invoiceDetail.LoadAllInclude(data,nameof(Invoice),nameof(InvoiceStaffArrangement)).Include(e=>e.DiscountUnit);
             return OkList(dataReturn);
         }
         // GET: api/InvoiceDetails/5

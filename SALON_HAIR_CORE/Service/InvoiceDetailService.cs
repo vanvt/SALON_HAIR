@@ -228,7 +228,7 @@ namespace SALON_HAIR_CORE.Service
             if (!invoiceDetail.IsPaid.Value)
             {
                 var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
-                var discount = invoiceDetail.DiscountUnitId == 1 ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
+                var discount = invoiceDetail.DiscountUnit.Code.Equals("PERCENT") ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
                 invoiceDetail.Total = total - discount;
             }
             else

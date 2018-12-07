@@ -29,20 +29,20 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/CommissionProducts
         [HttpGet("{salonBranchId}/{staffId}")]
-        public IActionResult GetCommissionProduct(long salonBranchId,long staffId ,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetCommissionProduct(long salonBranchId, long staffId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _commissionProduct.SearchAllFileds(keyword)
                  .Where(e => e.StaffId == staffId)
-                .Where(e => e.SalonBranchId == salonBranchId); 
+                .Where(e => e.SalonBranchId == salonBranchId);
 
-            var dataReturn =   _commissionProduct.LoadAllInclude(data);
+            var dataReturn = _commissionProduct.LoadAllInclude(data);
             dataReturn = dataReturn.Include(e => e.Product).ThenInclude(e => e.ProductCategory);
             return OkList(dataReturn);
         }
-    
+
         // PUT: api/CommissionProducts/5
         [HttpPut]
-        public async Task<IActionResult> PutCommissionProduct([FromBody] CommissionProductVM commissionProduct)
+        public async Task<IActionResult> PutCommissionProduct([FromRoute] long salonId,[FromBody] CommissionProductVM commissionProduct)
         {
             if (!ModelState.IsValid)
             {
@@ -55,21 +55,21 @@ namespace SALON_HAIR_API.Controllers
                 if (commissionProduct.ProductId != 0)
                 {
                     await _commissionProduct.EditAsync(commissionProduct);
-                    return CreatedAtAction("GetCommissionProduct", commissionProduct);
+                    return Ok(commissionProduct);
                 }
 
                 //Edit lever Category Product
                 if (commissionProduct.ProductCategoryId != 0)
                 {
                     await _commissionProduct.EditLevelGroupAsync(commissionProduct, commissionProduct.ProductCategoryId);
-                    return CreatedAtAction("GetCommissionProduct", commissionProduct);
+                    return Ok(commissionProduct);
                 }
 
                 //Edit lever Branch
                 if (commissionProduct.SalonBranchId != 0)
                 {
                     await _commissionProduct.EditLevelBranchAsync(commissionProduct);
-                    return CreatedAtAction("GetCommissionProduct", commissionProduct);
+                    return Ok(commissionProduct);
                 }
                 return BadRequest("Are you kidding me ?");
             }

@@ -51,6 +51,10 @@ namespace SALON_HAIR_CORE.Service
         public async Task EditLevelGroupAsync(CommissionProduct commissionProduct, long ProductCategoryId)
         {
             var listCommissionProduct = _salon_hairContext.CommissionProduct.Where(e => e.Product.ProductCategoryId == ProductCategoryId);
+            if (commissionProduct.StaffId != 0)
+            {
+                listCommissionProduct = listCommissionProduct.Where(e => e.StaffId == commissionProduct.StaffId);
+            }
             listCommissionProduct.ToList().ForEach(e =>
             {
                 e.CommisonUnitId = commissionProduct.CommisonUnitId;
@@ -64,6 +68,10 @@ namespace SALON_HAIR_CORE.Service
         public async Task EditLevelBranchAsync(CommissionProduct commissionProduct)
         {
             var listCommissionProduct = _salon_hairContext.CommissionProduct.Where(e => e.SalonBranchId == commissionProduct.SalonBranchId);
+            if (commissionProduct.StaffId != 0)
+            {
+                listCommissionProduct = listCommissionProduct.Where(e => e.StaffId == commissionProduct.StaffId);
+            }
             listCommissionProduct.ToList().ForEach(e =>
             {
                 e.CommisonUnitId = commissionProduct.CommisonUnitId;

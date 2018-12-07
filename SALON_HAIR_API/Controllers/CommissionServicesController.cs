@@ -39,8 +39,8 @@ namespace SALON_HAIR_API.Controllers
         }
 
         // PUT: api/CommissionServices/5
-        [HttpPut]
-        public async Task<IActionResult> PutCommissionService([FromBody] CommissionServiceVM commissionService)
+      [HttpPut]
+        public async Task<IActionResult> PutCommissionService( [FromBody] CommissionServiceVM commissionService)
         {
             if (!ModelState.IsValid)
             {
@@ -53,21 +53,21 @@ namespace SALON_HAIR_API.Controllers
                 if (commissionService.ServiceId != 0)
                 {
                     await _commissionService.EditAsync(commissionService);
-                    return CreatedAtAction("GetCommissionProduct", _commissionService);
+                    return Ok(commissionService);
                 }
 
                 //Edit lever Category Product
                 if (commissionService.ServiceCategoryId != 0)
                 {
                     await _commissionService.EditLevelGroupAsync(commissionService, commissionService.ServiceCategoryId);
-                    return CreatedAtAction("GetCommissionProduct", commissionService);
+                    return Ok(commissionService);
                 }
 
                 //Edit lever Branch
                 if (commissionService.SalonBranchId != 0)
                 {
                     await _commissionService.EditLevelBranchAsync(commissionService);
-                    return CreatedAtAction("GetCommissionProduct", commissionService);
+                    return Ok(commissionService);
                 }
                 return BadRequest("Are you kidding me ?");
             }

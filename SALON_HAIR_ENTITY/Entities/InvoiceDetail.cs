@@ -28,6 +28,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public int? Quantity { get; set; }
         public bool? IsPaid { get; set; }
 
+        public DiscountUnit DiscountUnit { get; set; }
         public Invoice Invoice { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
     }

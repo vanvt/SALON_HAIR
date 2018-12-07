@@ -4,12 +4,12 @@ using Xunit;
 using System;
 namespace XUnitTestProject1
 {   
-    public class commissionPackgeController
+    public class settingAdvanceController
     {
         [Fact]
-        public void commissionPackge()
+        public void settingAdvance()
         {
-            var client = new RestClient(ConfigTest.url+"commissionPackages/1/2");
+            var client = new RestClient(ConfigTest.url+"settingAdvances");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");

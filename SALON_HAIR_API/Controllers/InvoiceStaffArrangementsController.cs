@@ -35,7 +35,7 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _invoiceStaffArrangement.GetAll().Where(e => e.InvoiceId == id && !e.InvoiceDetail.Status.Equals("DELETED"));
 
-            var dataReturn =   _invoiceStaffArrangement.LoadAllInclude(data);
+            var dataReturn =   _invoiceStaffArrangement.LoadAllInclude(data,nameof(Invoice),nameof(InvoiceDetail));
             //dataReturn = _invoiceStaffArrangement.LoadAllInclude(dataReturn);
             var invoice= _invoice.Find(id);
 

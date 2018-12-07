@@ -35,7 +35,7 @@ namespace SALON_HAIR_API.Controllers
             var dataReturn =   _commissionPackge.LoadAllInclude(data);
             return OkList(dataReturn);
         }
-       
+
         // PUT: api/CommissionPackges/5
         [HttpPut]
         public async Task<IActionResult> PutCommissionPackge([FromBody] CommissionPackage commissionPackge)
@@ -52,14 +52,14 @@ namespace SALON_HAIR_API.Controllers
                 if (commissionPackge.PackageId != 0)
                 {
                     await _commissionPackge.EditAsync(commissionPackge);
-                    return CreatedAtAction("GetCommissionPackge", commissionPackge);
+                    return Ok(commissionPackge);
                 }
 
                 //Edit lever Branch
                 if (commissionPackge.SalonBranchId != 0)
                 {
                     await _commissionPackge.EditLevelBranchAsync(commissionPackge);
-                    return CreatedAtAction("GetCommissionPackge", commissionPackge);
+                    return Ok(commissionPackge);
                 }
 
                 return BadRequest("Are you kidding me?");

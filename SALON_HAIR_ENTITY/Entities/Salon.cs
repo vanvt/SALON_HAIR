@@ -22,8 +22,8 @@ namespace SALON_HAIR_ENTITY.Entities
             SalonBranch = new HashSet<SalonBranch>();
             Service = new HashSet<Service>();
             ServiceCategory = new HashSet<ServiceCategory>();
+            SettingAdvance = new HashSet<SettingAdvance>();
             Staff = new HashSet<Staff>();
-            StaffGroup = new HashSet<StaffGroup>();
             User = new HashSet<User>();
         }
 
@@ -56,8 +56,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<SalonBranch> SalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
         public ICollection<ServiceCategory> ServiceCategory { get; set; }
+        public ICollection<SettingAdvance> SettingAdvance { get; set; }
         public ICollection<Staff> Staff { get; set; }
-        public ICollection<StaffGroup> StaffGroup { get; set; }
         public ICollection<User> User { get; set; }
     }
 }
