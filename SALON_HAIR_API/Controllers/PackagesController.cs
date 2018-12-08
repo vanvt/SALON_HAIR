@@ -17,10 +17,12 @@ namespace SALON_HAIR_API.Controllers
     public class PackagesController : CustomControllerBase
     {
         private readonly IPackage _package;
+        private readonly IPackageSalonBranch _packageSalonBranch;
         private readonly IUser _user;
         private readonly IServicePackage _servicePackage;
-        public PackagesController(IServicePackage servicePackage,IPackage package, IUser user)
+        public PackagesController(IPackageSalonBranch packageSalonBranch,IServicePackage servicePackage,IPackage package, IUser user)
         {
+            _packageSalonBranch = packageSalonBranch;
             _servicePackage = servicePackage;
             _package = package;
             _user = user;
@@ -28,20 +30,35 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Packages
         [HttpGet]
-        public IActionResult GetPackage(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetPackage(long salonBranchId = 0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var start = DateTime.Now;
-            Console.WriteLine("GetPackage");
-            Console.WriteLine("-----------------------------------------------------------------------------");
-            var data = _package.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);
-            //var dataReturn = data.Include(e => e.ServicePackage);
-            var end = DateTime.Now;
-            Console.WriteLine($"Finished in {(end - start).TotalMilliseconds} miliseconds");
-            Console.WriteLine("-----------------------------------------------------------------------------");
+            var data = _package.SearchAllFileds(keyword)
+              .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+
+            if (salonBranchId != 0)
+            {
+                var listPackageAvailable = _packageSalonBranch
+                .FindBy(e => e.SalonBranchId == salonBranchId)
+                .Where(e => e.Status.Equals("ENABLE"))
+                .Select(e => e.PackageId);
+                data = data.Where(e => listPackageAvailable.Contains(e.Id));
+            }
+            var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);          
             return OkList(dataReturn);
         }
+
+        [HttpGet("setting")]
+        public IActionResult GetPackageSetting(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        {
+            var currentSalonBranchId = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+            var dataKeyword = _package.SearchAllFileds(keyword).Select(e => e.Id);          
+            var data = _packageSalonBranch.GetAll()
+                .Where(e => e.SalonBranchId == currentSalonBranchId)
+                .Where(e => dataKeyword.Contains(e.PackageId));
+            data = data.Include(e => e.Package);
+            return OkList(data);
+        }
+
         // GET: api/Packages/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPackage([FromRoute] long id)
@@ -116,7 +133,42 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(package,e);
             }
         }
+        [HttpPut("setting/{id}")]
+        public async Task<IActionResult> PutPackageSetting([FromRoute] long id, [FromBody] PackageSalonBranch package)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != package.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                package.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                await _packageSalonBranch.EditAsync(package);            
+                return Ok(package);
 
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PackageExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(package, e);
+            }
+        }
         // POST: api/Packages
         [HttpPost]
         public async Task<IActionResult> PostPackage([FromBody] Package package)
@@ -129,6 +181,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 package.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                package.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
                 await _package.AddAsync(package);
                 var servicePackge = _servicePackage.FindBy(e => e.PackageId == package.Id).Include(e=>e.Service);
                 package.ServicePackage = servicePackge.ToList();

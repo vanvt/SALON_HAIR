@@ -17,9 +17,11 @@ namespace SALON_HAIR_API.Controllers
     public class WarehousesController : CustomControllerBase
     {
         private readonly IWarehouse _warehouse;
+        private readonly IProduct _product;
         private readonly IUser _user;
-        public WarehousesController(IWarehouse warehouse, IUser user)
+        public WarehousesController(IProduct product, IWarehouse warehouse, IUser user)
         {
+            _product = product;
             _warehouse = warehouse;
             _user = user;
         }
@@ -28,9 +30,18 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetWarehouse(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _warehouse.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            var dataReturn =   _warehouse.LoadAllInclude(data);
+            var currentSalonBranchId = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+            var data = _warehouse.GetAll().Where
+                  (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                var listProductSearch = _product.SearchAllFileds(keyword)
+                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))).Select(e => e.Id).ToList();
+                data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
+            }
+            data = data.Where(e => e.SalonBranchId == currentSalonBranchId);
+            var dataReturn = _warehouse.LoadAllInclude(data);
             return OkList(dataReturn);
         }
         // GET: api/Warehouses/5
@@ -54,7 +65,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -87,11 +98,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(warehouse,e);
+                throw new UnexpectedException(warehouse, e);
             }
         }
 
@@ -113,9 +124,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(warehouse,e);
+                throw new UnexpectedException(warehouse, e);
             }
-          
+
         }
 
         // DELETE: api/Warehouses/5
@@ -143,9 +154,9 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(id,e);
+                throw new UnexpectedException(id, e);
             }
-          
+
         }
 
         private bool WarehouseExists(long id)

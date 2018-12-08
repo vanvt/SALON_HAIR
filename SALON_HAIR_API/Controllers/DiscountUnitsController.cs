@@ -53,7 +53,6 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
                   throw new UnexpectedException(id, e);
             }
         }

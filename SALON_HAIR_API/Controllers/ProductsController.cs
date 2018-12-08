@@ -125,7 +125,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 product.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
                 product.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));              
-                await _product.AddIncludeCommisionAsync(product);
+                await _product.AddAsync(product);
                 return CreatedAtAction("GetProduct", new { id = product.Id }, product);
             }
             catch (Exception e)

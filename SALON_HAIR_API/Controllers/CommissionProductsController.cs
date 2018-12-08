@@ -33,9 +33,11 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _commissionProduct.SearchAllFileds(keyword)
                  .Where(e => e.StaffId == staffId)
-                .Where(e => e.SalonBranchId == salonBranchId);
-
+                .Where(e => e.SalonBranchId == salonBranchId)
+                .Where(e => !e.Product.Status.Equals("DELETED"))
+                .Where(e => !e.Product.ProductCategory.Status.Equals("DELETED"));
             var dataReturn = _commissionProduct.LoadAllInclude(data);
+
             dataReturn = dataReturn.Include(e => e.Product).ThenInclude(e => e.ProductCategory);
             return OkList(dataReturn);
         }
@@ -58,18 +60,28 @@ namespace SALON_HAIR_API.Controllers
                     return Ok(commissionProduct);
                 }
 
+
+                var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+                if (currentSalonBranch == null)
+                {
+                    return BadRequest("Are you kidding me ?");
+                }
+                commissionProduct.SalonBranchId = currentSalonBranch.Value;
+
                 //Edit lever Category Product
                 if (commissionProduct.ProductCategoryId != 0)
                 {
-                    await _commissionProduct.EditLevelGroupAsync(commissionProduct, commissionProduct.ProductCategoryId);
-                    return Ok(commissionProduct);
+                  var data =   await _commissionProduct.EditGetLevelGroupAsync(commissionProduct, commissionProduct.ProductCategoryId);
+                    data = data.Include(e => e.Product).ThenInclude(e => e.ProductCategory);
+                    return Ok(data);
                 }
 
                 //Edit lever Branch
                 if (commissionProduct.SalonBranchId != 0)
                 {
-                    await _commissionProduct.EditLevelBranchAsync(commissionProduct);
-                    return Ok(commissionProduct);
+                    var data =  await _commissionProduct.EditGetLevelBranchAsync(commissionProduct);
+                    data = data.Include(e => e.Product).ThenInclude(e => e.ProductCategory);
+                    return Ok(data);
                 }
                 return BadRequest("Are you kidding me ?");
             }

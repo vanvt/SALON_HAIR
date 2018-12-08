@@ -57,13 +57,32 @@ namespace SALON_HAIR_CORE.Service
             }
             listCommissionProduct.ToList().ForEach(e =>
             {
-                e.CommisonUnitId = commissionProduct.CommisonUnitId;
-                e.CommisonValue = commissionProduct.CommisonValue;
+                e.CommissionUnit = commissionProduct.CommissionUnit;
+                e.CommissionValue = commissionProduct.CommissionValue;
             });
             _salon_hairContext.CommissionProduct.UpdateRange(listCommissionProduct);
           await  _salon_hairContext.SaveChangesAsync();
 
         }
+        public async Task<IQueryable<CommissionProduct>> EditGetLevelGroupAsync(CommissionProduct commissionProduct, long ProductCategoryId)
+        {
+            var listCommissionProduct = _salon_hairContext.CommissionProduct
+                .Where(e => e.Product.ProductCategoryId == ProductCategoryId)
+                .Where(e=>e.SalonBranchId== commissionProduct.SalonBranchId);
+            if (commissionProduct.StaffId != 0)
+            {
+                listCommissionProduct = listCommissionProduct.Where(e => e.StaffId == commissionProduct.StaffId);
+            }
+            listCommissionProduct.ToList().ForEach(e =>
+            {
+                e.CommissionUnit = commissionProduct.CommissionUnit;
+                e.CommissionValue = commissionProduct.CommissionValue;
+            });
+            _salon_hairContext.CommissionProduct.UpdateRange(listCommissionProduct);
+            await _salon_hairContext.SaveChangesAsync();
+            return listCommissionProduct;
+        }
+
 
         public async Task EditLevelBranchAsync(CommissionProduct commissionProduct)
         {
@@ -74,11 +93,28 @@ namespace SALON_HAIR_CORE.Service
             }
             listCommissionProduct.ToList().ForEach(e =>
             {
-                e.CommisonUnitId = commissionProduct.CommisonUnitId;
-                e.CommisonValue = commissionProduct.CommisonValue;
+                e.CommissionUnit = commissionProduct.CommissionUnit;
+                e.CommissionValue = commissionProduct.CommissionValue;
             });
             _salon_hairContext.CommissionProduct.UpdateRange(listCommissionProduct);
             await _salon_hairContext.SaveChangesAsync();
+        }
+        public async Task<IQueryable<CommissionProduct>> EditGetLevelBranchAsync(CommissionProduct commissionProduct)
+        {
+            var listCommissionProduct = _salon_hairContext.CommissionProduct
+                .Where(e => e.SalonBranchId == commissionProduct.SalonBranchId);
+            if (commissionProduct.StaffId != 0)
+            {
+                listCommissionProduct = listCommissionProduct.Where(e => e.StaffId == commissionProduct.StaffId);
+            }
+            listCommissionProduct.ToList().ForEach(e =>
+            {
+                e.CommissionUnit = commissionProduct.CommissionUnit;
+                e.CommissionValue = commissionProduct.CommissionValue;
+            });
+            _salon_hairContext.CommissionProduct.UpdateRange(listCommissionProduct);
+            await _salon_hairContext.SaveChangesAsync();
+            return listCommissionProduct;
         }
     }
 }

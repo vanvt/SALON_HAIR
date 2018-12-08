@@ -148,6 +148,7 @@ namespace WebApplication4
             services.AddScoped<IInvoiceStaffArrangement, InvoiceStaffArrangementService>();
             services.AddScoped<IInvoiceStatus, InvoiceStatusService>();
             services.AddScoped<IPackage, PackageService>();
+            services.AddScoped<IPackageSalonBranch,PackageSalonBranchService>();
             services.AddScoped<IPaymentBanking, PaymentBankingService>();
             services.AddScoped<IPaymentMethod, PaymentMethodService>();
             services.AddScoped<IPhoto, PhotoService>();
@@ -179,8 +180,9 @@ namespace WebApplication4
             services.AddScoped<IUserAuthority, UserAuthorityService>();
             services.AddScoped<IUserSalonBranch, UserSalonBranchService>();
             services.AddScoped<IWarehouse, WarehouseService>();
-
-
+            services.AddScoped<IWarehouseStatus, WarehouseStatusService>();
+            services.AddScoped<IWarehouseTransaction, WarehouseTransactionService>();
+            services.AddScoped<IWarehouseTransactionDetail, WarehouseTransactionDetailService>();
 
 
 

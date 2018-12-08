@@ -23,7 +23,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public long? CustomerId { get; set; }
         public long InvoiceStatusId { get; set; }
-        public long? DiscountUnitId { get; set; }
+        public string DiscountUnit { get; set; }
         public float? DiscountUnitValue { get; set; }
         public long? CashierId { get; set; }
         public long? SalesmanId { get; set; }
@@ -36,7 +36,6 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public User Cashier { get; set; }
         public Customer Customer { get; set; }
-        public DiscountUnit DiscountUnit { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
         public Staff Salesman { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }

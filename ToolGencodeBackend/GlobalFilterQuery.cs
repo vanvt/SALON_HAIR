@@ -38,11 +38,6 @@ namespace ToolGencodeBackend
                 builer += $@" builder.Entity<{nameEnity}>().HasQueryFilter(e => !e.Status.Equals(""DELETED""));" + Environment.NewLine;
             }
             rs.Replace("{xxx}", "33333333");
-
-
-
-
-
             return rs;
 
         }

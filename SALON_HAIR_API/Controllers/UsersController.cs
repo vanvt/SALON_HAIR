@@ -32,10 +32,10 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _user.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            var dataReturn =   _user.LoadAllInclude(data);
-            dataReturn = dataReturn.Include(e => e.UserAuthority).ThenInclude(e => e.Authority);
-            dataReturn = dataReturn.Include(e => e.UserSalonBranch).ThenInclude(e => e.SpaBranch);
-            return OkList(dataReturn);
+            // var dataReturn =   _user.LoadAllInclude(data);
+             data = data.Include(e => e.UserAuthority);
+            data = data.Include(e => e.UserSalonBranch);
+            return OkList(data);
         }
         // GET: api/Users/5
         [HttpGet("{id}")]
@@ -114,7 +114,6 @@ namespace SALON_HAIR_API.Controllers
             }
             // return null;
         }
-
 
         // PUT: api/Users/5
         [HttpPut("{id}")]

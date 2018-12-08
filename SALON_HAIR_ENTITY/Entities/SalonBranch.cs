@@ -13,6 +13,7 @@ namespace SALON_HAIR_ENTITY.Entities
             CommissionProduct = new HashSet<CommissionProduct>();
             CommissionService = new HashSet<CommissionService>();
             Customer = new HashSet<Customer>();
+            PackageSalonBranch = new HashSet<PackageSalonBranch>();
             Product = new HashSet<Product>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
             Service = new HashSet<Service>();
@@ -20,6 +21,8 @@ namespace SALON_HAIR_ENTITY.Entities
             StaffSalonBranch = new HashSet<StaffSalonBranch>();
             User = new HashSet<User>();
             UserSalonBranch = new HashSet<UserSalonBranch>();
+            Warehouse = new HashSet<Warehouse>();
+            WarehouseTransaction = new HashSet<WarehouseTransaction>();
         }
 
         public long Id { get; set; }
@@ -53,6 +56,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<Customer> Customer { get; set; }
+        public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
@@ -60,5 +64,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
         public ICollection<User> User { get; set; }
         public ICollection<UserSalonBranch> UserSalonBranch { get; set; }
+        public ICollection<Warehouse> Warehouse { get; set; }
+        public ICollection<WarehouseTransaction> WarehouseTransaction { get; set; }
     }
 }

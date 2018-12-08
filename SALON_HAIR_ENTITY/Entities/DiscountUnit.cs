@@ -5,15 +5,6 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class DiscountUnit
     {
-        public DiscountUnit()
-        {
-            CommissionPackage = new HashSet<CommissionPackage>();
-            CommissionProduct = new HashSet<CommissionProduct>();
-            CommissionService = new HashSet<CommissionService>();
-            Invoice = new HashSet<Invoice>();
-            InvoiceDetail = new HashSet<InvoiceDetail>();
-        }
-
         public long Id { get; set; }
         public DateTime? Created { get; set; }
         public string CreatedBy { get; set; }
@@ -22,11 +13,5 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
-
-        public ICollection<CommissionPackage> CommissionPackage { get; set; }
-        public ICollection<CommissionProduct> CommissionProduct { get; set; }
-        public ICollection<CommissionService> CommissionService { get; set; }
-        public ICollection<Invoice> Invoice { get; set; }
-        public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
     }
 }

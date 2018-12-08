@@ -8,6 +8,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Package()
         {
             CommissionPackage = new HashSet<CommissionPackage>();
+            PackageSalonBranch = new HashSet<PackageSalonBranch>();
             ServicePackage = new HashSet<ServicePackage>();
         }
 
@@ -16,17 +17,17 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Status { get; set; }
         public DateTime? Updated { get; set; }
         public string Description { get; set; }
-        public string Label { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
-        public string PriceText { get; set; }
-        public long SalonBranchId { get; set; }
         public long SalonId { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public decimal? OriginalPrice { get; set; }
+        public int? NumberOfUse { get; set; }
+        public int? UsedInMonth { get; set; }
 
         public ICollection<CommissionPackage> CommissionPackage { get; set; }
+        public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }
         public ICollection<ServicePackage> ServicePackage { get; set; }
     }
 }

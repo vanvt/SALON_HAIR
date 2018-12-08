@@ -61,8 +61,8 @@ namespace SALON_HAIR_CORE.Service
             var listCommissionProduct = _salon_hairContext.CommissionPackage.Where(e => e.SalonBranchId == commissionPackge.SalonBranchId);
             listCommissionProduct.ToList().ForEach(e =>
             {
-                e.CommisonUnitId = commissionPackge.CommisonUnitId;
-                e.CommisonValue = commissionPackge.CommisonValue;
+                e.CommissionUnit = commissionPackge.CommissionUnit;
+                e.CommissionValue = commissionPackge.CommissionValue;
             });
             _salon_hairContext.CommissionPackage.UpdateRange(listCommissionProduct);
             await _salon_hairContext.SaveChangesAsync();

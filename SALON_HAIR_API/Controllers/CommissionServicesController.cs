@@ -31,8 +31,11 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet("{salonBranchId}/{staffId}")]
         public IActionResult GetCommissionService(long salonBranchId, long staffId,  int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _commissionService.SearchAllFileds(keyword).Where(e => e.StaffId == staffId)
-                .Where(e => e.SalonBranchId == salonBranchId);
+            var data = _commissionService.SearchAllFileds(keyword)
+                .Where(e => e.StaffId == staffId)
+                .Where(e => e.SalonBranchId == salonBranchId)
+                .Where(e=>! e.Service.Status.Equals("DELETED"))
+                .Where(e => !e.Service.ServiceCategory.Status.Equals("DELETED"));
             var dataReturn = _commissionService.LoadAllInclude(data);
             dataReturn = dataReturn.Include(e => e.Service).ThenInclude(e => e.ServiceCategory);
             return OkList(dataReturn);
@@ -55,19 +58,28 @@ namespace SALON_HAIR_API.Controllers
                     await _commissionService.EditAsync(commissionService);
                     return Ok(commissionService);
                 }
+                var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+                if (currentSalonBranch == null)
+                {
+                    return BadRequest("Are you kidding me ?");
+                }
 
+                commissionService.SalonBranchId = currentSalonBranch.Value;
                 //Edit lever Category Product
                 if (commissionService.ServiceCategoryId != 0)
                 {
-                    await _commissionService.EditLevelGroupAsync(commissionService, commissionService.ServiceCategoryId);
-                    return Ok(commissionService);
-                }
 
+                  
+                    var data =  await _commissionService.EditGetLevelGroupAsync(commissionService, commissionService.ServiceCategoryId);
+                    data = data.Include(e=>e.Service).ThenInclude(e => e.ServiceCategory);
+                    return Ok(data);
+                }
                 //Edit lever Branch
                 if (commissionService.SalonBranchId != 0)
                 {
-                    await _commissionService.EditLevelBranchAsync(commissionService);
-                    return Ok(commissionService);
+                    var data  = await _commissionService.EditGetLevelBranchAsync(commissionService);
+                    data = data.Include(e => e.Service).ThenInclude(e => e.ServiceCategory);
+                    return Ok(data);
                 }
                 return BadRequest("Are you kidding me ?");
             }

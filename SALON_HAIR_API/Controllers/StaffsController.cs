@@ -20,30 +20,39 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly IPhoto _photo;
         private readonly IStaff _staff;
+        private readonly IStaffSalonBranch _staffSalonBranch;
         private readonly IUser _user;
       
         private readonly IStaffService _staffService;
        
-        public StaffsController(IPhoto photo,IStaff staff, IUser user, IStaffService staffService)
+        public StaffsController(IStaffSalonBranch staffSalonBranch,IPhoto photo,IStaff staff, IUser user, IStaffService staffService)
         {
             _photo = photo;
-          
-        
-               _staffService = staffService;
+            _staffSalonBranch = staffSalonBranch;
+
+                 _staffService = staffService;
             _staff = staff;
             _user = user;
         }
 
         // GET: api/Staffs
         [HttpGet]
-        public IActionResult GetStaff(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetStaff(long salonBranchId =0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-       
-            var data = _staff.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
-            var dataReturn =   _staff.LoadAllInclude(data);
-            dataReturn = dataReturn.Include(e => e.StaffSalonBranch).ThenInclude(e => e.SalonBranch);
-            return OkList(dataReturn);
+            var data = _staff.SearchAllFileds(keyword)
+                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+
+            if (salonBranchId != 0)
+            {
+                var listStaffAvailable = _staffSalonBranch
+               .FindBy(e => e.SalonBranchId == salonBranchId)
+               .Where(e => e.Status.Equals("ENABLE"))
+               .Select(e => e.StaffId);
+                data = data.Where(e => listStaffAvailable.Contains(e.Id));
+            }
+            var dataReturn = _staff.LoadAllInclude(data);
+            dataReturn = dataReturn.Include(e => e.StaffSalonBranch);
+            return OkList(dataReturn);          
         }
         // GET: api/Staffs/5
         [HttpGet("{id}")]
@@ -65,7 +74,6 @@ namespace SALON_HAIR_API.Controllers
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(id, e);
             }
         }

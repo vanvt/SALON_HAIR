@@ -14,10 +14,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Description { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
-        public long? CommisonUnitId { get; set; }
-        public float? CommisonValue { get; set; }
+        public string CommissionUnit { get; set; }
+        public float? CommissionValue { get; set; }
+        public long Id { get; set; }
 
-        public DiscountUnit CommisonUnit { get; set; }
         public Package Package { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public Staff Staff { get; set; }

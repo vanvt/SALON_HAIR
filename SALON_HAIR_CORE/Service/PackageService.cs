@@ -31,11 +31,13 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(Package package)
         {
             package.Created = DateTime.Now;
+            package = AddToAllBranch(package);
             return await base.AddAsync(package);
         }
         public new void Add(Package package)
         {
             package.Created = DateTime.Now;
+            package = AddToAllBranch(package);
             base.Add(package);
         }
         public new void Delete(Package package)
@@ -76,6 +78,15 @@ namespace SALON_HAIR_CORE.Service
         {
             package.Created = DateTime.Now;
             return await base.AddAsync(package);
+        }
+        public Package AddToAllBranch(Package package)
+        {
+            var listBranch = _salon_hairContext.SalonBranch.Where(e => e.SalonId == package.SalonId).ToList();
+            listBranch.ForEach(e =>
+            {
+                package.PackageSalonBranch.Add(new PackageSalonBranch { SalonBranchId = e.Id });
+            });
+            return package;
         }
     }
 }

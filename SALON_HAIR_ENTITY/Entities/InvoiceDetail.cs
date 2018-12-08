@@ -22,13 +22,12 @@ namespace SALON_HAIR_ENTITY.Entities
         public string ObjectName { get; set; }
         public string ObjectCode { get; set; }
         public decimal ObjectPrice { get; set; }
-        public long DiscountUnitId { get; set; }
+        public string DiscountUnit { get; set; }
         public long? DiscountValue { get; set; }
         public decimal? Total { get; set; }
         public int? Quantity { get; set; }
         public bool? IsPaid { get; set; }
 
-        public DiscountUnit DiscountUnit { get; set; }
         public Invoice Invoice { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
     }

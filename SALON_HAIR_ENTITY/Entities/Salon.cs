@@ -25,6 +25,7 @@ namespace SALON_HAIR_ENTITY.Entities
             SettingAdvance = new HashSet<SettingAdvance>();
             Staff = new HashSet<Staff>();
             User = new HashSet<User>();
+            Warehouse = new HashSet<Warehouse>();
         }
 
         public long Id { get; set; }
@@ -59,5 +60,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<SettingAdvance> SettingAdvance { get; set; }
         public ICollection<Staff> Staff { get; set; }
         public ICollection<User> User { get; set; }
+        public ICollection<Warehouse> Warehouse { get; set; }
     }
 }

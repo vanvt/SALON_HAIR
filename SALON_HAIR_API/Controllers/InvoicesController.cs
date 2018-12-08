@@ -229,7 +229,7 @@ namespace SALON_HAIR_API.Controllers
                 dataUpdate.NotePayment = invoice.NotePayment;
                 dataUpdate.Total = invoice.Total;
                 dataUpdate.InvoicePayment = invoice.InvoicePayment;
-                dataUpdate.DiscountUnitId = invoice.DiscountUnitId;
+                dataUpdate.DiscountUnit = invoice.DiscountUnit;
                 dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
                 //status 2 : cancel
                 dataUpdate.InvoiceStatusId = 2;
