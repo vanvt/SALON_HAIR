@@ -22,6 +22,7 @@ using SALON_HAIR_ENTITY.Entities;
 using Swashbuckle.AspNetCore.Swagger;
 
 using ULTIL_HELPER;
+using BookingCustomerService = SALON_HAIR_CORE.Service.BookingCustomerService;
 
 namespace WebApplication4
 {
@@ -131,6 +132,8 @@ namespace WebApplication4
             services.AddScoped<IAuthority, AuthorityService>();
             services.AddScoped<IAuthorityRouter, AuthorityRouterService>();
             services.AddScoped<IBooking, BookingService>();
+            services.AddScoped<IBookingCustomer, BookingCustomerService>();
+            services.AddScoped<IBookingCustomerService, BookingCustomerServiceService>();
             services.AddScoped<IBookingDetail, BookingDetailService>();
             services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();

@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public CustomerSource()
         {
+            Booking = new HashSet<Booking>();
             Customer = new HashSet<Customer>();
         }
 
@@ -21,6 +22,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public bool? IsDefault { get; set; }
 
+        public ICollection<Booking> Booking { get; set; }
         public ICollection<Customer> Customer { get; set; }
     }
 }

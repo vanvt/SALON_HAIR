@@ -10,29 +10,33 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<Authority>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<AuthorityRouter>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Booking>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<BookingCustomer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<BookingCustomerService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingLog>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CommissionPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CommissionProduct>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CommissionService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CurrencyUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Customer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerChannel>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerSource>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-
-            builder.Entity<CommissionPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<CommissionProduct>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<CommissionService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<DiscountUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Invoice>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoicePayment>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceStaffArrangement>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Package>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<PackageSalonBranch>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<PaymentBanking>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<PaymentBankingMethod>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<PaymentMethod>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Photo>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Product>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductCategory>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-          
+            builder.Entity<ProductCountUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductPictures>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductSalonBranch>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ProductSource>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
@@ -47,12 +51,13 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<ServiceProduct>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<ServiceSalonBranch>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Setting>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            //builder.Entity<SettingAdvance>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Staff>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-          
+            builder.Entity<StaffGroup>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<StaffSalonBranch>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<StaffService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<StaffGroup>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-          
+            //builder.Entity<SysObjectAutoIncreament>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            //builder.Entity<SysScheduleJob>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<User>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<UserAuthority>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<UserSalonBranch>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
@@ -60,6 +65,7 @@ namespace SALON_HAIR_ENTITY.Extensions
             builder.Entity<WarehouseStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<WarehouseTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<WarehouseTransactionDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+
 
             return builder;
         }

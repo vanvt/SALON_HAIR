@@ -28,7 +28,7 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Warehouses
         [HttpGet]
-        public IActionResult GetWarehouse(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetWarehouse(long warehouseStatusId=0, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var currentSalonBranchId = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
             var data = _warehouse.GetAll().Where
@@ -41,6 +41,10 @@ namespace SALON_HAIR_API.Controllers
                 data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
             }
             data = data.Where(e => e.SalonBranchId == currentSalonBranchId);
+            if (warehouseStatusId != 0)
+            {
+                data = data.Where(e => e.WarehouseStatusId == warehouseStatusId);
+            }
             var dataReturn = _warehouse.LoadAllInclude(data);
             return OkList(dataReturn);
         }
