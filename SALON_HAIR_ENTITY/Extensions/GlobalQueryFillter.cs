@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SALON_HAIR_ENTITY.Entities;
-namespace SALON_HAIR_ENTITY.Extensions
+namespace SALON_HAIR_ENTITY.Entities
 {
     public static class GlobalQueryFillter
     {

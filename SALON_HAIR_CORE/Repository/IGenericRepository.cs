@@ -53,5 +53,6 @@ namespace SALON_HAIR_CORE.Repository
         Task RemovePhysicalAsync<TDel>(long id);
         Task RemovePhysicalAsync<TDel>(long[] ids);
         void RemoveLogic<TDel, Tkey>(long[] ids, Expression<Func<TDel, Tkey>> predicate);
+
     }
 }

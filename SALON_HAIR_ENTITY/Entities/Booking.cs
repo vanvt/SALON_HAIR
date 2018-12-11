@@ -18,7 +18,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Status { get; set; }
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; set; }
-        public string Name { get; set; }
         public long SalonBranchId { get; set; }
         public long SalonId { get; set; }
         public long? CustomerId { get; set; }

@@ -16,19 +16,24 @@ namespace SALON_HAIR_API.Controllers
     [Authorize]
     public class BookingsController : CustomControllerBase
     {
+        private readonly ISysObjectAutoIncreament _sysObjectAutoIncreament;
         private readonly IBooking _booking;
+        private readonly IBookingCustomer _bookingCustomer;
         private readonly IUser _user;
 
-        public BookingsController(IBooking booking, IUser user)
+        public BookingsController(IBookingCustomer bookingCustomer,ISysObjectAutoIncreament sysObjectAutoIncreament,IBooking booking, IUser user)
         {
+            _bookingCustomer = bookingCustomer;
             _booking = booking;
             _user = user;
+            _sysObjectAutoIncreament = sysObjectAutoIncreament;
         }
 
         // GET: api/Bookings
         [HttpGet]
-        public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetBooking(long salonBranchId  = 0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
+            
             var data = _booking.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")))
                 ;
@@ -46,7 +51,8 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 var booking = await _booking.FindAsync(id);
-
+                var bookingCustomer = _bookingCustomer.FindBy(e => e.BookingId == id).Include(e => e.BookingCustomerService);
+                booking.BookingCustomer = await bookingCustomer.ToListAsync();
                 if (booking == null)
                 {
                     return NotFound();
@@ -109,12 +115,16 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                booking.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
+                booking.BookingCode = "ES" + _sysObjectAutoIncreament.
+                    GetCodeByObjectAsync(nameof(Booking), booking.SalonId).
+                    Result.ObjectIndex.ToString("000000");
+
                 await _booking.AddAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(booking,e);
             }
           

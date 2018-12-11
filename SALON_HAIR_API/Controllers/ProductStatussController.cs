@@ -109,7 +109,7 @@ namespace SALON_HAIR_API.Controllers
         //        {
         //            return BadRequest(ModelState);
         //        }
-        //        productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+        //        productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
         //        await _productStatus.AddAsync(productStatus);
         //        return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
         //    }

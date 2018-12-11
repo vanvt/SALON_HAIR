@@ -30,6 +30,7 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _salonBranch.SearchAllFileds(keyword).Where
                 (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+           
             var dataReturn =   _salonBranch.LoadAllInclude(data);
             return OkList(dataReturn);
         }

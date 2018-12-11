@@ -26,6 +26,7 @@ namespace SALON_HAIR_ENTITY.Entities
             Staff = new HashSet<Staff>();
             User = new HashSet<User>();
             Warehouse = new HashSet<Warehouse>();
+            WarehouseTransaction = new HashSet<WarehouseTransaction>();
         }
 
         public long Id { get; set; }
@@ -61,5 +62,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Staff> Staff { get; set; }
         public ICollection<User> User { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }
+        public ICollection<WarehouseTransaction> WarehouseTransaction { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(Booking booking)
         {
             booking.Created = DateTime.Now;
+
             return await base.AddAsync(booking);
         }
         public new void Add(Booking booking)

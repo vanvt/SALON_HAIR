@@ -20,7 +20,11 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Creator { get; set; }
         public long? SalonBranchId { get; set; }
         public string Action { get; set; }
+        public long? SalonId { get; set; }
+        public long? InvoiceId { get; set; }
 
+        public Invoice Invoice { get; set; }
+        public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
         public ICollection<WarehouseTransactionDetail> WarehouseTransactionDetail { get; set; }
     }

@@ -107,7 +107,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                customerSource.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"));
+                customerSource.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _customerSource.AddAsync(customerSource);
                 return CreatedAtAction("GetCustomerSource", new { id = customerSource.Id }, customerSource);
             }

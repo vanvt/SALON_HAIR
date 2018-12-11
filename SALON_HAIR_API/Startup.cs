@@ -177,7 +177,7 @@ namespace WebApplication4
             services.AddScoped<IStaffSalonBranch, StaffSalonBranchService>();
             services.AddScoped<IStaffService, StaffServiceService>();
             services.AddScoped<ISettingAdvance, SettingAdvanceService>();
-         
+            services.AddScoped<ISysObjectAutoIncreament, SysObjectAutoIncreamentService>();
             services.AddScoped<IStatus, StatusService>();
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IUserAuthority, UserAuthorityService>();

@@ -730,6 +730,6 @@ namespace SALON_HAIR_CORE.Repository
            RawSqlString rawSqlString = new RawSqlString(sql);
           return await _easyspaContext.Database.ExecuteSqlCommandAsync(rawSqlString);
         }
-
+        
     }
 }

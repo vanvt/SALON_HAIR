@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.Entities
             InvoiceDetail = new HashSet<InvoiceDetail>();
             InvoicePayment = new HashSet<InvoicePayment>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
+            WarehouseTransaction = new HashSet<WarehouseTransaction>();
         }
 
         public long Id { get; set; }
@@ -41,5 +42,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
+        public ICollection<WarehouseTransaction> WarehouseTransaction { get; set; }
     }
 }

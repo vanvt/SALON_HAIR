@@ -18,6 +18,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public long BookingId { get; set; }
         public long CutomerId { get; set; }
+        public bool? NoteStatus { get; set; }
+        public string Note { get; set; }
 
         public Booking Booking { get; set; }
         public Customer Cutomer { get; set; }
