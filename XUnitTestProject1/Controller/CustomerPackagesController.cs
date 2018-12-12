@@ -4,12 +4,12 @@ using Xunit;
 using System;
 namespace XUnitTestProject1
 {   
-    public class bookingCustomerServiceController
+    public class customerPackageController
     {
         [Fact]
-        public void bookingCustomerService()
+        public void customerPackage()
         {
-            var client = new RestClient(ConfigTest.url+ "BookingDetailServices");
+            var client = new RestClient(ConfigTest.url+"customerPackages");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");

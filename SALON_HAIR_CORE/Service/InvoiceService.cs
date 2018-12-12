@@ -6,6 +6,8 @@ using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -68,6 +70,104 @@ namespace SALON_HAIR_CORE.Service
         {
             invoice.Status = "DELETED";
             return await base.EditAsync(invoice);
+        }
+        public async Task EditAsPayAsync(Invoice dataUpdate)
+        {
+            var listInvoiceDetail = _salon_hairContext.InvoiceDetail.Where(e => e.InvoiceId == dataUpdate.Id).ToList();          
+            //add transaction customer-package
+            var listCustomerPackageTransaction = GetCustomerPackageTransactionsByInvoiceDetail(dataUpdate, listInvoiceDetail);
+            await _salon_hairContext.CustomerPackageTransaction.AddRangeAsync(listCustomerPackageTransaction);
+            //Get Warehoure Transaction
+            var warehouseTransactionByInvoice = WarehouseTransactionByInvoice(dataUpdate, listInvoiceDetail);
+            _salon_hairContext.WarehouseTransaction.Add(warehouseTransactionByInvoice);
+            _salon_hairContext.Invoice.Update(dataUpdate);
+            await _salon_hairContext.SaveChangesAsync();
+        }
+        private List<CustomerPackageTransaction> GetCustomerPackageTransactionsByInvoiceDetail(Invoice dataUpdate, List<InvoiceDetail> invoiceDetails)
+        {
+            //Get list package
+            var listPackge = invoiceDetails
+                .Where(e => e.Status.Equals(OBJECTSTATUS.ENABLE))
+                .Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE));
+
+            var listCustomerPackageTransaction = new List<CustomerPackageTransaction>();
+            listPackge.ToList().ForEach(e => {
+                listCustomerPackageTransaction.Add(new CustomerPackageTransaction
+                {
+                    CreatedBy = dataUpdate.CreatedBy,
+                    Created = DateTime.Now,
+                    Action = e.IsPaid.Value ? CUSTOMERPACKAGETRANSACTIONACTION.USE : CUSTOMERPACKAGETRANSACTIONACTION.PAY,
+                    CustomerId = dataUpdate.CustomerId,
+                    PackageId = e.ObjectId,
+                    Quantity = e.Quantity,
+                    SalonId = dataUpdate.SalonId,
+                    SalonBranchId = dataUpdate.SalonBranchId
+                });
+            });
+            return listCustomerPackageTransaction;
+        } 
+        private WarehouseTransaction WarehouseTransactionByInvoice(Invoice invoice, List<InvoiceDetail> invoiceDetails)
+        {
+            WarehouseTransaction warehouseTransaction = new WarehouseTransaction
+            {
+                Action = WAREHOUSETRANSATIONACTION.SALE,
+                Created = DateTime.Now,
+                CreatedBy = invoice.CreatedBy,
+                InvoiceId = invoice.Id,
+                SalonBranchId = invoice.SalonBranchId,
+                SalonId = invoice.SalonId,
+            };
+            var listWarehouseTransactionDetail = new List<WarehouseTransactionDetail>();
+
+          
+            invoiceDetails.ForEach(e =>
+            {
+                switch (e.ObjectType)
+                {   //Product
+                    case INVOICEOBJECTTYPE.PRODUCT:
+                        listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
+                        {
+                            ProductId = e.ObjectId,
+                            Quantity = e.Quantity,                            
+                        });
+                    break;
+                        //service
+                    case INVOICEOBJECTTYPE.SERVICE:
+                        var products = _salon_hairContext.Service.Find(e.ObjectId).ServiceProduct;
+                        products.ToList().ForEach(x =>
+                        {
+                            listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
+                            {
+                                ProductId = x.ProductId,
+                                Quantity = 0,
+                                TotalVolume = x.Quota * e.Quantity,
+                            });
+                        });
+                    break;
+                    case INVOICEOBJECTTYPE.PACKAGE:
+                        if (e.IsPaid.Value)
+                        {
+                            var listService = _salon_hairContext.ServicePackage
+                            .Include(c => c.Service)
+                            .ThenInclude(c => c.ServiceProduct.ToList());
+                            listService.ForEachAsync(x => {
+                                x.Service.ServiceProduct.ToList().ForEach(v =>
+                                {
+                                    listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
+                                    {
+                                        ProductId = v.ProductId,
+                                        Quantity = 0,
+                                        TotalVolume = v.Quota * e.Quantity,
+                                    });
+                                });
+                            });
+                        }
+                    break;
+                };
+            });
+            warehouseTransaction.WarehouseTransactionDetail = listWarehouseTransactionDetail;
+            return warehouseTransaction;
+            
         }
     }
 }

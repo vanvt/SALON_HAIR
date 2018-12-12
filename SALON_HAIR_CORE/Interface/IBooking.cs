@@ -1,12 +1,13 @@
 
+using System.Threading.Tasks;
 using SALON_HAIR_CORE.Repository;
 using SALON_HAIR_ENTITY.Entities;
 
 namespace SALON_HAIR_CORE.Interface
 {
-    public interface IBooking: IGenericRepository<Booking>
+    public interface IBooking : IGenericRepository<Booking>
     {
-
+        Task EditAsyncOnetoManyAsync(Booking booking);
     }
 }
 

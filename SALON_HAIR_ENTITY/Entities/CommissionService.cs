@@ -17,6 +17,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public string CommissionUnit { get; set; }
         public decimal? CommissionValue { get; set; }
+        public string CommissionServiceUnit { get; set; }
+        public decimal? CommissionServiceValue { get; set; }
 
         public SalonBranch SalonBranch { get; set; }
         public Service Service { get; set; }

@@ -5,6 +5,11 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class BookingDetail
     {
+        public BookingDetail()
+        {
+            BookingDetailService = new HashSet<BookingDetailService>();
+        }
+
         public long Id { get; set; }
         public DateTime? Created { get; set; }
         public string CreatedBy { get; set; }
@@ -12,11 +17,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public DateTime? Updated { get; set; }
         public string UpdatedBy { get; set; }
         public long BookingId { get; set; }
-        public long ServiceId { get; set; }
-        public long? StaffId { get; set; }
+        public bool? NoteStatus { get; set; }
+        public string Note { get; set; }
 
         public Booking Booking { get; set; }
-        public Service Service { get; set; }
-        public Staff Staff { get; set; }
+        public ICollection<BookingDetailService> BookingDetailService { get; set; }
     }
 }
