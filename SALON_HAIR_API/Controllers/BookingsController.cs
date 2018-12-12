@@ -18,10 +18,10 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly ISysObjectAutoIncreament _sysObjectAutoIncreament;
         private readonly IBooking _booking;
-        private readonly IBookingCustomer _bookingCustomer;
+        private readonly IBookingDetail _bookingCustomer;
         private readonly IUser _user;
 
-        public BookingsController(IBookingCustomer bookingCustomer,ISysObjectAutoIncreament sysObjectAutoIncreament,IBooking booking, IUser user)
+        public BookingsController(IBookingDetail bookingCustomer,ISysObjectAutoIncreament sysObjectAutoIncreament,IBooking booking, IUser user)
         {
             _bookingCustomer = bookingCustomer;
             _booking = booking;
@@ -51,8 +51,8 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 var booking = await _booking.FindAsync(id);
-                var bookingCustomer = _bookingCustomer.FindBy(e => e.BookingId == id).Include(e => e.BookingCustomerService);
-                booking.BookingCustomer = await bookingCustomer.ToListAsync();
+                var bookingCustomer = _bookingCustomer.FindBy(e => e.BookingId == id).Include(e => e.BookingDetailService);
+                booking.BookingDetail= await bookingCustomer.ToListAsync();
                 if (booking == null)
                 {
                     return NotFound();
@@ -81,7 +81,7 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                await _booking.EditAsync(booking);
+                await _booking.EditAsyncOnetoManyAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
 

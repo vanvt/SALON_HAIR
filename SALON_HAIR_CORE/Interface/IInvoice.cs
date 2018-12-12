@@ -1,12 +1,13 @@
 
+using System.Threading.Tasks;
 using SALON_HAIR_CORE.Repository;
 using SALON_HAIR_ENTITY.Entities;
 
 namespace SALON_HAIR_CORE.Interface
 {
-    public interface IInvoice: IGenericRepository<Invoice>
+    public interface IInvoice : IGenericRepository<Invoice>
     {
-
+        Task EditAsPayAsync(Invoice dataUpdate);
     }
 }
 

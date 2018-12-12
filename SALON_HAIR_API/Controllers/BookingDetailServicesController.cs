@@ -14,12 +14,12 @@ namespace SALON_HAIR_API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class BookingCustomerServicesController : CustomControllerBase
+    public class BookingDetailServicesController : CustomControllerBase
     {
-        private readonly IBookingCustomerService _bookingCustomerService;
+        private readonly IBookingDetailService _bookingCustomerService;
         private readonly IUser _user;
 
-        public BookingCustomerServicesController(IBookingCustomerService bookingCustomerService, IUser user)
+        public BookingDetailServicesController(IBookingDetailService bookingCustomerService, IUser user)
         {
             _bookingCustomerService = bookingCustomerService;
             _user = user;
@@ -60,7 +60,7 @@ namespace SALON_HAIR_API.Controllers
 
         // PUT: api/BookingCustomerServices/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookingCustomerService([FromRoute] long id, [FromBody] BookingCustomerService bookingCustomerService)
+        public async Task<IActionResult> PutBookingCustomerService([FromRoute] long id, [FromBody] BookingDetailService bookingCustomerService)
         {
             if (!ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace SALON_HAIR_API.Controllers
 
         // POST: api/BookingCustomerServices
         [HttpPost]
-        public async Task<IActionResult> PostBookingCustomerService([FromBody] BookingCustomerService bookingCustomerService)
+        public async Task<IActionResult> PostBookingCustomerService([FromBody] BookingDetailService bookingCustomerService)
         {
 
             try
@@ -150,7 +150,7 @@ namespace SALON_HAIR_API.Controllers
 
         private bool BookingCustomerServiceExists(long id)
         {
-            return _bookingCustomerService.Any<BookingCustomerService>(e => e.Id == id);
+            return _bookingCustomerService.Any<BookingDetailService>(e => e.Id == id);
         }
     }
 }

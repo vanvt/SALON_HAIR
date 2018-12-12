@@ -13,6 +13,7 @@ namespace SALON_HAIR_ENTITY.Entities
             CurrencyUnit = new HashSet<CurrencyUnit>();
             Customer = new HashSet<Customer>();
             CustomerChannel = new HashSet<CustomerChannel>();
+            CustomerPackage = new HashSet<CustomerPackage>();
             PaymentBanking = new HashSet<PaymentBanking>();
             PaymentMethod = new HashSet<PaymentMethod>();
             Product = new HashSet<Product>();
@@ -49,6 +50,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CurrencyUnit> CurrencyUnit { get; set; }
         public ICollection<Customer> Customer { get; set; }
         public ICollection<CustomerChannel> CustomerChannel { get; set; }
+        public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<PaymentBanking> PaymentBanking { get; set; }
         public ICollection<PaymentMethod> PaymentMethod { get; set; }
         public ICollection<Product> Product { get; set; }

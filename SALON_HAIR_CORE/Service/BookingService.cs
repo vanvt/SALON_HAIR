@@ -5,6 +5,7 @@ using SALON_HAIR_CORE.Interface;
 using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -46,6 +47,42 @@ namespace SALON_HAIR_CORE.Service
         {
             booking.Status = "DELETED";
             return await base.EditAsync(booking);
+        }
+
+        public async Task EditAsyncOnetoManyAsync(Booking booking)
+        {
+            //check BookingCustomer
+            //deleted all old BookingCustomer
+            var listNeedDelete = _salon_hairContext.BookingDetail
+                .Where(e => e.BookingId == booking.Id)
+                .Where(e => !booking.BookingDetail.Select(x => x.Id).Contains(e.Id));
+            _salon_hairContext.BookingDetail.RemoveRange(listNeedDelete);
+            //update BookingCustomer by new Entity
+            var listNeedUpdate = booking.BookingDetail.Where(e=>e.Id!=default);
+            foreach (var item in listNeedUpdate)
+            {
+                //check BookingCustomerService
+                //deleted all old BookingCustomerService
+                var listBookingCustomerSeriveNeedDelete = _salon_hairContext.BookingDetailService
+               .Where(e => e.BookingDetailId == item.Id)
+               .Where(e => !item.BookingDetailService.Select(x => x.Id).Contains(e.Id));
+                _salon_hairContext.BookingDetailService.RemoveRange(listBookingCustomerSeriveNeedDelete);
+
+                ///update BookingCustomerSerive  by new Entity
+                var listBookingCustomerSeriveNeedUpdate = item.BookingDetailService.Where(e => e.Id != default);
+                _salon_hairContext.BookingDetailService.UpdateRange(listBookingCustomerSeriveNeedUpdate);
+                // add new BookingCustomerSerive
+                var listBookingCustomerSeriveNeedToAdd = item.BookingDetailService.Where(e => e.Id == default);
+                _salon_hairContext.BookingDetailService.AddRange(listBookingCustomerSeriveNeedToAdd);
+            }
+
+
+            _salon_hairContext.BookingDetail.UpdateRange(listNeedUpdate);
+            // add new BookingCustomer
+            var listNeedToAdd =  booking.BookingDetail.Where(e => e.Id == default);
+            _salon_hairContext.BookingDetail.AddRange(listNeedToAdd);
+            _salon_hairContext.Booking.Update(booking);
+           await _salon_hairContext.SaveChangesAsync();
         }
     }
 }

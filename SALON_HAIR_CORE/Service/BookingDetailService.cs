@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SALON_HAIR_CORE.Service
 {
-    public class BookingDetailService: GenericRepository<BookingDetail> ,IBookingDetail
+    public class BookingDetailService : GenericRepository<BookingDetail>, IBookingDetail
     {
         private salon_hairContext _salon_hairContext;
         public BookingDetailService(salon_hairContext salon_hairContext) : base(salon_hairContext)
@@ -22,8 +22,8 @@ namespace SALON_HAIR_CORE.Service
             base.Edit(bookingDetail);
         }
         public async new Task<int> EditAsync(BookingDetail bookingDetail)
-        {            
-            bookingDetail.Updated = DateTime.Now;         
+        {
+            bookingDetail.Updated = DateTime.Now;
             return await base.EditAsync(bookingDetail);
         }
         public new async Task<int> AddAsync(BookingDetail bookingDetail)

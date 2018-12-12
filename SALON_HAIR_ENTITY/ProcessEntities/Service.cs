@@ -9,7 +9,7 @@ namespace SALON_HAIR_ENTITY.ProcessedEntities
     {
         public Service()
         {
-            BookingDetail = new HashSet<BookingDetail>();
+           
             CommissionDetail = new HashSet<DiscountUnit>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
             ServicePackage = new HashSet<ServicePackage>();
@@ -36,9 +36,7 @@ namespace SALON_HAIR_ENTITY.ProcessedEntities
         public Salon Salon { get; set; }
         public SalonBranch SalonBranchCreate { get; set; }
         public ServiceCategory ServiceCategory { get; set; }
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public ICollection<BookingDetail> BookingDetail { get; set; }
+      
         [JsonIgnore]
         [IgnoreDataMember]
         public ICollection<DiscountUnit> CommissionDetail { get; set; }

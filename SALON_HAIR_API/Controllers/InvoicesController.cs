@@ -233,10 +233,10 @@ namespace SALON_HAIR_API.Controllers
                 dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
                 //status 2 : cancel
                 dataUpdate.InvoiceStatusId = 2;
-                var t1 =   _invoice.EditAsync(dataUpdate);              
+                await _invoice.EditAsPayAsync(dataUpdate);              
              
                 dataUpdate = _invoice.LoadAllReference(dataUpdate);
-                await t1;
+               
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataUpdate);
 
             }
