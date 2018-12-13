@@ -75,7 +75,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                paymentMethod.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                paymentMethod.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _paymentMethod.EditAsync(paymentMethod);
                 return CreatedAtAction("GetPaymentMethod", new { id = paymentMethod.Id }, paymentMethod);
             }
@@ -109,7 +109,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                paymentMethod.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                paymentMethod.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _paymentMethod.AddAsync(paymentMethod);
                 return CreatedAtAction("GetPaymentMethod", new { id = paymentMethod.Id }, paymentMethod);
             }

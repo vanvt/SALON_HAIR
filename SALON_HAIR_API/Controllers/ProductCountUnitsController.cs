@@ -72,7 +72,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                productCountUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                productCountUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _productCountUnit.EditAsync(productCountUnit);
                 return CreatedAtAction("GetProductCountUnit", new { id = productCountUnit.Id }, productCountUnit);
             }
@@ -106,7 +106,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                productCountUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                productCountUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _productCountUnit.AddAsync(productCountUnit);
                 return CreatedAtAction("GetProductCountUnit", new { id = productCountUnit.Id }, productCountUnit);
             }

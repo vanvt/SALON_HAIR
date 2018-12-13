@@ -71,7 +71,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                discountUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                discountUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _discountUnit.EditAsync(discountUnit);
                 return CreatedAtAction("GetDiscountUnit", new { id = discountUnit.Id }, discountUnit);
             }
@@ -105,7 +105,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                discountUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                discountUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _discountUnit.AddAsync(discountUnit);
                 return CreatedAtAction("GetDiscountUnit", new { id = discountUnit.Id }, discountUnit);
             }

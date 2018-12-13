@@ -79,15 +79,14 @@ namespace SALON_HAIR_API.Controllers
         public async Task<IActionResult> GetInvoice([FromRoute] long id)
         {
             try
-            {
-              
+            {              
                 var start = DateTime.Now;
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
                 var invoices =  _invoice.FindBy(e=>e.Id==id);
-                invoices = _invoice.LoadAllCollecttion(invoices, nameof(InvoiceStaffArrangement));
+                invoices = _invoice.LoadAllCollecttion(invoices, nameof(InvoiceStaffArrangement),nameof(WarehouseTransaction));
                 invoices = _invoice.LoadAllInclude(invoices);              
                 var dataturn = await invoices.FirstOrDefaultAsync();           
                 var end = DateTime.Now;
@@ -115,7 +114,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
 
                 await _invoice.EditAsync(invoice);
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
@@ -151,8 +150,8 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                invoice.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                invoice.SalonId =  long.Parse( JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("salonId")));
+                invoice.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                invoice.SalonId =  long.Parse( JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.SALONID)));
                 await _invoice.AddAsync(invoice);
                 invoice = _invoice.LoadAllReference(invoice);
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
@@ -225,21 +224,20 @@ namespace SALON_HAIR_API.Controllers
             {
                 return BadRequest();
             }
-            if (PAYSTATUS.PAID.Equals(invoice.PaymentStatus))
-            {
-                throw new UnexpectedException(invoice, new Exception("Hóa  đơn này đã được thanh toán rồi."));
-            }
+          
             try
             {
-                var dataUpdate = _invoice.Find(id);               
-                dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                var dataUpdate = _invoice.Find(id);
+                if (PAYSTATUS.PAID.Equals(dataUpdate.PaymentStatus))
+                {
+                    throw new UnexpectedException(invoice, new Exception("Hóa  đơn này đã được thanh toán rồi."));
+                }
+
+                dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 dataUpdate.IsDisplay = false;
                 dataUpdate.NotePayment = invoice.NotePayment;
                 dataUpdate.Total = invoice.Total;
-                dataUpdate.InvoicePayment = invoice.InvoicePayment;
-                //dataUpdate.DiscountUnit= invoice.DiscountUnit;
-                //dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
-                //status 2 : cancel
+                dataUpdate.InvoicePayment = invoice.InvoicePayment;               
                 dataUpdate.PaymentStatus = PAYSTATUS.PAID;
                 await _invoice.EditAsPayAsync(dataUpdate);              
              

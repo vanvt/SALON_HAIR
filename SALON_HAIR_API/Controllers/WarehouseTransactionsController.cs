@@ -72,7 +72,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                warehouseDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                warehouseDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _warehouseDetail.EditAsync(warehouseDetail);
                 return CreatedAtAction("GetWarehouseDetail", new { id = warehouseDetail.Id }, warehouseDetail);
             }
@@ -107,7 +107,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 warehouseDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
-                warehouseDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                warehouseDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _warehouseDetail.AddAsync(warehouseDetail);
                 return CreatedAtAction("GetWarehouseDetail", new { id = warehouseDetail.Id }, warehouseDetail);
             }

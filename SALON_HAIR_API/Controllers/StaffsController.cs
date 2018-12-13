@@ -40,15 +40,9 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetStaff(long salonBranchId =0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _staff.SearchAllFileds(keyword);
-               data = data.get
-            if (salonBranchId != 0)
-            {
-                var listStaffAvailable = _staffSalonBranch
-               .FindBy(e => e.SalonBranchId == salonBranchId)
-               .Where(e => e.Status.Equals("ENABLE"))
-               .Select(e => e.StaffId);
-                data = data.Where(e => listStaffAvailable.Contains(e.Id));
-            }
+
+            data = GetByCurrentSalon(data);
+            //data = GetByCurrentSpaBranch(data);            
             var dataReturn = _staff.LoadAllInclude(data);
             dataReturn = dataReturn.Include(e => e.StaffSalonBranch);
             return OkList(dataReturn);          
@@ -98,7 +92,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw new BadRequestException("Không thể tạo nhân có hai sản dịch vụ nhau được babe");
                 }
-                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                staff.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _staff.EditMany2ManyAsync(staff);
                 //staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
@@ -136,20 +130,7 @@ namespace SALON_HAIR_API.Controllers
                 if (staff.StaffService.Select(e => e.ServiceId).Count() != staff.StaffService.Select(e => e.ServiceId).Distinct().Count())
                 {
                     throw new BadRequestException("Không thể tạo nhân có hai sản dịch vụ nhau được babe");
-                }
-                //staff.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("email"));
-                //await _staff.AddMany2ManyAsync(staff);
-                //var title = await _staffTitle.FindAsync( staff.StaffTitleId.Value);
-                //staff.StaffTitle = title;
-                //var groupCommision = await  _commissionGroup.FindAsync(staff.StaffCommisionGroupId);
-                //staff.StaffCommisionGroup = groupCommision;
-                //staff.StaffService = _staffService.FindBy(e => e.StaffId == staff.Id).Include(e => e.Service).ToList();
-                //if(staff.PhotoId!= default)
-                //{
-                //    staff.Photo =await _photo.FindAsync(staff.PhotoId);
-                //}
-
-                //_staff.Entry()
+                }              
                 await  _staff.AddAsync(staff);
                 return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
             }
@@ -234,8 +215,6 @@ namespace SALON_HAIR_API.Controllers
             }
             return data;
         }
-       
- 
         private IQueryable<Staff> GetByCurrentSalon(IQueryable<Staff> data)
         {
             data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));

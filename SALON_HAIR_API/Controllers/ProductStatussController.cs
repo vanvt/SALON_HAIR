@@ -74,7 +74,7 @@ namespace SALON_HAIR_API.Controllers
         //    }
         //    try
         //    {
-        //        productStatus.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+        //        productStatus.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
         //        await _productStatus.EditAsync(productStatus);
         //        return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
         //    }
@@ -109,7 +109,7 @@ namespace SALON_HAIR_API.Controllers
         //        {
         //            return BadRequest(ModelState);
         //        }
-        //        productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+        //        productStatus.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
         //        await _productStatus.AddAsync(productStatus);
         //        return CreatedAtAction("GetProductStatus", new { id = productStatus.Id }, productStatus);
         //    }
