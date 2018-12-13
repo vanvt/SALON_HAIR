@@ -76,13 +76,30 @@ namespace SALON_HAIR_CORE.Service
                 _salon_hairContext.BookingDetailService.AddRange(listBookingCustomerSeriveNeedToAdd);
             }
 
-
             _salon_hairContext.BookingDetail.UpdateRange(listNeedUpdate);
             // add new BookingCustomer
             var listNeedToAdd =  booking.BookingDetail.Where(e => e.Id == default);
             _salon_hairContext.BookingDetail.AddRange(listNeedToAdd);
             _salon_hairContext.Booking.Update(booking);
            await _salon_hairContext.SaveChangesAsync();
+        }
+
+        public async Task AddRemoveNoNeedAsync(Booking booking)
+        {
+            if (booking.Customer != null)
+            {
+                if (booking.CustomerId == booking.Customer.Id)
+                {
+                    booking.Customer = null;
+                }
+            }
+            booking.BookingDetail.ToList().ForEach(e => {
+                e.BookingDetailService.ToList().ForEach(a => {
+                    a.Service = null;
+                });
+            });          
+            booking.Created = DateTime.Now;
+             await base.AddAsync(booking);
         }
     }
 }

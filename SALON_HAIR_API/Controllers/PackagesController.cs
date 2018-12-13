@@ -20,8 +20,10 @@ namespace SALON_HAIR_API.Controllers
         private readonly IPackageSalonBranch _packageSalonBranch;
         private readonly IUser _user;
         private readonly IServicePackage _servicePackage;
-        public PackagesController(IPackageSalonBranch packageSalonBranch,IServicePackage servicePackage,IPackage package, IUser user)
+        private readonly ICustomerPackage _customerPackage;
+        public PackagesController(ICustomerPackage customerPackage, IPackageSalonBranch packageSalonBranch,IServicePackage servicePackage,IPackage package, IUser user)
         {
+            _customerPackage = customerPackage;
             _packageSalonBranch = packageSalonBranch;
             _servicePackage = servicePackage;
             _package = package;
@@ -45,6 +47,21 @@ namespace SALON_HAIR_API.Controllers
             }
             var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);          
             return OkList(dataReturn);
+        }
+        [HttpGet("by-customer/{customerId}")]
+        public IActionResult GetPackageByCustomer(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var customerPackage = _customerPackage.FindBy(e => e.CustomerId == customerId);
+            customerPackage = customerPackage.Include(e => e.Package);
+            if (customerPackage == null)
+            {
+                return NotFound();
+            }
+            return OkList(customerPackage);
         }
 
         [HttpGet("setting")]

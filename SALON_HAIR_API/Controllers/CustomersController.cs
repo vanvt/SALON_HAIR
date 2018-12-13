@@ -164,7 +164,7 @@ namespace SALON_HAIR_API.Controllers
                 return OkList(new List<PackgeAvailable>().AsQueryable());
             var listInvoiceDetail = _invoiceDetail.GetAll().Where(
                 e => e.Invoice.CustomerId == id &&
-                e.Invoice.InvoiceStatusId == 2 &&
+                e.Invoice.PaymentStatus.Equals(PAYSTATUS.PAID) &&
                 e.ObjectType.Equals("PACKAGE")
                 );
             var listPackage = from a in listInvoiceDetail

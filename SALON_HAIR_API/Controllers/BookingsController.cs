@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using System.Security.Claims;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -21,7 +23,7 @@ namespace SALON_HAIR_API.Controllers
         private readonly IBookingDetail _bookingCustomer;
         private readonly IUser _user;
 
-        public BookingsController(IBookingDetail bookingCustomer,ISysObjectAutoIncreament sysObjectAutoIncreament,IBooking booking, IUser user)
+        public BookingsController(IBookingDetail bookingCustomer, ISysObjectAutoIncreament sysObjectAutoIncreament, IBooking booking, IUser user)
         {
             _bookingCustomer = bookingCustomer;
             _booking = booking;
@@ -31,16 +33,26 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Bookings
         [HttpGet]
-        public IActionResult GetBooking(long salonBranchId  = 0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            
-            var data = _booking.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")))
-                ;
-            var dataReturn =   _booking.LoadAllInclude(data);
+            var data = _booking.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            //data = GetByCurrentSpaBranch(data);
+            var dataReturn = _booking.LoadAllInclude(data);
             return OkList(dataReturn);
         }
         // GET: api/Bookings/5
+        [HttpGet("by-customer/{customerId}")]
+        public IActionResult GetBooking(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        {
+            var data = _booking.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);
+            data = data.Where(e => e.CustomerId == customerId);
+            var dataReturn = _booking.LoadAllInclude(data);
+            return OkList(dataReturn);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBooking([FromRoute] long id)
         {
@@ -52,7 +64,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 var booking = await _booking.FindAsync(id);
                 var bookingCustomer = _bookingCustomer.FindBy(e => e.BookingId == id).Include(e => e.BookingDetailService);
-                booking.BookingDetail= await bookingCustomer.ToListAsync();
+                booking.BookingDetail = await bookingCustomer.ToListAsync();
                 if (booking == null)
                 {
                     return NotFound();
@@ -62,7 +74,7 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                  throw new UnexpectedException(id, e);
+                throw new UnexpectedException(id, e);
             }
         }
 
@@ -95,11 +107,10 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
-
-                  throw new UnexpectedException(booking,e);
+                throw new UnexpectedException(booking, e);
             }
         }
 
@@ -107,7 +118,6 @@ namespace SALON_HAIR_API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostBooking([FromBody] Booking booking)
         {
-
             try
             {
                 if (!ModelState.IsValid)
@@ -115,21 +125,20 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                booking.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
+                //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
+
                 booking.BookingCode = "ES" + _sysObjectAutoIncreament.
                     GetCodeByObjectAsync(nameof(Booking), booking.SalonId).
                     Result.ObjectIndex.ToString("000000");
 
-                await _booking.AddAsync(booking);
+                await _booking.AddRemoveNoNeedAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
             catch (Exception e)
             {
-                throw new UnexpectedException(booking,e);
+                throw new UnexpectedException(booking, e);
             }
-          
         }
-
         // DELETE: api/Bookings/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking([FromRoute] long id)
@@ -155,14 +164,28 @@ namespace SALON_HAIR_API.Controllers
             catch (Exception e)
             {
 
-                throw new UnexpectedException(id,e);
+                throw new UnexpectedException(id, e);
             }
-          
-        }
 
+        }
         private bool BookingExists(long id)
         {
             return _booking.Any<Booking>(e => e.Id == id);
+        }
+        private IQueryable<Booking> GetByCurrentSpaBranch(IQueryable<Booking> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<Booking> GetByCurrentSalon(IQueryable<Booking> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

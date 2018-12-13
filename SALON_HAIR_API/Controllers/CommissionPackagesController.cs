@@ -71,11 +71,25 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(commissionPackge,e);
             }
         }
+        private IQueryable<Booking> GetByCurrentSpaBranch(IQueryable<Booking> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
 
-    
-      
-       
-       
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<Booking> GetByCurrentSalon(IQueryable<Booking> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            return data;
+        }
+
+
+
+
     }
 }
 

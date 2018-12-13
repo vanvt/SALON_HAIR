@@ -20,13 +20,11 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly ICommissionProduct _commissionProduct;
         private readonly IUser _user;
-
         public CommissionProductsController(ICommissionProduct commissionProduct, IUser user)
         {
             _commissionProduct = commissionProduct;
             _user = user;
         }
-
         // GET: api/CommissionProducts
         [HttpGet("{salonBranchId}/{staffId}")]
         public IActionResult GetCommissionProduct(long salonBranchId, long staffId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
@@ -41,7 +39,6 @@ namespace SALON_HAIR_API.Controllers
             dataReturn = dataReturn.Include(e => e.Product).ThenInclude(e => e.ProductCategory);
             return OkList(dataReturn);
         }
-
         // PUT: api/CommissionProducts/5
         [HttpPut]
         public async Task<IActionResult> PutCommissionProduct([FromRoute] long salonId,[FromBody] CommissionProductVM commissionProduct)
