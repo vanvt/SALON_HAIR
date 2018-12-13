@@ -119,8 +119,10 @@ namespace SALON_HAIR_CORE.Service
             };
             var listWarehouseTransactionDetail = new List<WarehouseTransactionDetail>();
 
+
+            //invoiceDetails.ForEach(e =>
+            foreach (var e in invoiceDetails)
           
-            invoiceDetails.ForEach(e =>
             {
                 switch (e.ObjectType)
                 {   //Product
@@ -133,8 +135,8 @@ namespace SALON_HAIR_CORE.Service
                     break;
                         //service
                     case INVOICEOBJECTTYPE.SERVICE:
-                        var products = _salon_hairContext.Service.Find(e.ObjectId).ServiceProduct;
-                        products.ToList().ForEach(x =>
+                        var serviceProduct = _salon_hairContext.ServiceProduct.Where(x => x.ServiceId == e.ObjectId);
+                        serviceProduct.ToList().ForEach(x =>
                         {
                             listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
                             {
@@ -147,10 +149,12 @@ namespace SALON_HAIR_CORE.Service
                     case INVOICEOBJECTTYPE.PACKAGE:
                         if (e.IsPaid.Value)
                         {
-                            var listService = _salon_hairContext.ServicePackage
+                            var listService = _salon_hairContext.ServicePackage.Where(c=>c.PackageId == e.ObjectId)
                             .Include(c => c.Service)
-                            .ThenInclude(c => c.ServiceProduct.ToList());
-                            listService.ForEachAsync(x => {
+                            .ThenInclude(c => c.ServiceProduct);
+
+                            foreach (var x in listService)
+                            {
                                 x.Service.ServiceProduct.ToList().ForEach(v =>
                                 {
                                     listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
@@ -160,11 +164,11 @@ namespace SALON_HAIR_CORE.Service
                                         TotalVolume = v.Quota * e.Quantity,
                                     });
                                 });
-                            });
+                            }
                         }
                     break;
                 };
-            });
+            };
             warehouseTransaction.WarehouseTransactionDetail = listWarehouseTransactionDetail;
             return warehouseTransaction;
             

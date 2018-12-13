@@ -23,9 +23,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public long? CustomerId { get; set; }
-        public long InvoiceStatusId { get; set; }
         public string DiscountUnit { get; set; }
-        public float? DiscountUnitValue { get; set; }
+        public float DiscountValue { get; set; }
         public long? CashierId { get; set; }
         public long? SalesmanId { get; set; }
         public bool? IsDisplay { get; set; }
@@ -33,11 +32,12 @@ namespace SALON_HAIR_ENTITY.Entities
         public decimal? Total { get; set; }
         public string NotePayment { get; set; }
         public string NoteArrangement { get; set; }
-        public decimal? ExcessCash { get; set; }
+        public decimal? CashBack { get; set; }
+        public decimal TotalDetails { get; set; }
+        public string PaymentStatus { get; set; }
 
         public User Cashier { get; set; }
         public Customer Customer { get; set; }
-        public InvoiceStatus InvoiceStatus { get; set; }
         public Staff Salesman { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }

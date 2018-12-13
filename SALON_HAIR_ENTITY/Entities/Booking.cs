@@ -22,7 +22,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? CustomerId { get; set; }
         public DateTime? Date { get; set; }
         public int? NumberCustomer { get; set; }
-        public long? BookingStatusId { get; set; }
+        public string BookingStatus { get; set; }
         public string Note { get; set; }
         public bool? IsSameService { get; set; }
         public long? CustomerChannelId { get; set; }
@@ -30,7 +30,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string ColorCode { get; set; }
         public string BookingCode { get; set; }
 
-        public BookingStatus BookingStatus { get; set; }
         public Customer Customer { get; set; }
         public CustomerChannel CustomerChannel { get; set; }
         public Salon Salon { get; set; }

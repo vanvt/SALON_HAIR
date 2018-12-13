@@ -6,9 +6,9 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class salon_hairContext : DbContext
     {
-        //public salon_hairContext()
-        //{
-        //}
+        public salon_hairContext()
+        {
+        }
 
         public salon_hairContext(DbContextOptions<salon_hairContext> options)
             : base(options)
@@ -176,7 +176,7 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("booking");
 
-                entity.HasIndex(e => e.BookingStatusId)
+                entity.HasIndex(e => e.BookingStatus)
                     .HasName("booking_status_idx");
 
                 entity.HasIndex(e => e.CustomerChannelId)
@@ -202,9 +202,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("booking_code")
                     .HasColumnType("varchar(405)");
 
-                entity.Property(e => e.BookingStatusId)
-                    .HasColumnName("booking_status_id")
-                    .HasColumnType("bigint(20)");
+                entity.Property(e => e.BookingStatus)
+                    .HasColumnName("booking_status")
+                    .HasColumnType("varchar(200)")
+                    .HasDefaultValueSql("'NEW'");
 
                 entity.Property(e => e.ColorCode)
                     .HasColumnName("color_code")
@@ -267,11 +268,6 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
-
-                entity.HasOne(d => d.BookingStatus)
-                    .WithMany(p => p.Booking)
-                    .HasForeignKey(d => d.BookingStatusId)
-                    .HasConstraintName("booking_status");
 
                 entity.HasOne(d => d.CustomerChannel)
                     .WithMany(p => p.Booking)
@@ -1292,15 +1288,17 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.CustomerId)
                     .HasName("invoice_customer_idx");
 
-                entity.HasIndex(e => e.InvoiceStatusId)
-                    .HasName("invoice_status_idx");
-
                 entity.HasIndex(e => e.SalesmanId)
                     .HasName("invoice_salesman_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.CashBack)
+                    .HasColumnName("cash_back")
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.CashierId)
                     .HasColumnName("cashier_id")
@@ -1328,16 +1326,9 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnType("varchar(255)")
                     .HasDefaultValueSql("'MONEY'");
 
-                entity.Property(e => e.DiscountUnitValue).HasColumnName("discount_unit_value");
-
-                entity.Property(e => e.ExcessCash)
-                    .HasColumnName("excess_cash")
-                    .HasColumnType("decimal(10,0)");
-
-                entity.Property(e => e.InvoiceStatusId)
-                    .HasColumnName("invoice_status_id")
-                    .HasColumnType("bigint(20)")
-                    .HasDefaultValueSql("'1'");
+                entity.Property(e => e.DiscountValue)
+                    .HasColumnName("discount_value")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.IsDisplay)
                     .IsRequired()
@@ -1356,6 +1347,12 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.NotePayment)
                     .HasColumnName("note_payment")
                     .HasColumnType("text");
+
+                entity.Property(e => e.PaymentStatus)
+                    .IsRequired()
+                    .HasColumnName("payment_status")
+                    .HasColumnType("varchar(450)")
+                    .HasDefaultValueSql("'UNPAID'");
 
                 entity.Property(e => e.SalesmanId)
                     .HasColumnName("salesman_id")
@@ -1377,7 +1374,13 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.Total)
                     .HasColumnName("total")
-                    .HasColumnType("decimal(20,3)");
+                    .HasColumnType("decimal(20,3)")
+                    .HasDefaultValueSql("'0.000'");
+
+                entity.Property(e => e.TotalDetails)
+                    .HasColumnName("total_details")
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")
@@ -1396,12 +1399,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .WithMany(p => p.Invoice)
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("invoice_customer");
-
-                entity.HasOne(d => d.InvoiceStatus)
-                    .WithMany(p => p.Invoice)
-                    .HasForeignKey(d => d.InvoiceStatusId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("invoice_status_status");
 
                 entity.HasOne(d => d.Salesman)
                     .WithMany(p => p.Invoice)
@@ -3113,6 +3110,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.Enum)
                     .HasColumnName("enum")
                     .HasColumnType("varchar(500)");
+
+                entity.Property(e => e.Group)
+                    .HasColumnName("group")
+                    .HasColumnType("varchar(450)");
 
                 entity.Property(e => e.Key)
                     .HasColumnName("key")

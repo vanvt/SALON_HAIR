@@ -8,6 +8,7 @@ namespace SALON_HAIR_CORE.Interface
     public interface IBooking : IGenericRepository<Booking>
     {
         Task EditAsyncOnetoManyAsync(Booking booking);
+        Task AddRemoveNoNeedAsync(Booking booking);
     }
 }
 

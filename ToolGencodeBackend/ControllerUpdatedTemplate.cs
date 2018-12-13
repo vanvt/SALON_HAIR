@@ -160,7 +160,23 @@ namespace SALON_HAIR_API.Controllers
         {
             return _{InstanceName}.Any<{ClassName}>(e => e.Id == id);
         }
-    }
+
+        private IQueryable<{ClassName}> GetByCurrentSpaBranch(IQueryable<{ClassName}> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<{ClassName}> GetByCurrentSalon(IQueryable<{ClassName}> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
+        }
+}
 }
 
 "

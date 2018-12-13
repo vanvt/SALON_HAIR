@@ -29,10 +29,14 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/SettingAdvances
         [HttpGet]
-        public IActionResult GetSettingAdvance(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetSettingAdvance(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",string group="")
         {
             var data = _settingAdvance.SearchAllFileds(keyword)
-                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            if (!string.IsNullOrEmpty(group))
+            {
+                data = data.Where(e => e.Group.Equals(group));
+            }
             var dataReturn =   _settingAdvance.LoadAllInclude(data);
             SettingAdvanceVM settingAdvanceVM = new SettingAdvanceVM();
             settingAdvanceVM.settingAdvances = dataReturn.ToList() ;

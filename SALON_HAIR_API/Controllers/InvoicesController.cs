@@ -37,18 +37,15 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/Invoices
         [HttpGet]
-        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="",long currentSalonBranchId = 0)
+        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = ""
+            ,bool isDisplay=false,string date ="")
         {
-          
-            date += "";
-         
+            var data = _invoice.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            //data = GetByCurrentSpaBranch(data);
+            date += "";         
             var datetime = DateTime.Now;
-            var data = _invoice.SearchAllFileds(keyword)
-                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
-            if (currentSalonBranchId != 0)
-            {
-                data = data.Where(e => e.SalonBranchId == currentSalonBranchId);
-            }
+
             DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
             if (datetime == new DateTime())
             {
@@ -60,14 +57,24 @@ namespace SALON_HAIR_API.Controllers
             {
                 data = data.Where(e => e.IsDisplay.Value);                        
             }         
+            var dataReturn = _invoice.LoadAllInclude(data,nameof(WarehouseTransaction));
+
+            return OkList(dataReturn);
+        }
+
+
+        [HttpGet("by-customer/{customerId}")]
+        public IActionResult GetInvoice(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        {
+            var data = _invoice.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);
+            data = data.Where(e => e.CustomerId == customerId);
             var dataReturn = _invoice.LoadAllInclude(data);
-           
-           
             return OkList(dataReturn);
         }
         // GET: api/Invoices/5
-        [MeasureController("GetInvoice")]
-    
+        [MeasureController("GetInvoice")]   
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice([FromRoute] long id)
         {
@@ -109,6 +116,7 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+
                 await _invoice.EditAsync(invoice);
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
                 //var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
@@ -217,7 +225,7 @@ namespace SALON_HAIR_API.Controllers
             {
                 return BadRequest();
             }
-            if (invoice.InvoiceStatusId == 2)
+            if (PAYSTATUS.PAID.Equals(invoice.PaymentStatus))
             {
                 throw new UnexpectedException(invoice, new Exception("Hóa  đơn này đã được thanh toán rồi."));
             }
@@ -229,10 +237,10 @@ namespace SALON_HAIR_API.Controllers
                 dataUpdate.NotePayment = invoice.NotePayment;
                 dataUpdate.Total = invoice.Total;
                 dataUpdate.InvoicePayment = invoice.InvoicePayment;
-                dataUpdate.DiscountUnit = invoice.DiscountUnit;
-                dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
+                //dataUpdate.DiscountUnit= invoice.DiscountUnit;
+                //dataUpdate.DiscountUnitValue = invoice.DiscountUnitValue;
                 //status 2 : cancel
-                dataUpdate.InvoiceStatusId = 2;
+                dataUpdate.PaymentStatus = PAYSTATUS.PAID;
                 await _invoice.EditAsPayAsync(dataUpdate);              
              
                 dataUpdate = _invoice.LoadAllReference(dataUpdate);
@@ -257,7 +265,7 @@ namespace SALON_HAIR_API.Controllers
                 return null;
             var listInvoiceDetail = _invoiceDetail.GetAll().Where(
                 e => e.Invoice.CustomerId == customerId && 
-                e.Invoice.InvoiceStatusId == 2 && 
+                e.Invoice.PaymentStatus.Equals(PAYSTATUS.PAID) && 
                 e.ObjectType.Equals("PACKAGE") 
                        
                 );
@@ -273,6 +281,21 @@ namespace SALON_HAIR_API.Controllers
                               };
             listPackage = listPackage.Where(e => e.NumberRemaining > 0);
             return listPackage;
+        }
+        private IQueryable<Invoice> GetByCurrentSpaBranch(IQueryable<Invoice> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<Invoice> GetByCurrentSalon(IQueryable<Invoice> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            return data;
         }
     }
 }
