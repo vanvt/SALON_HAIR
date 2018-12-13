@@ -74,7 +74,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                paymentBanking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                paymentBanking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _paymentBanking.EditAsync(paymentBanking);
                 return CreatedAtAction("GetPaymentBanking", new { id = paymentBanking.Id }, paymentBanking);
             }
@@ -108,7 +108,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                paymentBanking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                paymentBanking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _paymentBanking.AddAsync(paymentBanking);
                 return CreatedAtAction("GetPaymentBanking", new { id = paymentBanking.Id }, paymentBanking);
             }

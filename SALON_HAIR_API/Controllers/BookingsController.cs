@@ -92,7 +92,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _booking.EditAsyncOnetoManyAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
@@ -124,7 +124,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
 
                 booking.BookingCode = "ES" + _sysObjectAutoIncreament.

@@ -72,7 +72,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                currencyUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                currencyUnit.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _currencyUnit.EditAsync(currencyUnit);
                 return CreatedAtAction("GetCurrencyUnit", new { id = currencyUnit.Id }, currencyUnit);
             }
@@ -106,7 +106,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                currencyUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                currencyUnit.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _currencyUnit.AddAsync(currencyUnit);
                 return CreatedAtAction("GetCurrencyUnit", new { id = currencyUnit.Id }, currencyUnit);
             }

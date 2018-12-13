@@ -75,7 +75,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                serviceCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                serviceCategory.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _serviceCategory.EditAsync(serviceCategory);
                 return CreatedAtAction("GetServiceCategory", new { id = serviceCategory.Id }, serviceCategory);
             }
@@ -109,7 +109,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                serviceCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                serviceCategory.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _serviceCategory.AddAsync(serviceCategory);
                 return CreatedAtAction("GetServiceCategory", new { id = serviceCategory.Id }, serviceCategory);
             }

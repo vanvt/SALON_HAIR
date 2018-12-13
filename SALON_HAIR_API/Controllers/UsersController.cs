@@ -20,8 +20,10 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly ISecurityHelper SecurityHelper;
         private readonly IUser _user;
-        public UsersController(IUser user, ISecurityHelper SecurityHelper)
+        private readonly IUserSalonBranch _userSalonBranch;
+        public UsersController(IUserSalonBranch userSalonBranch, IUser user, ISecurityHelper SecurityHelper)
         {
+            _userSalonBranch = userSalonBranch;
             this.SecurityHelper = SecurityHelper;
             _user = user;
         }
@@ -30,10 +32,10 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetUser(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _user.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            // var dataReturn =   _user.LoadAllInclude(data);
-             data = data.Include(e => e.UserAuthority);
+            var data = _user.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            //data = GetByCurrentSpaBranch(data);            
+            data = data.Include(e => e.UserAuthority);
             data = data.Include(e => e.UserSalonBranch);
             return OkList(data);
         }
@@ -129,7 +131,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                //user.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 user.PasswordHash = string.IsNullOrEmpty(user.Password) ? _user.FindBy(e => e.Id == id).AsNoTracking().FirstOrDefault().PasswordHash :
                SecurityHelper.BCryptPasswordEncoder(user.Password);
                 await _user.EditMany2ManyAsync(user);
@@ -166,7 +168,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 user.PasswordHash = SecurityHelper.BCryptPasswordEncoder(user.Password);
-                user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _user.AddAsync(user);
                 return CreatedAtAction("GetUser", new { id = user.Id }, user);
             }
@@ -211,6 +213,26 @@ namespace SALON_HAIR_API.Controllers
         private bool UserExists(long id)
         {
             return _user.Any<User>(e => e.Id == id);
+        }
+        private IQueryable<User> GetByCurrentSpaBranch(IQueryable<User> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                
+                    var listPackageAvailable = _userSalonBranch
+                   .FindBy(e => e.SpaBranchId == currentSalonBranch)
+                   .Where(e => e.Status.Equals("ENABLE"))
+                   .Select(e => e.UserId);
+                    data = data.Where(e => listPackageAvailable.Contains(e.Id));                
+            }
+            return data;
+        }
+        private IQueryable<User> GetByCurrentSalon(IQueryable<User> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

@@ -76,7 +76,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-               // photo.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+               // photo.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _photo.EditAsync(photo);
                 return CreatedAtAction("GetPhoto", new { id = photo.Id }, photo);
             }

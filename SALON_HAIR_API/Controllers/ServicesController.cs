@@ -87,7 +87,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw new BadRequestException("Không th? t?o serive có hai s?n ph?m gi?ng nhau du?c babe");
                 }
-                service.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                service.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _service.EditMany2ManyAsync(service);
 
                 var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x => x.Unit);
@@ -126,7 +126,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
 
-                service.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                service.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                
                 await _service.AddAsync(service);
                 var serviceProduct = _serviceProduct.GetAll().Where(e => e.ServiceId == service.Id).Include(e => e.Product).ThenInclude(x => x.Unit);

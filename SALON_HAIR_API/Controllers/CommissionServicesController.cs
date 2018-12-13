@@ -51,7 +51,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                commissionService.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                commissionService.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 //Edit level Product
                 if (commissionService.ServiceId != 0)
                 {

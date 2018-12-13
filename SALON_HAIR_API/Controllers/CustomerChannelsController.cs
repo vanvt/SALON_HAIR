@@ -73,7 +73,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                customerChannel.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                customerChannel.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _customerChannel.EditAsync(customerChannel);
                 return CreatedAtAction("GetCustomerChannel", new { id = customerChannel.Id }, customerChannel);
             }
@@ -107,7 +107,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                customerChannel.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                customerChannel.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _customerChannel.AddAsync(customerChannel);
                 return CreatedAtAction("GetCustomerChannel", new { id = customerChannel.Id }, customerChannel);
             }

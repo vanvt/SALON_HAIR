@@ -82,7 +82,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail.Updated = DateTime.Now;
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;
@@ -137,7 +137,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 invoiceDetail.Created = DateTime.Now;
                 switch (invoiceDetail.ObjectType)
