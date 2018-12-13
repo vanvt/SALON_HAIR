@@ -30,9 +30,12 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetWarehouse(long warehouseStatusId=0, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var currentSalonBranchId = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+          
             var data = _warehouse.GetAll().Where
                   (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -40,7 +43,7 @@ namespace SALON_HAIR_API.Controllers
                 .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))).Select(e => e.Id).ToList();
                 data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
             }
-            data = data.Where(e => e.SalonBranchId == currentSalonBranchId);
+          
             if (warehouseStatusId != 0)
             {
                 data = data.Where(e => e.WarehouseStatusId == warehouseStatusId);
@@ -166,6 +169,21 @@ namespace SALON_HAIR_API.Controllers
         private bool WarehouseExists(long id)
         {
             return _warehouse.Any<Warehouse>(e => e.Id == id);
+        }
+        private IQueryable<Warehouse> GetByCurrentSpaBranch(IQueryable<Warehouse> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<Warehouse> GetByCurrentSalon(IQueryable<Warehouse> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

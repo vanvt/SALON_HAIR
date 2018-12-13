@@ -19,9 +19,10 @@ namespace SALON_HAIR_API.Controllers
         private readonly IService _service;
         private readonly IServiceProduct _serviceProduct;
         private readonly IUser _user;
-
-        public ServicesController(IServiceProduct serviceProduct, IService service, IUser user)
+        private readonly IServiceSalonBranch _serviceSalonBranch;
+        public ServicesController(IServiceSalonBranch serviceSalonBranch,IServiceProduct serviceProduct, IService service, IUser user)
         {
+            _serviceSalonBranch = serviceSalonBranch;
             _service = service;
             _user = user;
             _serviceProduct = serviceProduct;
@@ -34,7 +35,6 @@ namespace SALON_HAIR_API.Controllers
             var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType)
                 .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
-
             if (serviceCategoryId != 0)
             {
                 data = data.Where(e => e.ServiceCategoryId == serviceCategoryId)
@@ -145,7 +145,6 @@ namespace SALON_HAIR_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteService([FromRoute] long id)
         {
-
             try
             {
                 if (!ModelState.IsValid)
@@ -174,6 +173,25 @@ namespace SALON_HAIR_API.Controllers
         private bool ServiceExists(long id)
         {
             return _service.Any<Service>(e => e.Id == id);
+        }
+        private IQueryable<Service> GetByCurrentSpaBranch(IQueryable<Service> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                var listPackageAvailable = _serviceSalonBranch
+               .FindBy(e => e.SalonBranchId == currentSalonBranch)
+               .Where(e => e.Status.Equals("ENABLE"))
+               .Select(e => e.ServiceId);
+                data = data.Where(e => listPackageAvailable.Contains(e.Id));
+            }
+            return data;
+        }
+        private IQueryable<Product> GetByCurrentSalon(IQueryable<Product> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

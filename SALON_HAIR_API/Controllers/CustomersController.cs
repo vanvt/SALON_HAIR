@@ -156,34 +156,49 @@ namespace SALON_HAIR_API.Controllers
             }
           
         }
-        [HttpGet("get-package-available/{id}")]
-        public IActionResult GetPackgeAvailablesByCustomerId(long? id)
-        {
+        //[HttpGet("get-package-available/{id}")]
+        //public IActionResult GetPackgeAvailablesByCustomerId(long? id)
+        //{
 
-            if (id == 0)
-                return OkList(new List<PackgeAvailable>().AsQueryable());
-            var listInvoiceDetail = _invoiceDetail.GetAll().Where(
-                e => e.Invoice.CustomerId == id &&
-                e.Invoice.PaymentStatus.Equals(PAYSTATUS.PAID) &&
-                e.ObjectType.Equals("PACKAGE")
-                );
-            var listPackage = from a in listInvoiceDetail
-                              join c in _package.GetAll() on a.ObjectId equals c.Id
-                              group a by c into b
-                              select new PackgeAvailable
-                              {
-                                  NumberOfPayed = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity),
-                                  NumberOfUsed = b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
-                                  NumberRemaining = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity) - b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
-                                  Package = b.Key
-                              };
-            listPackage = listPackage.Where(e => e.NumberRemaining > 0);
-            return OkList(listPackage);
-        }
+        //    if (id == 0)
+        //        return OkList(new List<PackgeAvailable>().AsQueryable());
+        //    var listInvoiceDetail = _invoiceDetail.GetAll().Where(
+        //        e => e.Invoice.CustomerId == id &&
+        //        e.Invoice.PaymentStatus.Equals(PAYSTATUS.PAID) &&
+        //        e.ObjectType.Equals("PACKAGE")
+        //        );
+        //    var listPackage = from a in listInvoiceDetail
+        //                      join c in _package.GetAll() on a.ObjectId equals c.Id
+        //                      group a by c into b
+        //                      select new PackgeAvailable
+        //                      {
+        //                          NumberOfPayed = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity),
+        //                          NumberOfUsed = b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
+        //                          NumberRemaining = b.Where(e => !e.IsPaid.Value).Sum(e => e.Quantity) - b.Where(e => e.IsPaid.Value).Sum(e => e.Quantity),
+        //                          Package = b.Key
+        //                      };
+        //    listPackage = listPackage.Where(e => e.NumberRemaining > 0);
+        //    return OkList(listPackage);
+        //}
 
         private bool CustomerExists(long id)
         {
             return _customer.Any<Customer>(e => e.Id == id);
+        }
+        private IQueryable<Customer> GetByCurrentSpaBranch(IQueryable<Customer> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<Customer> GetByCurrentSalon(IQueryable<Customer> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

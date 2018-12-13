@@ -90,6 +90,21 @@ namespace SALON_HAIR_API.Controllers
                 throw new UnexpectedException(commissionService, e);
             }
         }
+        private IQueryable<CommissionService> GetByCurrentSpaBranch(IQueryable<CommissionService> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<CommissionService> GetByCurrentSalon(IQueryable<CommissionService> data)
+        {
+            data = data.Where(e => e.SalonBranch.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
+        }
 
 
     }

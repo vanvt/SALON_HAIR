@@ -19,13 +19,15 @@ namespace SALON_HAIR_API.Controllers
     public class ProductsController : CustomControllerBase
     {
         private readonly IProduct _product;
+        private readonly IProductSalonBranch _productSalonBranch;
         private readonly IUser _user;
         private readonly IProductUnit _productUnit;
         private readonly IStatus _status;
         private readonly IPhoto _photo;
         private readonly IProductStatus _productStatus;
-        public ProductsController(IProductStatus productStatus, IStatus status, IProductUnit productUnit, IProduct product, IUser user, IPhoto photo)
+        public ProductsController(IProductSalonBranch productSalonBranch,IProductStatus productStatus, IStatus status, IProductUnit productUnit, IProduct product, IUser user, IPhoto photo)
         {
+            _productSalonBranch = productSalonBranch;
             _productStatus = productStatus;
             _photo = photo;
             _status = status;
@@ -37,8 +39,10 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProduct(int page = 1, int rowPerPage = 50, string keyword = "", long productCategoryId = 0, long productStatusId = 0)
         {
-            var data = _product.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+            var data = _product.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            //data = GetByCurrentSalon(da)
+                
             if (productCategoryId != 0)
             {
                 data = data.Where(e => e.ProductCategoryId == productCategoryId);
@@ -263,6 +267,25 @@ namespace SALON_HAIR_API.Controllers
                 throw new UnexpectedException(productsVM, e);
             }
 
+        }
+        private IQueryable<Product> GetByCurrentSpaBranch(IQueryable<Product> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+             var listPackageAvailable = _productSalonBranch
+            .FindBy(e => e.SalonBranchId == currentSalonBranch)
+            .Where(e => e.Status.Equals("ENABLE"))
+            .Select(e => e.ProductId);
+                data = data.Where(e => listPackageAvailable.Contains(e.Id));
+            }
+            return data;
+        }
+        private IQueryable<Product> GetByCurrentSalon(IQueryable<Product> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }
