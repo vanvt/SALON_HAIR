@@ -147,6 +147,21 @@ namespace SALON_HAIR_API.Controllers
             }
           
         }
+        [HttpGet("by-customer/{customerId}")]
+        public IActionResult GetPackageByCustomer(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var customerPackage = _customerPackage.FindBy(e => e.CustomerId == customerId);
+            customerPackage = customerPackage.Include(e => e.Package);
+            if (customerPackage == null)
+            {
+                return NotFound();
+            }
+            return OkList(customerPackage);
+        }
 
         private bool CustomerPackageExists(long id)
         {

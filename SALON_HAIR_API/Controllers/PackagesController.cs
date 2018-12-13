@@ -34,35 +34,27 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPackage(long salonBranchId = 0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _package.SearchAllFileds(keyword)
-              .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
-
-            if (salonBranchId != 0)
-            {
-                var listPackageAvailable = _packageSalonBranch
-                .FindBy(e => e.SalonBranchId == salonBranchId)
-                .Where(e => e.Status.Equals("ENABLE"))
-                .Select(e => e.PackageId);
-                data = data.Where(e => listPackageAvailable.Contains(e.Id));
-            }
+            var data = _package.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);          
             var dataReturn = data.Include(e=>e.ServicePackage).ThenInclude(x=>x.Service);          
             return OkList(dataReturn);
         }
-        [HttpGet("by-customer/{customerId}")]
-        public IActionResult GetPackageByCustomer(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var customerPackage = _customerPackage.FindBy(e => e.CustomerId == customerId);
-            customerPackage = customerPackage.Include(e => e.Package);
-            if (customerPackage == null)
-            {
-                return NotFound();
-            }
-            return OkList(customerPackage);
-        }
+        //[HttpGet("by-customer/{customerId}")]
+        //public IActionResult GetPackageByCustomer(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+        //    var customerPackage = _customerPackage.FindBy(e => e.CustomerId == customerId);
+        //    customerPackage = customerPackage.Include(e => e.Package);
+        //    if (customerPackage == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return OkList(customerPackage);
+        //}
 
         [HttpGet("setting")]
         public IActionResult GetPackageSetting(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
@@ -271,6 +263,25 @@ namespace SALON_HAIR_API.Controllers
 
                 throw;
             }
+        }
+        private IQueryable<Package> GetByCurrentSpaBranch(IQueryable<Package> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                var listPackageAvailable = _packageSalonBranch
+               .FindBy(e => e.SalonBranchId == currentSalonBranch)
+               .Where(e => e.Status.Equals("ENABLE"))
+               .Select(e => e.PackageId);
+                data = data.Where(e => listPackageAvailable.Contains(e.Id));
+            }
+            return data;
+        }
+        private IQueryable<Package> GetByCurrentSalon(IQueryable<Package> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

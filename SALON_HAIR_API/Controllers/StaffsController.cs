@@ -39,9 +39,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetStaff(long salonBranchId =0,int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _staff.SearchAllFileds(keyword)
-                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
-
+            var data = _staff.SearchAllFileds(keyword);
+               data = data.get
             if (salonBranchId != 0)
             {
                 var listStaffAvailable = _staffSalonBranch
@@ -198,7 +197,7 @@ namespace SALON_HAIR_API.Controllers
         }
         [HttpPut("change-status/{id}")]
         public async Task<IActionResult> ChangeStatusAsync([FromBody] Staff staff, [FromRoute] long id)
-        {         
+        {
             try
             {
                 if (!ModelState.IsValid)
@@ -220,6 +219,27 @@ namespace SALON_HAIR_API.Controllers
             {
                 throw new UnexpectedException(staff, e);
             }
+        }
+        private IQueryable<Staff> GetByCurrentSpaBranch(IQueryable<Staff> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                var listPackageAvailable = _staffSalonBranch
+               .FindBy(e => e.SalonBranchId == currentSalonBranch)
+               .Where(e => e.Status.Equals("ENABLE"))
+               .Select(e => e.StaffId);
+                data = data.Where(e => listPackageAvailable.Contains(e.Id));
+            }
+            return data;
+        }
+       
+ 
+        private IQueryable<Staff> GetByCurrentSalon(IQueryable<Staff> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

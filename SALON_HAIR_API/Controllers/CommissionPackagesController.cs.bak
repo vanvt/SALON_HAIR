@@ -71,8 +71,7 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(commissionPackge,e);
             }
         }
-
-        private IQueryable<CommissionPackage> GetByCurrentSpaBranch(IQueryable<CommissionPackage> data)
+        private IQueryable<Booking> GetByCurrentSpaBranch(IQueryable<Booking> data)
         {
             var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
 
@@ -82,11 +81,14 @@ namespace SALON_HAIR_API.Controllers
             }
             return data;
         }
-        private IQueryable<CommissionPackage> GetByCurrentSalon(IQueryable<CommissionPackage> data)
+        private IQueryable<Booking> GetByCurrentSalon(IQueryable<Booking> data)
         {
-            data = data.Where(e => e.SalonBranch.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             return data;
         }
+
+
+
 
     }
 }
