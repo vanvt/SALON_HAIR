@@ -42,7 +42,7 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _invoice.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);
-            //data = GetByCurrentSpaBranch(data);
+            data = GetByCurrentSpaBranch(data);
             date += "";         
             var datetime = DateTime.Now;
 
