@@ -231,6 +231,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("date")
                     .HasColumnType("datetime");
 
+                entity.Property(e => e.DateString)
+                    .HasColumnName("date_string")
+                    .HasColumnType("varchar(450)");
+
                 entity.Property(e => e.IsSameService)
                     .HasColumnName("is_same_service")
                     .HasColumnType("bit(1)");
