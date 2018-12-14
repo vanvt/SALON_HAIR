@@ -106,6 +106,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                var email = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                warehouseDetail.WarehouseTransactionDetail.ToList().ForEach(e => {
+                    e.Created = DateTime.Now;
+                    e.CreatedBy = email;
+                });
                 warehouseDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
                 warehouseDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _warehouseDetail.AddAsync(warehouseDetail);

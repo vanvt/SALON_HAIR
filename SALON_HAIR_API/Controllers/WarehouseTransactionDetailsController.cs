@@ -27,10 +27,18 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/WarehouseTransactionDetails
         [HttpGet]
-        public IActionResult GetWarehouseTransactionDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetWarehouseTransactionDetail(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = ""
+            ,long productId = 0,string action = "", string start = "",string end ="")
         {
+
             var data = _warehouseTransactionDetail.SearchAllFileds(keyword);
-            var dataReturn =   _warehouseTransactionDetail.LoadAllInclude(data);
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);
+            var dateRange = GetDateRangeQueryBack(start, end);
+            data = productId == 0 ? data : data.Where(e => e.ProductId == productId);
+            data = string.IsNullOrEmpty(action)? data : data.Where(e => e.WarehouseTransaction.Action.Equals(action));
+            data = data.Where(e => e.Created.Value.Date >= dateRange.Item1.Date && e.Created.Value.Date <= dateRange.Item2.Date.Date);
+            var dataReturn =  _warehouseTransactionDetail.LoadAllInclude(data);
             return OkList(dataReturn);
         }
         // GET: api/WarehouseTransactionDetails/5
@@ -151,6 +159,55 @@ namespace SALON_HAIR_API.Controllers
         private bool WarehouseTransactionDetailExists(long id)
         {
             return _warehouseTransactionDetail.Any<WarehouseTransactionDetail>(e => e.Id == id);
+        }
+        private IQueryable<WarehouseTransactionDetail> GetByCurrentSpaBranch(IQueryable<WarehouseTransactionDetail> data)
+        {
+            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+            if (currentSalonBranch != default || currentSalonBranch != 0)
+            {
+                data = data.Where(e => e.WarehouseTransaction.SalonBranchId == currentSalonBranch);
+            }
+            return data;
+        }
+        private IQueryable<WarehouseTransactionDetail> GetByCurrentSalon(IQueryable<WarehouseTransactionDetail> data)
+        {
+            data = data.Where(e => e.WarehouseTransaction.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
+        }
+        private Tuple<DateTime, DateTime> GetDateRangeQuery(string start, string end)
+        {
+            start += "";
+            end += "";
+            var st = DateTime.Now;
+            var en = DateTime.Now.AddDays(30.0);
+            if (!string.IsNullOrEmpty(start))
+            {
+
+                st = DateTime.Parse(start);
+            }
+            if (!string.IsNullOrEmpty(end))
+            {
+                en = DateTime.Parse(end);
+            }
+            return Tuple.Create(st, en);
+        }
+        private Tuple<DateTime, DateTime> GetDateRangeQueryBack(string start, string end)
+        {
+            start += "";
+            end += "";
+            var st = DateTime.Now.AddDays(-30); 
+            var en = DateTime.Now;
+            if (!string.IsNullOrEmpty(start))
+            {
+
+                st = DateTime.Parse(start);
+            }
+            if (!string.IsNullOrEmpty(end))
+            {
+                en = DateTime.Parse(end);
+            }
+            return Tuple.Create(st, en);
         }
     }
 }
