@@ -48,9 +48,15 @@ namespace SALON_HAIR_CORE.Service
             booking.Status = "DELETED";
             return await base.EditAsync(booking);
         }
-
         public async Task EditAsyncOnetoManyAsync(Booking booking)
         {
+            booking.BookingDetail.ToList().ForEach(e => {
+                e.BookingDetailService.ToList().ForEach(a => {
+                    a.Service = null;
+                });
+            });
+
+            booking.Customer = null;
             //check BookingCustomer
             //deleted all old BookingCustomer
             var listNeedDelete = _salon_hairContext.BookingDetail
@@ -70,9 +76,11 @@ namespace SALON_HAIR_CORE.Service
 
                 ///update BookingCustomerSerive  by new Entity
                 var listBookingCustomerSeriveNeedUpdate = item.BookingDetailService.Where(e => e.Id != default);
+               
                 _salon_hairContext.BookingDetailService.UpdateRange(listBookingCustomerSeriveNeedUpdate);
                 // add new BookingCustomerSerive
                 var listBookingCustomerSeriveNeedToAdd = item.BookingDetailService.Where(e => e.Id == default);
+              
                 _salon_hairContext.BookingDetailService.AddRange(listBookingCustomerSeriveNeedToAdd);
             }
 
@@ -83,7 +91,6 @@ namespace SALON_HAIR_CORE.Service
             _salon_hairContext.Booking.Update(booking);
            await _salon_hairContext.SaveChangesAsync();
         }
-
         public async Task AddRemoveNoNeedAsync(Booking booking)
         {
             if (booking.Customer != null)

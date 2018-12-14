@@ -106,9 +106,16 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                warehouseDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
+                var email = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                warehouseDetail.WarehouseTransactionDetail.ToList().ForEach(e => {
+                    e.Created = DateTime.Now;
+                    e.CreatedBy = email;
+                });
+                //warehouseDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, e => e.Type.Equals("salonId"));
+               
                 warehouseDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _warehouseDetail.AddAsync(warehouseDetail);
+
                 return CreatedAtAction("GetWarehouseDetail", new { id = warehouseDetail.Id }, warehouseDetail);
             }
             catch (Exception e)

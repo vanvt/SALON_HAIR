@@ -30,20 +30,18 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetWarehouse(long warehouseStatusId=0, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-          
-            var data = _warehouse.GetAll().Where
-                  (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+
+            var data = _warehouse.GetAll();
 
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
-
+            data = data.Where(e => !e.Product.Status.Equals("DELETED"));
             if (!string.IsNullOrEmpty(keyword))
             {
                 var listProductSearch = _product.SearchAllFileds(keyword)
                 .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))).Select(e => e.Id).ToList();
                 data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
-            }
-          
+            }          
             if (warehouseStatusId != 0)
             {
                 data = data.Where(e => e.WarehouseStatusId == warehouseStatusId);
@@ -61,7 +59,18 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var warehouse = await _warehouse.FindAsync(id);
+                var warehouse = await _warehouse.FindBy(e=>e.Id==id)
+                    .Include(e=>e.Product)
+                        .ThenInclude(e=>e.ProductCountUnit)
+                    .Include(e => e.Product)
+                        .ThenInclude(e=>e.Unit)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.ProductCategory)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.ProductStatus)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.Source)
+                    .FirstOrDefaultAsync();
 
                 if (warehouse == null)
                 {
