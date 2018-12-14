@@ -9,7 +9,7 @@ namespace XUnitTestProject1
         [Fact]
         public void booking()
         {
-            var client = new RestClient(ConfigTest.url+"bookings");
+            var client = new RestClient(ConfigTest.url+ "bookings/32");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");
