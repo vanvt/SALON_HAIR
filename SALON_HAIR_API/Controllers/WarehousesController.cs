@@ -41,8 +41,7 @@ namespace SALON_HAIR_API.Controllers
                 var listProductSearch = _product.SearchAllFileds(keyword)
                 .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))).Select(e => e.Id).ToList();
                 data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
-            }
-          
+            }          
             if (warehouseStatusId != 0)
             {
                 data = data.Where(e => e.WarehouseStatusId == warehouseStatusId);
@@ -60,7 +59,18 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var warehouse = await _warehouse.FindBy(e=>e.Id==id).Include(e=>e.Product).FirstOrDefaultAsync();
+                var warehouse = await _warehouse.FindBy(e=>e.Id==id)
+                    .Include(e=>e.Product)
+                        .ThenInclude(e=>e.ProductCountUnit)
+                    .Include(e => e.Product)
+                        .ThenInclude(e=>e.Unit)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.ProductCategory)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.ProductStatus)
+                    .Include(e => e.Product)
+                        .ThenInclude(e => e.Source)
+                    .FirstOrDefaultAsync();
 
                 if (warehouse == null)
                 {

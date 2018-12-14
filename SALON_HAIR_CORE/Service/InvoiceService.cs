@@ -116,6 +116,8 @@ namespace SALON_HAIR_CORE.Service
                 InvoiceId = invoice.Id,
                 SalonBranchId = invoice.SalonBranchId,
                 SalonId = invoice.SalonId,
+                Creator = invoice.CreatedBy,
+                Description = invoice.Note
             };
             var listWarehouseTransactionDetail = new List<WarehouseTransactionDetail>();
 
@@ -129,6 +131,8 @@ namespace SALON_HAIR_CORE.Service
                     case INVOICEOBJECTTYPE.PRODUCT:
                         listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
                         {
+                            CreatedBy = invoice.CreatedBy,                            
+                            Created = DateTime.Now,
                             ProductId = e.ObjectId,
                             Quantity = e.Quantity,                            
                         });
@@ -140,6 +144,8 @@ namespace SALON_HAIR_CORE.Service
                         {
                             listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
                             {
+                                CreatedBy = invoice.CreatedBy,
+                                Created = DateTime.Now,
                                 ProductId = x.ProductId,
                                 Quantity = 0,
                                 TotalVolume = x.Quota * e.Quantity,
@@ -159,9 +165,11 @@ namespace SALON_HAIR_CORE.Service
                                 {
                                     listWarehouseTransactionDetail.Add(new WarehouseTransactionDetail
                                     {
+                                        CreatedBy = invoice.CreatedBy,
+                                        Created = DateTime.Now,
                                         ProductId = v.ProductId,
                                         Quantity = 0,
-                                        TotalVolume = v.Quota * e.Quantity,
+                                        TotalVolume = v.Quota * e.Quantity,                                        
                                     });
                                 });
                             }

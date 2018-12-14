@@ -116,6 +116,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 warehouseTransactionDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _warehouseTransactionDetail.AddAsync(warehouseTransactionDetail);
+
                 return CreatedAtAction("GetWarehouseTransactionDetail", new { id = warehouseTransactionDetail.Id }, warehouseTransactionDetail);
             }
             catch (Exception e)
