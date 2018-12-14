@@ -33,11 +33,23 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/Bookings
         [HttpGet]
-        public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", string end = "", string start = "")
         {
+            var dataRange = GetDateRangeQuery(start, end);                       
             var data = _booking.SearchAllFileds(keyword);
+            data = data.Where(e => e.Date.Value.Date >= dataRange.Item1.Date && e.Date.Value.Date <= dataRange.Item2.Date.Date);
             data = GetByCurrentSalon(data);
-            //data = GetByCurrentSpaBranch(data);
+
+            if (orderType.Equals("asc"))
+            {
+                data = data.OrderBy(e => e.Date.Value);
+            }
+            else
+            {
+                data = data.OrderByDescending(e => e.Date.Value);
+            }
+
+            data = GetByCurrentSpaBranch(data);
             var dataReturn = _booking.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -92,6 +104,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
+                booking.Date = DateTime.Parse(booking.DateString);
                 booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _booking.EditAsyncOnetoManyAsync(booking);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
@@ -126,7 +139,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
-
+                booking.Date = DateTime.Parse(booking.DateString);
                 booking.BookingCode = "ES" + _sysObjectAutoIncreament.
                     GetCodeByObjectAsync(nameof(Booking), booking.SalonId).
                     Result.ObjectIndex.ToString("000000");
@@ -186,6 +199,24 @@ namespace SALON_HAIR_API.Controllers
         {
             data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
             return data;
+        }
+        private Tuple<DateTime ,DateTime> GetDateRangeQuery(string start,string end)
+        {
+            start += "";
+            end += "";
+            var st = DateTime.Now;
+            var en = DateTime.Now.AddDays(30.0);
+            if (!string.IsNullOrEmpty(start))
+            {
+                st = DateTime.Now;
+
+                st = DateTime.Parse(start);
+            }
+            if (!string.IsNullOrEmpty(end))
+            {
+                en = DateTime.Parse(end);
+            }
+            return Tuple.Create(st, en);
         }
     }
 }

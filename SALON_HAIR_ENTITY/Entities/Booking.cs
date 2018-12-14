@@ -29,6 +29,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? SourceChannelId { get; set; }
         public string ColorCode { get; set; }
         public string BookingCode { get; set; }
+        public string DateString { get; set; }
 
         public Customer Customer { get; set; }
         public CustomerChannel CustomerChannel { get; set; }
