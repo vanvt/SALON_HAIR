@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Invoice()
         {
+            InverseBooking = new HashSet<Invoice>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
             InvoicePayment = new HashSet<InvoicePayment>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
@@ -35,10 +36,13 @@ namespace SALON_HAIR_ENTITY.Entities
         public decimal? CashBack { get; set; }
         public decimal TotalDetails { get; set; }
         public string PaymentStatus { get; set; }
+        public long? BookingId { get; set; }
 
+        public Invoice Booking { get; set; }
         public User Cashier { get; set; }
         public Customer Customer { get; set; }
         public Staff Salesman { get; set; }
+        public ICollection<Invoice> InverseBooking { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }

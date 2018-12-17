@@ -56,7 +56,7 @@ namespace SALON_HAIR_API.Controllers
             if (isDisplay)
             {
                 data = data.Where(e => e.IsDisplay.Value);                        
-            }         
+            }
             var dataReturn = _invoice.LoadAllInclude(data,nameof(WarehouseTransaction));
 
             return OkList(dataReturn);

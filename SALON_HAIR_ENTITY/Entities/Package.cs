@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Package()
         {
+            Booking = new HashSet<Booking>();
             CommissionPackage = new HashSet<CommissionPackage>();
             CustomerPackage = new HashSet<CustomerPackage>();
             PackageSalonBranch = new HashSet<PackageSalonBranch>();
@@ -27,6 +28,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public int? NumberOfUse { get; set; }
         public int? UsedInMonth { get; set; }
 
+        public ICollection<Booking> Booking { get; set; }
         public ICollection<CommissionPackage> CommissionPackage { get; set; }
         public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }

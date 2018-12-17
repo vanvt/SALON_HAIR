@@ -50,4 +50,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public const string ISS = "iss";
         public const string AUD = "aud"; 
     }
+    public static class CASHBOOKTRANSACTIONACTION
+    {
+        public const string INCOME = "INCOME";
+        public const string OUTCOME = "OUTCOME";
+    }
 }

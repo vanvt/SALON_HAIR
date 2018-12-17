@@ -22,6 +22,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public virtual DbSet<BookingDetailService> BookingDetailService { get; set; }
         public virtual DbSet<BookingLog> BookingLog { get; set; }
         public virtual DbSet<BookingStatus> BookingStatus { get; set; }
+        public virtual DbSet<CashBook> CashBook { get; set; }
+        public virtual DbSet<CashBookTransaction> CashBookTransaction { get; set; }
         public virtual DbSet<CommissionPackage> CommissionPackage { get; set; }
         public virtual DbSet<CommissionProduct> CommissionProduct { get; set; }
         public virtual DbSet<CommissionService> CommissionService { get; set; }
@@ -191,6 +193,9 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.SalonId)
                     .HasName("booking_salon_idx");
 
+                entity.HasIndex(e => e.SelectedPackageId)
+                    .HasName("booking_selected_package_idx");
+
                 entity.HasIndex(e => e.SourceChannelId)
                     .HasName("booking_customer_source_idx");
 
@@ -255,6 +260,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("salon_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.SelectedPackageId)
+                    .HasColumnName("selected_package_id")
+                    .HasColumnType("bigint(20)");
+
                 entity.Property(e => e.SourceChannelId)
                     .HasColumnName("source_channel_id")
                     .HasColumnType("bigint(20)");
@@ -294,6 +303,11 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasForeignKey(d => d.SalonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("booking_salon");
+
+                entity.HasOne(d => d.SelectedPackage)
+                    .WithMany(p => p.Booking)
+                    .HasForeignKey(d => d.SelectedPackageId)
+                    .HasConstraintName("booking_selected_package");
 
                 entity.HasOne(d => d.SourceChannel)
                     .WithMany(p => p.Booking)
@@ -557,6 +571,172 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+            });
+
+            modelBuilder.Entity<CashBook>(entity =>
+            {
+                entity.ToTable("cash_book");
+
+                entity.HasIndex(e => e.SalonBranchId)
+                    .HasName("cash_book_branch_idx");
+
+                entity.HasIndex(e => e.SalonId)
+                    .HasName("cash_book_salon_idx");
+
+                entity.HasIndex(e => new { e.SalonBranchId, e.Day, e.Year, e.Month })
+                    .HasName("unique_index")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasColumnName("created_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.Day)
+                    .HasColumnName("day")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.EarlyFund)
+                    .HasColumnName("early_fund")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.EndFund)
+                    .HasColumnName("end_fund")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.Month)
+                    .HasColumnName("month")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.SalonBranchId)
+                    .HasColumnName("salon_branch_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonId)
+                    .HasColumnName("salon_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status")
+                    .HasColumnType("varchar(255)")
+                    .HasDefaultValueSql("'ENABLE'");
+
+                entity.Property(e => e.TotalExpenditure)
+                    .HasColumnName("total_expenditure")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.TotalRevenue)
+                    .HasColumnName("total_revenue")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.Updated)
+                    .HasColumnName("updated")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasColumnName("updated_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.Year)
+                    .HasColumnName("year")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.SalonBranch)
+                    .WithMany(p => p.CashBook)
+                    .HasForeignKey(d => d.SalonBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("cash_book_branch");
+
+                entity.HasOne(d => d.Salon)
+                    .WithMany(p => p.CashBook)
+                    .HasForeignKey(d => d.SalonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("cash_book_salon");
+            });
+
+            modelBuilder.Entity<CashBookTransaction>(entity =>
+            {
+                entity.ToTable("cash_book_transaction");
+
+                entity.HasIndex(e => e.SalonBranchId)
+                    .HasName("cash_book_transaction_branch_idx");
+
+                entity.HasIndex(e => e.SalonId)
+                    .HasName("cash_book_transaction_salon_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Action)
+                    .HasColumnName("action")
+                    .HasColumnType("varchar(45)");
+
+                entity.Property(e => e.Cashier)
+                    .HasColumnName("cashier")
+                    .HasColumnType("varchar(45)");
+
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasColumnType("varchar(45)");
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasColumnName("created_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("varchar(450)");
+
+                entity.Property(e => e.Money)
+                    .HasColumnName("money")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.SalonBranchId)
+                    .HasColumnName("salon_branch_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonId)
+                    .HasColumnName("salon_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status")
+                    .HasColumnType("varchar(255)")
+                    .HasDefaultValueSql("'ENABLE'");
+
+                entity.Property(e => e.Updated)
+                    .HasColumnName("updated")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasColumnName("updated_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.SalonBranch)
+                    .WithMany(p => p.CashBookTransaction)
+                    .HasForeignKey(d => d.SalonBranchId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("cash_book_transaction_branch");
+
+                entity.HasOne(d => d.Salon)
+                    .WithMany(p => p.CashBookTransaction)
+                    .HasForeignKey(d => d.SalonId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("cash_book_transaction_salon");
             });
 
             modelBuilder.Entity<CommissionPackage>(entity =>
@@ -1286,6 +1466,9 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("invoice");
 
+                entity.HasIndex(e => e.BookingId)
+                    .HasName("invoice_booking_idx");
+
                 entity.HasIndex(e => e.CashierId)
                     .HasName("invoice_cashier_idx");
 
@@ -1297,6 +1480,10 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.BookingId)
+                    .HasColumnName("booking_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.CashBack)
@@ -1393,6 +1580,11 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.Booking)
+                    .WithMany(p => p.InverseBooking)
+                    .HasForeignKey(d => d.BookingId)
+                    .HasConstraintName("invoice_booking");
 
                 entity.HasOne(d => d.Cashier)
                     .WithMany(p => p.Invoice)

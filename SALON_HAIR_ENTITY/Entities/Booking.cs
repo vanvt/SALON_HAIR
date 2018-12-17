@@ -30,11 +30,13 @@ namespace SALON_HAIR_ENTITY.Entities
         public string ColorCode { get; set; }
         public string BookingCode { get; set; }
         public string DateString { get; set; }
+        public long? SelectedPackageId { get; set; }
 
         public Customer Customer { get; set; }
         public CustomerChannel CustomerChannel { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
+        public Package SelectedPackage { get; set; }
         public CustomerSource SourceChannel { get; set; }
         public ICollection<BookingDetail> BookingDetail { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
