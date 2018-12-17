@@ -18,9 +18,10 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly ICashBookTransaction _cashBookTransaction;
         private readonly IUser _user;
-
-        public CashBookTransactionsController(ICashBookTransaction cashBookTransaction, IUser user)
+        private readonly ISysObjectAutoIncreament _sysObjectAutoIncreament;
+        public CashBookTransactionsController(ISysObjectAutoIncreament sysObjectAutoIncreament ,ICashBookTransaction cashBookTransaction, IUser user)
         {
+            _sysObjectAutoIncreament = sysObjectAutoIncreament;
             _cashBookTransaction = cashBookTransaction;
             _user = user;
         }
@@ -109,6 +110,9 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                cashBookTransaction.Code = "ES" + _sysObjectAutoIncreament.
+                   GetCodeByObjectAsync(nameof(CashBookTransaction), cashBookTransaction.SalonId).
+                   Result.ObjectIndex.ToString("000000");
                 cashBookTransaction.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _cashBookTransaction.AddAsync(cashBookTransaction);
                 return CreatedAtAction("GetCashBookTransaction", new { id = cashBookTransaction.Id }, cashBookTransaction);
