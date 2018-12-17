@@ -6,6 +6,8 @@ using SALON_HAIR_CORE.Repository;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace SALON_HAIR_CORE.Service
 {
@@ -55,8 +57,24 @@ namespace SALON_HAIR_CORE.Service
                     a.Service = null;
                 });
             });
-
-            booking.Customer = null;
+            if (booking.Customer != null)
+            {
+                if (booking.CustomerId == booking.Customer.Id)
+                {
+                    booking.Customer = null;
+                }
+                else if (booking.Customer.Id == default)
+                {
+                    //Add new customer while create booking.
+                    booking.Customer.CreatedBy = booking.CreatedBy;
+                    booking.Customer.Created = DateTime.Now;
+                    booking.Customer.SoucreCustomerId = booking.SourceChannelId;
+                    booking.Customer.ChannelCustomerId = booking.SourceChannelId;
+                }
+            }else
+            {
+                booking.Customer = null;
+            }
             //check BookingCustomer
             //deleted all old BookingCustomer
             var listNeedDelete = _salon_hairContext.BookingDetail
@@ -64,14 +82,20 @@ namespace SALON_HAIR_CORE.Service
                 .Where(e => !booking.BookingDetail.Select(x => x.Id).Contains(e.Id));
             _salon_hairContext.BookingDetail.RemoveRange(listNeedDelete);
             //update BookingCustomer by new Entity
+            var listBookingDetailServiceEffect = _salon_hairContext.BookingDetailService.Where(e => e.BookingDetail.BookingId == booking.Id).AsNoTracking().ToList();
             var listNeedUpdate = booking.BookingDetail.Where(e=>e.Id!=default);
             foreach (var item in listNeedUpdate)
             {
                 //check BookingCustomerService
                 //deleted all old BookingCustomerService
-                var listBookingCustomerSeriveNeedDelete = _salon_hairContext.BookingDetailService
+                // var listBookingCustomerSeriveNeedDelete = _salon_hairContext.BookingDetailService
+                //.Where(e => e.BookingDetailId == item.Id)
+                //.Where(e => !item.BookingDetailService.Select(x => x.Id).Contains(e.Id));
+
+                var listBookingCustomerSeriveNeedDelete = listBookingDetailServiceEffect
                .Where(e => e.BookingDetailId == item.Id)
                .Where(e => !item.BookingDetailService.Select(x => x.Id).Contains(e.Id));
+
                 _salon_hairContext.BookingDetailService.RemoveRange(listBookingCustomerSeriveNeedDelete);
 
                 ///update BookingCustomerSerive  by new Entity
@@ -99,6 +123,14 @@ namespace SALON_HAIR_CORE.Service
                 {
                     booking.Customer = null;
                 }
+                else if (booking.Customer.Id== default)
+                {
+                    //Add new customer while create booking.
+                    booking.Customer.CreatedBy = booking.CreatedBy;
+                    booking.Customer.Created = DateTime.Now;
+                    booking.Customer.SoucreCustomerId = booking.SourceChannelId;
+                    booking.Customer.ChannelCustomerId = booking.SourceChannelId;
+                }
             }
             booking.BookingDetail.ToList().ForEach(e => {
                 e.BookingDetailService.ToList().ForEach(a => {
@@ -106,8 +138,94 @@ namespace SALON_HAIR_CORE.Service
                 });
             });          
             booking.Created = DateTime.Now;
+            
              await base.AddAsync(booking);
+        }
+
+        public async Task EditAsyncCheckinAsync(Booking booking)
+        {
+            //Create new invoice
+
+
+            var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == booking.SalonId && e.ObjectName.Equals(nameof(Invoice))).FirstOrDefault();
+
+            if (indexObject == null)
+            {
+                indexObject = new SysObjectAutoIncreament
+                {
+                    SpaId = booking.SalonId,
+                    ObjectIndex = 1,
+                    ObjectName = nameof(Invoice)
+                };
+                await _salon_hairContext.SysObjectAutoIncreament.AddAsync(
+                 indexObject
+                    );
+            }
+            else
+            {
+                indexObject.ObjectIndex++;
+                _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
+            }
+
+
+            Invoice invoice = new Invoice
+            {
+                BookingId = booking.Id,
+                CustomerId = booking.CustomerId,
+                SalonBranchId = booking.SalonBranchId,
+                SalonId = booking.SalonId,
+                Code = "ES" + indexObject.ObjectIndex.ToString("000000")
+            };
+            var listServiceBooking = new List<InvoiceDetail>();
+         
+            //Get package selected from booking
+            if (booking.SelectedPackageId != default)
+            {
+                var package = _salon_hairContext.Package.Find(booking.SelectedPackageId);
+                InvoiceDetail packageSelected = new InvoiceDetail
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = booking.CreatedBy,
+                    IsPaid = true,
+                    ObjectId = booking.SelectedPackageId,
+                    ObjectName = package.Name,
+                    ObjectPrice = 0,
+                    ObjectType = INVOICEOBJECTTYPE.PACKAGE,
+                    Quantity = 1,
+
+                };
+                listServiceBooking.Add(packageSelected);
+            }
+           
+           
+            //Get services 
+           var listService =  _salon_hairContext.BookingDetailService.Where(e => e.BookingDetail.BookingId == booking.Id)
+                .AsNoTracking().GroupBy(e=>e.Service).Select(e=>new {Service = e.Key ,ServiceCount =  e.Count()});
+           await listService.ForEachAsync(e => {
+                listServiceBooking.Add(new InvoiceDetail
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = booking.CreatedBy,
+                    IsPaid = false,
+                    ObjectId = e.Service.Id,
+                    ObjectName = e.Service.Name,
+                    ObjectType = INVOICEOBJECTTYPE.SERVICE,
+                    ObjectPrice = e.Service.Price,
+                    Quantity = e.ServiceCount,
+                    Total = e.Service.Price * e.ServiceCount,
+                    
+                });
+            });
+            booking.BookingStatus = BOOKINGSTATUS.CHECKIN;
+            booking.Updated = DateTime.Now;
+            booking.UpdatedBy = booking.CreatedBy;
+
+            invoice.InvoiceDetail = listServiceBooking;
+
+            _salon_hairContext.Invoice.Add(invoice);          
+            _salon_hairContext.Booking.Update(booking);
+         await  _salon_hairContext.SaveChangesAsync();
+
         }
     }
 }
-    

@@ -36,25 +36,13 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetBooking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", string end = "", string start = "",string bookingStatus="")
         {
-            var dataRange = GetDateRangeQuery(start, end);                       
             var data = _booking.SearchAllFileds(keyword);
+            var dataRange = GetDateRangeQuery(start, end);                                  
             data = data.Where(e => e.Date.Value.Date >= dataRange.Item1.Date && e.Date.Value.Date <= dataRange.Item2.Date.Date);
             data = GetByCurrentSalon(data);
-            if (!string.IsNullOrEmpty(bookingStatus))
-            {
-                data = data.Where(e => e.BookingStatus.Equals(bookingStatus));
-            }
-
-            if (orderType.Equals("asc"))
-            {
-                data = data.OrderBy(e => e.Date.Value);
-            }
-            else
-            {
-                data = data.OrderByDescending(e => e.Date.Value);
-            }
-
             data = GetByCurrentSpaBranch(data);
+            data = string.IsNullOrEmpty(bookingStatus)? data: data.Where(e => e.BookingStatus.Equals(bookingStatus));           
+            data = OrderBy(data, orderType);
             var dataReturn = _booking.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -80,7 +68,8 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 var booking =  _booking.GetAll().Where(c=>c.Id == id);
-                booking = _booking.LoadAllInclude(booking).Include(e=>e.BookingDetail).ThenInclude(e=>e.BookingDetailService);
+                booking = _booking.LoadAllInclude(booking)
+                    .Include(e=>e.BookingDetail).ThenInclude(e=>e.BookingDetailService);
 
                 var data = await booking.FirstOrDefaultAsync();
                 if (data == null)
@@ -149,7 +138,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
-                //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));
+                //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));               
                 booking.Date = DateTime.Parse(booking.DateString);
                 booking.BookingCode = "ES" + _sysObjectAutoIncreament.
                     GetCodeByObjectAsync(nameof(Booking), booking.SalonId).
@@ -192,6 +181,43 @@ namespace SALON_HAIR_API.Controllers
             }
 
         }
+        [HttpPut("checkin/{id}")]
+        public async Task<IActionResult> CheckinBooking([FromRoute] long id, [FromBody] Booking booking)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != booking.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                booking.Date = DateTime.Parse(booking.DateString);
+                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                await _booking.EditAsyncCheckinAsync(booking);
+                booking.Customer = _customer.Find(booking.CustomerId);
+                return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BookingExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(booking, e);
+            }
+        }
+
         private bool BookingExists(long id)
         {
             return _booking.Any<Booking>(e => e.Id == id);
@@ -228,6 +254,18 @@ namespace SALON_HAIR_API.Controllers
             }
             return Tuple.Create(st, en);
         }
+        private IQueryable<Booking> OrderBy(IQueryable<Booking> data,string orderType )
+        {
+            if (orderType.Equals("asc"))
+            {
+                data = data.OrderBy(e => e.Date.Value);
+            }
+            else
+            {
+                data = data.OrderByDescending(e => e.Date.Value);
+            }
+            return data;
+        }
+
     }
 }
-

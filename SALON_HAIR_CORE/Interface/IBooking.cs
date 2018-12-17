@@ -9,6 +9,7 @@ namespace SALON_HAIR_CORE.Interface
     {
         Task EditAsyncOnetoManyAsync(Booking booking);
         Task AddRemoveNoNeedAsync(Booking booking);
+        Task EditAsyncCheckinAsync(Booking booking);
     }
 }
 

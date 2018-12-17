@@ -78,6 +78,8 @@ namespace ToolGencodeBackend
 
 
 
+
+
             System.IO.File.WriteAllText($@"C:\Users\votha\OneDrive\Desktop\test\GlobalFilterQuery.cs", GlobalFilterQuery.GenGlobalFilterQuery(db));
             System.IO.File.WriteAllText($@"C:\Users\votha\OneDrive\Desktop\test\DependencyInjection.cs", DependencyInjection.GenDependencyInjection(db));
 

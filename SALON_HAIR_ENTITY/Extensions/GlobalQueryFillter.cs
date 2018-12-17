@@ -15,6 +15,8 @@ namespace SALON_HAIR_ENTITY.Entities
             builder.Entity<BookingLog>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CashBook>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CashBookTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionProduct>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CurrencyUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
