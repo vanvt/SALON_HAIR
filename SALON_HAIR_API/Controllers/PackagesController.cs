@@ -78,17 +78,19 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                var package = await _package.FindAsync(id);
-
+                var package = await _package.GetAll().Where(e => e.Id == id).FirstOrDefaultAsync();
+               
                 if (package == null)
                 {
+
                     return NotFound();
                 }
+                var servicePackage = _servicePackage.FindBy(e => e.PackageId == id).Include(e => e.Service);
+                package.ServicePackage = servicePackage.ToList();
                 return Ok(package);
             }
             catch (Exception e)
             {
-
                   throw new UnexpectedException(id, e);
             }
         }

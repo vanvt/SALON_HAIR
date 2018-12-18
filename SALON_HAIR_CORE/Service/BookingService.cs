@@ -141,12 +141,9 @@ namespace SALON_HAIR_CORE.Service
             
              await base.AddAsync(booking);
         }
-
         public async Task EditAsyncCheckinAsync(Booking booking)
         {
             //Create new invoice
-
-
             var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == booking.SalonId && e.ObjectName.Equals(nameof(Invoice))).FirstOrDefault();
 
             if (indexObject == null)
@@ -221,7 +218,7 @@ namespace SALON_HAIR_CORE.Service
             booking.UpdatedBy = booking.CreatedBy;
             invoice.InvoiceDetail = listServiceBooking;
             _salon_hairContext.Invoice.Add(invoice);          
-            //_salon_hairContext.Booking.Update(booking);
+            _salon_hairContext.Booking.Update(booking);
          await  _salon_hairContext.SaveChangesAsync();
 
         }
