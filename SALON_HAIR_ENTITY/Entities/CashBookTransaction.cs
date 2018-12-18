@@ -18,8 +18,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Cashier { get; set; }
         public string Description { get; set; }
         public decimal? Money { get; set; }
+        public long? InvoiceId { get; set; }
 
+        public Invoice Invoice { get; set; }
         public Salon Salon { get; set; }
-        public ProductSalonBranch SalonBranch { get; set; }
+        public SalonBranch SalonBranch { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace SALON_HAIR_ENTITY.Entities
             ProductPictures = new HashSet<ProductPictures>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
             ServiceProduct = new HashSet<ServiceProduct>();
+            StaffProductCommissionTransaction = new HashSet<StaffProductCommissionTransaction>();
             Warehouse = new HashSet<Warehouse>();
             WarehouseTransactionDetail = new HashSet<WarehouseTransactionDetail>();
         }
@@ -50,6 +51,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<ProductPictures> ProductPictures { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }
         public ICollection<ServiceProduct> ServiceProduct { get; set; }
+        public ICollection<StaffProductCommissionTransaction> StaffProductCommissionTransaction { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }
         public ICollection<WarehouseTransactionDetail> WarehouseTransactionDetail { get; set; }
     }

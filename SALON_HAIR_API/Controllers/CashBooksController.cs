@@ -33,6 +33,7 @@ namespace SALON_HAIR_API.Controllers
             data = GetByCurrentSpaBranch(data);
             data = GetByCurrentSalon(data);
             data = data.Where(e => e.Created.Value.Date == GetDateRangeQuery(date).Date);
+
             var dataReturn =   _cashBook.LoadAllInclude(data);
             return OkList(dataReturn);
         }

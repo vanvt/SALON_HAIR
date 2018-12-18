@@ -12,8 +12,11 @@ namespace SALON_HAIR_ENTITY.Entities
             CommissionService = new HashSet<CommissionService>();
             Invoice = new HashSet<Invoice>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
+            StaffPackageCommissionTransaction = new HashSet<StaffPackageCommissionTransaction>();
+            StaffProductCommissionTransaction = new HashSet<StaffProductCommissionTransaction>();
             StaffSalonBranch = new HashSet<StaffSalonBranch>();
             StaffService = new HashSet<StaffService>();
+            StaffServiceCommissionTransaction = new HashSet<StaffServiceCommissionTransaction>();
         }
 
         public long Id { get; set; }
@@ -35,7 +38,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<Invoice> Invoice { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }
+        public ICollection<StaffPackageCommissionTransaction> StaffPackageCommissionTransaction { get; set; }
+        public ICollection<StaffProductCommissionTransaction> StaffProductCommissionTransaction { get; set; }
         public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
         public ICollection<StaffService> StaffService { get; set; }
+        public ICollection<StaffServiceCommissionTransaction> StaffServiceCommissionTransaction { get; set; }
     }
 }

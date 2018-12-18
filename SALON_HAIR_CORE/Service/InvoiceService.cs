@@ -181,6 +181,27 @@ namespace SALON_HAIR_CORE.Service
             return warehouseTransaction;
             
         }
+        private List<CashBookTransaction> CreateCashBookTransaction(Invoice invoice, List<InvoiceDetail> invoiceDetails)
+        {
+            //list<cashbooktransaction> cashbooktransactions = new list<cashbooktransaction>();
+            ////income on invoice
+            //var cashbooktransaction = new cashbooktransaction
+            //{
+            //    action = cashbooktransactionaction.income,
+            //    cashier = invoice.cashier.name,
+            //    description = $"pay for invoce :{invoice.code}",
+            //    created = datetime.now,
+            //    salonbranchid = invoice.salonbranchid,
+            //    salonid = invoice.salonid,
+            //    createdby = invoice.updatedby,
+            //    money = invoice.total,
+            //    code = ""
+            //};
+
+            ////out come for invoice
+            throw new NotImplementedException();
+
+        }
     }
 }
     

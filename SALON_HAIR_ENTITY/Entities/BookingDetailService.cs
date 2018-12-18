@@ -13,6 +13,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string UpdatedBy { get; set; }
         public long BookingDetailId { get; set; }
         public long ServiceId { get; set; }
+        public bool? IsPaid { get; set; }
 
         public BookingDetail BookingDetail { get; set; }
         public Service Service { get; set; }

@@ -27,6 +27,9 @@ namespace SALON_HAIR_ENTITY.Entities
             ServiceCategory = new HashSet<ServiceCategory>();
             SettingAdvance = new HashSet<SettingAdvance>();
             Staff = new HashSet<Staff>();
+            StaffPackageCommissionTransaction = new HashSet<StaffPackageCommissionTransaction>();
+            StaffProductCommissionTransaction = new HashSet<StaffProductCommissionTransaction>();
+            StaffServiceCommissionTransaction = new HashSet<StaffServiceCommissionTransaction>();
             User = new HashSet<User>();
             Warehouse = new HashSet<Warehouse>();
             WarehouseTransaction = new HashSet<WarehouseTransaction>();
@@ -66,6 +69,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<ServiceCategory> ServiceCategory { get; set; }
         public ICollection<SettingAdvance> SettingAdvance { get; set; }
         public ICollection<Staff> Staff { get; set; }
+        public ICollection<StaffPackageCommissionTransaction> StaffPackageCommissionTransaction { get; set; }
+        public ICollection<StaffProductCommissionTransaction> StaffProductCommissionTransaction { get; set; }
+        public ICollection<StaffServiceCommissionTransaction> StaffServiceCommissionTransaction { get; set; }
         public ICollection<User> User { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }
         public ICollection<WarehouseTransaction> WarehouseTransaction { get; set; }

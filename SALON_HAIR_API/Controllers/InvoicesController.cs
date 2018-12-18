@@ -236,7 +236,9 @@ namespace SALON_HAIR_API.Controllers
                 dataUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 dataUpdate.IsDisplay = false;
                 dataUpdate.NotePayment = invoice.NotePayment;
-                dataUpdate.Total = invoice.Total;
+                //dataUpdate.Total = invoice.Total;
+                dataUpdate.Total = dataUpdate.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? (dataUpdate.TotalDetails - (decimal)dataUpdate.DiscountValue) 
+                    : (dataUpdate.TotalDetails - (dataUpdate.TotalDetails*(decimal)dataUpdate.DiscountValue/100));
                 dataUpdate.InvoicePayment = invoice.InvoicePayment;               
                 dataUpdate.PaymentStatus = PAYSTATUS.PAID;
                 await _invoice.EditAsPayAsync(dataUpdate);              

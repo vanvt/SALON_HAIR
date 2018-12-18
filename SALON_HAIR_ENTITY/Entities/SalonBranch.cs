@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.Entities
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
             CashBook = new HashSet<CashBook>();
+            CashBookTransaction = new HashSet<CashBookTransaction>();
             CommissionPackage = new HashSet<CommissionPackage>();
             CommissionProduct = new HashSet<CommissionProduct>();
             CommissionService = new HashSet<CommissionService>();
@@ -19,7 +20,10 @@ namespace SALON_HAIR_ENTITY.Entities
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
             Service = new HashSet<Service>();
             ServiceSalonBranch = new HashSet<ServiceSalonBranch>();
+            StaffPackageCommissionTransaction = new HashSet<StaffPackageCommissionTransaction>();
+            StaffProductCommissionTransaction = new HashSet<StaffProductCommissionTransaction>();
             StaffSalonBranch = new HashSet<StaffSalonBranch>();
+            StaffServiceCommissionTransaction = new HashSet<StaffServiceCommissionTransaction>();
             User = new HashSet<User>();
             UserSalonBranch = new HashSet<UserSalonBranch>();
             Warehouse = new HashSet<Warehouse>();
@@ -54,6 +58,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
         public ICollection<CashBook> CashBook { get; set; }
+        public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
         public ICollection<CommissionPackage> CommissionPackage { get; set; }
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<CommissionService> CommissionService { get; set; }
@@ -63,7 +68,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }
         public ICollection<Service> Service { get; set; }
         public ICollection<ServiceSalonBranch> ServiceSalonBranch { get; set; }
+        public ICollection<StaffPackageCommissionTransaction> StaffPackageCommissionTransaction { get; set; }
+        public ICollection<StaffProductCommissionTransaction> StaffProductCommissionTransaction { get; set; }
         public ICollection<StaffSalonBranch> StaffSalonBranch { get; set; }
+        public ICollection<StaffServiceCommissionTransaction> StaffServiceCommissionTransaction { get; set; }
         public ICollection<User> User { get; set; }
         public ICollection<UserSalonBranch> UserSalonBranch { get; set; }
         public ICollection<Warehouse> Warehouse { get; set; }

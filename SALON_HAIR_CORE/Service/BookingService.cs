@@ -117,6 +117,7 @@ namespace SALON_HAIR_CORE.Service
         }
         public async Task AddRemoveNoNeedAsync(Booking booking)
         {
+            booking.SelectedPackage = null;
             if (booking.Customer != null)
             {
                 if (booking.CustomerId == booking.Customer.Id)
@@ -144,6 +145,7 @@ namespace SALON_HAIR_CORE.Service
         public async Task EditAsyncCheckinAsync(Booking booking)
         {
             //Create new invoice
+            booking.SelectedPackage = null;
             var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == booking.SalonId && e.ObjectName.Equals(nameof(Invoice))).FirstOrDefault();
 
             if (indexObject == null)
@@ -171,7 +173,11 @@ namespace SALON_HAIR_CORE.Service
                 CustomerId = booking.CustomerId,
                 SalonBranchId = booking.SalonBranchId,
                 SalonId = booking.SalonId,
-                Code = "ES" + indexObject.ObjectIndex.ToString("000000")
+                Code = "ES" + indexObject.ObjectIndex.ToString("000000"),
+                Created = DateTime.Now,
+                CreatedBy = booking.CreatedBy,
+                
+                
             };
             var listServiceBooking = new List<InvoiceDetail>();
          
@@ -196,7 +202,7 @@ namespace SALON_HAIR_CORE.Service
            
            
             //Get services 
-           var listService =  _salon_hairContext.BookingDetailService.Where(e => e.BookingDetail.BookingId == booking.Id)
+           var listService =  _salon_hairContext.BookingDetailService.Where(e => e.BookingDetail.BookingId == booking.Id).Where(e=>e.IsPaid==false) 
                 .AsNoTracking().GroupBy(e=>e.Service).Select(e=>new {Service = e.Key ,ServiceCount =  e.Count()});
            await listService.ForEachAsync(e => {
                 listServiceBooking.Add(new InvoiceDetail
@@ -221,6 +227,14 @@ namespace SALON_HAIR_CORE.Service
             _salon_hairContext.Booking.Update(booking);
          await  _salon_hairContext.SaveChangesAsync();
 
+        }
+
+        public async Task EditAsyncCheckoutAsync(Booking booking)
+        {
+            booking.SelectedPackage = null;
+            booking.BookingStatus = BOOKINGSTATUS.CHECKOUT;
+            booking.Updated = DateTime.Now;          
+            await _salon_hairContext.SaveChangesAsync();
         }
     }
 }

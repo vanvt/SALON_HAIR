@@ -66,8 +66,9 @@ namespace SALON_HAIR_ENTITY.Entities
             builder.Entity<WarehouseStatus>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<WarehouseTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<WarehouseTransactionDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-
-
+            builder.Entity<StaffPackageCommissionTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<StaffProductCommissionTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<StaffServiceCommissionTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             return builder;
         }
     }

@@ -12,6 +12,7 @@ namespace SALON_HAIR_ENTITY.Entities
             CustomerPackage = new HashSet<CustomerPackage>();
             PackageSalonBranch = new HashSet<PackageSalonBranch>();
             ServicePackage = new HashSet<ServicePackage>();
+            StaffPackageCommissionTransaction = new HashSet<StaffPackageCommissionTransaction>();
         }
 
         public long Id { get; set; }
@@ -33,5 +34,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }
         public ICollection<ServicePackage> ServicePackage { get; set; }
+        public ICollection<StaffPackageCommissionTransaction> StaffPackageCommissionTransaction { get; set; }
     }
 }

@@ -36,6 +36,7 @@ namespace SALON_HAIR_ENTITY.Entities
     public static class BOOKINGSTATUS
     {
         public const  string CHECKIN = "CHECKIN";
+        public const string CHECKOUT = "CHECKOUT";
         public const  string NEW = "NEW";
         public const  string CONFIRMED = "CONFIRMED";
     }
@@ -54,5 +55,10 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public const string INCOME = "INCOME";
         public const string OUTCOME = "OUTCOME";
+    }
+    public static class DISCOUNTUNIT
+    {
+        public const string PERCENT = "PERCENT";
+        public const string MONEY = "MONEY";
     }
 }
