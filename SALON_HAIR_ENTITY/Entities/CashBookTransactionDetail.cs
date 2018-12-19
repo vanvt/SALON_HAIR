@@ -3,13 +3,8 @@ using System.Collections.Generic;
 
 namespace SALON_HAIR_ENTITY.Entities
 {
-    public partial class CashBookTransaction
+    public partial class CashBookTransactionDetail
     {
-        public CashBookTransaction()
-        {
-            CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
-        }
-
         public long Id { get; set; }
         public DateTime? Created { get; set; }
         public string Status { get; set; }
@@ -19,15 +14,14 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string Action { get; set; }
-        public string Code { get; set; }
-        public string Cashier { get; set; }
         public string Description { get; set; }
-        public decimal? Money { get; set; }
-        public long? InvoiceId { get; set; }
+        public decimal Money { get; set; }
+        public long? CashBookTransactionId { get; set; }
+        public long? StaffId { get; set; }
 
-        public Invoice Invoice { get; set; }
+        public CashBookTransaction CashBookTransaction { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
-        public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
+        public Staff Staff { get; set; }
     }
 }

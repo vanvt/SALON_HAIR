@@ -11,6 +11,7 @@ namespace SALON_HAIR_ENTITY.Entities
             BookingLog = new HashSet<BookingLog>();
             CashBook = new HashSet<CashBook>();
             CashBookTransaction = new HashSet<CashBookTransaction>();
+            CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
             CommissionPackage = new HashSet<CommissionPackage>();
             CommissionProduct = new HashSet<CommissionProduct>();
             CommissionService = new HashSet<CommissionService>();
@@ -59,6 +60,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<BookingLog> BookingLog { get; set; }
         public ICollection<CashBook> CashBook { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
+        public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
         public ICollection<CommissionPackage> CommissionPackage { get; set; }
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<CommissionService> CommissionService { get; set; }

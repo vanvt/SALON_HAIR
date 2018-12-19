@@ -219,6 +219,7 @@ namespace SALON_HAIR_CORE.Service
                     
                 });
             });
+
             booking.BookingStatus = BOOKINGSTATUS.CHECKIN;
             booking.Updated = DateTime.Now;
             booking.UpdatedBy = booking.CreatedBy;

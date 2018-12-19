@@ -110,9 +110,9 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                //cashBookTransaction.Code = "ES" + _sysObjectAutoIncreament.
-                //   GetCodeByObjectAsync(nameof(CashBookTransaction), cashBookTransaction.SalonId).
-                //   Result.ObjectIndex.ToString("000000");
+                cashBookTransaction.Code = "ES" + _sysObjectAutoIncreament.
+                   GetCodeByObjectAsync(nameof(CashBookTransaction), cashBookTransaction.SalonId).
+                   Result.ObjectIndex.ToString("000000");
                 cashBookTransaction.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
                 await _cashBookTransaction.AddAsync(cashBookTransaction);
                 return CreatedAtAction("GetCashBookTransaction", new { id = cashBookTransaction.Id }, cashBookTransaction);

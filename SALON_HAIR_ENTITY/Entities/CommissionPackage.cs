@@ -15,7 +15,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string CommissionUnit { get; set; }
-        public float? CommissionValue { get; set; }
+        public decimal CommissionValue { get; set; }
         public long Id { get; set; }
 
         public Package Package { get; set; }

@@ -43,16 +43,7 @@ namespace SALON_HAIR_API.Controllers
             var data = _invoice.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
-            date += "";         
-            var datetime = DateTime.Now;
-
-            DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out datetime);
-            if (datetime == new DateTime())
-            {
-                datetime = DateTime.Now;
-            }
-            data = data.Where(e => e.Created.Value.Date == datetime.Date);
-           
+            data = data.Where(e => e.Created.Value.Date == GetDateRangeQuery(date).Date);                     
             if (isDisplay)
             {
                 data = data.Where(e => e.IsDisplay.Value);                        
@@ -61,8 +52,6 @@ namespace SALON_HAIR_API.Controllers
 
             return OkList(dataReturn);
         }
-
-
         [HttpGet("by-customer/{customerId}")]
         public IActionResult GetInvoice(long customerId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
@@ -98,8 +87,7 @@ namespace SALON_HAIR_API.Controllers
             {
                   throw new UnexpectedException(id, e);
             }
-        }
-      
+        }     
         // PUT: api/Invoices/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInvoice([FromRoute] long id, [FromBody] Invoice invoice)
@@ -114,12 +102,21 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
+                //Invoice invoiceUpdate = _invoice.Find(invoice.Id);
+
+
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                //invoiceUpdate.DiscountUnit = invoice.DiscountUnit;
+                //invoiceUpdate.IsDisplay = invoice.IsDisplay;
+                //invoiceUpdate.DiscountValue = invoice.DiscountValue;
+                //invoiceUpdate.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
 
                 await _invoice.EditAsync(invoice);
+                invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoice.TotalDetails - invoice.DiscountValue : invoice.TotalDetails * (1 - invoice.DiscountValue / 100);
+
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
                 //var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
-                return CreatedAtAction("GetInvoice", new { id = invoice.Id } , invoice );
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id } , invoice);
             }
 
             catch (DbUpdateConcurrencyException)
@@ -296,6 +293,18 @@ namespace SALON_HAIR_API.Controllers
         {
             data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
             return data;
+        }
+        private DateTime GetDateRangeQuery(string date)
+        {
+            date += "";
+
+            var st = DateTime.Now;
+            if (!string.IsNullOrEmpty(date))
+            {
+                st = DateTime.Parse(date);
+            }
+
+            return st;
         }
     }
 }

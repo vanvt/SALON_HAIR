@@ -29,11 +29,10 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPaymentMethod(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _paymentMethod.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            data = data.Include(e => e.PaymentBankingMethod).ThenInclude(e=>e.Banking);
-            //var dataReturn =   _paymentMethod.LoadMany2Many(data, nameof(InvoicePayment));
-            // dataReturn = _paymentMethod.LoadAllInclude(dataReturn);
+            var data = _paymentMethod.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            //data = data.Where(e => e.Status.Equals(OBJECTSTATUS.ENABLE));
+            data = data.Include(e => e.PaymentBankingMethod).ThenInclude(e=>e.Banking);         
             return OkList(data);
         }
         // GET: api/PaymentMethods/5
@@ -154,6 +153,11 @@ namespace SALON_HAIR_API.Controllers
         private bool PaymentMethodExists(long id)
         {
             return _paymentMethod.Any<PaymentMethod>(e => e.Id == id);
+        }
+        private IQueryable<PaymentMethod> GetByCurrentSalon(IQueryable<PaymentMethod> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }
