@@ -25,8 +25,7 @@ namespace SALON_HAIR_API.Controllers
         private readonly IInvoice _invoice;
         private readonly IPackage _package;
         private readonly IInvoiceDetail _invoiceDetail;
-        private readonly IUser _user;
-      
+        private readonly IUser _user;      
         public InvoicesController(IPackage package,IInvoiceDetail invoiceDetail,IInvoice invoice, IUser user)
         {
             _package = package;
@@ -37,8 +36,7 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/Invoices
         [HttpGet]
-        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = ""
-            ,bool isDisplay=false,string date ="")
+        public IActionResult GetInvoice(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",bool isDisplay=false,string date ="")
         {
             var data = _invoice.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);
@@ -59,7 +57,7 @@ namespace SALON_HAIR_API.Controllers
             return OkList(dataReturn);
         }
         // GET: api/Invoices/5
-        [MeasureController("GetInvoice")]   
+        [MeasureController("GetInvoice")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice([FromRoute] long id)
         {

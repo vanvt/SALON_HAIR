@@ -86,7 +86,7 @@ namespace SALON_HAIR_API.Controllers
                 invoiceDetail.Updated = DateTime.Now;
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;
-                await _invoiceDetail.EditAsync(invoiceDetail);
+                //await _invoiceDetail.EditAsync(invoiceDetail);
                 //just for invoice_staff_arrangement
                 //switch (invoiceDetail.ObjectType)
                 //{

@@ -175,7 +175,9 @@ namespace SALON_HAIR_CORE.Service
                 ObjectPrice = invoiceDetail.ObjectPrice,
                 ObjectType = invoiceDetail.ObjectType,
                 SalonBranchId = invoiceDetail.SalonBranchId,
-                SalonId = invoiceDetail.SalonId                
+                SalonId = invoiceDetail.SalonId,
+                InvoiceDetailId = invoiceDetail.Id
+                
             };
         }
         private async Task<List<CommissionArrangement>> GetCommissionArrangementFromInvoiceDetailAsync(InvoiceDetail invoiceDetail)
@@ -352,8 +354,9 @@ namespace SALON_HAIR_CORE.Service
                     InvoiceStaffArrangements.Add(
                       InvoiceCommissionArrangement(invoiceDetail));
                 }
+                _salon_hairContext.CommissionArrangement.RemoveRange(InvoiceStaffArrangements);
             }
-
+          
             _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
             await _salon_hairContext.SaveChangesAsync();
 
