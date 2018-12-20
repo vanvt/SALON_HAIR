@@ -231,7 +231,8 @@ namespace SALON_HAIR_API.Controllers
         }
         private IQueryable<User> GetByCurrentSalon(IQueryable<User> data)
         {
-            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
             return data;
         }
     }

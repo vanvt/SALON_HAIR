@@ -272,7 +272,8 @@ namespace SALON_HAIR_API.Controllers
         }
         private IQueryable<Booking> GetByCurrentSalon(IQueryable<Booking> data)
         {
-            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
             return data;
         }
         private Tuple<DateTime ,DateTime> GetDateRangeQuery(string start,string end)

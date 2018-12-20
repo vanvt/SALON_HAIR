@@ -44,12 +44,8 @@ namespace SALON_HAIR_API.Controllers
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
             data = data.Where(e => e.Created.Value.Date == GetDateRangeQuery(date).Date);                     
-            if (isDisplay)
-            {
-                data = data.Where(e => e.IsDisplay.Value);                        
-            }
+            data = isDisplay? data.Where(e => e.IsDisplay.Value):data;                                    
             var dataReturn = _invoice.LoadAllInclude(data,nameof(WarehouseTransaction));
-
             return OkList(dataReturn);
         }
         [HttpGet("by-customer/{customerId}")]
@@ -291,7 +287,8 @@ namespace SALON_HAIR_API.Controllers
         }
         private IQueryable<Invoice> GetByCurrentSalon(IQueryable<Invoice> data)
         {
-            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
             return data;
         }
         private DateTime GetDateRangeQuery(string date)

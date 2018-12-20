@@ -102,7 +102,8 @@ namespace SALON_HAIR_API.Controllers
         }
         private IQueryable<CommissionService> GetByCurrentSalon(IQueryable<CommissionService> data)
         {
-            data = data.Where(e => e.SalonBranch.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonBranch.SalonId == salonId);
             return data;
         }
 
