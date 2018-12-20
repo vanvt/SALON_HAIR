@@ -12,10 +12,12 @@ namespace SALON_HAIR_ENTITY.Entities
             CashBook = new HashSet<CashBook>();
             CashBookTransaction = new HashSet<CashBookTransaction>();
             CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
+            CommissionArrangement = new HashSet<CommissionArrangement>();
             CommissionPackage = new HashSet<CommissionPackage>();
             CommissionProduct = new HashSet<CommissionProduct>();
             CommissionService = new HashSet<CommissionService>();
             Customer = new HashSet<Customer>();
+            InvoiceDetail = new HashSet<InvoiceDetail>();
             PackageSalonBranch = new HashSet<PackageSalonBranch>();
             Product = new HashSet<Product>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
@@ -61,10 +63,12 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CashBook> CashBook { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
+        public ICollection<CommissionArrangement> CommissionArrangement { get; set; }
         public ICollection<CommissionPackage> CommissionPackage { get; set; }
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<Customer> Customer { get; set; }
+        public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }

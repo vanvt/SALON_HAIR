@@ -137,6 +137,7 @@ namespace WebApplication4
             //services.AddScoped<IBookingDetail, BookingDetailService>();
             services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();
+            services.AddScoped<ICommissionArrangement, CommissionArrangementService>();
             services.AddScoped<ICommissionPackage, CommissionPackageService>();
             services.AddScoped<ICommissionProduct, CommissionProductService>();
             services.AddScoped<ICommissionService, CommissionServiceService>();

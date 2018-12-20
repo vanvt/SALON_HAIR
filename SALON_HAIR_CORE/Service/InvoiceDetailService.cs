@@ -66,11 +66,21 @@ namespace SALON_HAIR_CORE.Service
             
             await _salon_hairContext.SaveChangesAsync();
         }
+        public async Task AddAsServiceGenCommisionAsync(InvoiceDetail invoiceDetail)
+        {
+            await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
 
+            List<CommissionArrangement> commissionArrangements = new List<CommissionArrangement>();
+            for (int i = 0; i < invoiceDetail.Quantity; i++)
+            {
+                commissionArrangements.Add(
+                    InvoiceCommissionArrangement(invoiceDetail));
+            }
+            await _salon_hairContext.CommissionArrangement.AddRangeAsync(commissionArrangements);
+            await _salon_hairContext.SaveChangesAsync();
+        }
         public async Task AddAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
- 
-
             await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
             var serviceIds = _salon_hairContext.ServicePackage.Where(e => e.PackageId == invoiceDetail.ObjectId).Select(e => e.ServiceId);
             List<InvoiceStaffArrangement> InvoiceStaffArrangements = new List<InvoiceStaffArrangement>();
@@ -86,7 +96,6 @@ namespace SALON_HAIR_CORE.Service
             await _salon_hairContext.SaveChangesAsync();
             //await Task.WhenAll( t2, t3, t4, t5);
         }
-
         public string GetObjectName(InvoiceDetail invoiceDetail)
         {
             string rs;
@@ -111,7 +120,6 @@ namespace SALON_HAIR_CORE.Service
             }
             return rs;
         }
-
         public async Task EditAsServiceAsync(InvoiceDetail invoiceDetail)
         {
                 var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
@@ -141,6 +149,7 @@ namespace SALON_HAIR_CORE.Service
             await _salon_hairContext.SaveChangesAsync();
             //throw new NotImplementedException();
         }
+        
         private InvoiceStaffArrangement InvoiceStaffArrangement(long? invoiceDetailId, long? invoiceId, long? serviceId, string createdBy)
         {
             return new InvoiceStaffArrangement
@@ -152,7 +161,52 @@ namespace SALON_HAIR_CORE.Service
                 CreatedBy = createdBy
             };
         }
-
+        private CommissionArrangement InvoiceCommissionArrangement(InvoiceDetail invoiceDetail)
+        {
+            return new CommissionArrangement
+            {
+                Created = DateTime.Now,                            
+                CreatedBy = invoiceDetail.CreatedBy,
+                InvoiceId = invoiceDetail.InvoiceId.Value,
+                IsPaid = invoiceDetail.IsPaid,
+                ObjectCode = invoiceDetail.ObjectCode,
+                ObjectId = invoiceDetail.ObjectId,
+                ObjectName = invoiceDetail.ObjectName,
+                ObjectPrice = invoiceDetail.ObjectPrice,
+                ObjectType = invoiceDetail.ObjectType,
+                SalonBranchId = invoiceDetail.SalonBranchId,
+                SalonId = invoiceDetail.SalonId                
+            };
+        }
+        private async Task<List<CommissionArrangement>> GetCommissionArrangementFromInvoiceDetailAsync(InvoiceDetail invoiceDetail)
+        {
+            List<CommissionArrangement> commissionArrangements = new List<CommissionArrangement>();
+            if (invoiceDetail.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE) && invoiceDetail.IsPaid == true)
+            {
+                var services = _salon_hairContext.ServicePackage.Where(e => e.PackageId == invoiceDetail.ObjectId).Include(e => e.Service);
+                await services.ForEachAsync(e =>
+                {
+                    for (int i = 0; i < invoiceDetail.Quantity; i++)
+                    {
+                        var serviceCommision = InvoiceCommissionArrangement(invoiceDetail);
+                        serviceCommision.ObjectName = e.Service.Name;
+                        serviceCommision.ObjectId = e.ServiceId;
+                        serviceCommision.ObjectType = INVOICEOBJECTTYPE.SERVICE;
+                        serviceCommision.ObjectPrice = e.Service.Price;                        
+                        commissionArrangements.Add(serviceCommision);
+                    }
+                });
+            }
+            else
+            {
+                for (int i = 0; i < invoiceDetail.Quantity; i++)
+                {
+                    commissionArrangements.Add(InvoiceCommissionArrangement(invoiceDetail));
+                }
+            }            
+            return commissionArrangements;
+           
+        }
         public async Task EditAsPackgeAsync(InvoiceDetail invoiceDetail)
         {
             var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
@@ -196,7 +250,6 @@ namespace SALON_HAIR_CORE.Service
          
             await _salon_hairContext.SaveChangesAsync();
         }
-
         public InvoiceDetail GetObjectDetail(InvoiceDetail invoiceDetail)
         {
            
@@ -240,7 +293,6 @@ namespace SALON_HAIR_CORE.Service
             return invoiceDetail;
 
         }
-
         public async Task EditAsServiceAsync(InvoiceDetail invoiceDetail, int? oldQuantity)
         {
         
@@ -253,6 +305,7 @@ namespace SALON_HAIR_CORE.Service
 
                 _salon_hairContext.InvoiceStaffArrangement.RemoveRange(listInvoiceStaffArrangement);
             }
+
             if (oldQuantity < invoiceDetail.Quantity)
             {
                 var numberItemAddnew = invoiceDetail.Quantity - oldQuantity.Value;
@@ -268,6 +321,49 @@ namespace SALON_HAIR_CORE.Service
             }
  
             //_salon_hairContext.InvoiceDetail.Update(invoiceDetail);
+            await _salon_hairContext.SaveChangesAsync();
+        }
+        public async Task AddAsGenCommisonAsync(InvoiceDetail invoiceDetail)
+        {
+            await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
+            var commissionArrangementFromInvoiceDetail = await GetCommissionArrangementFromInvoiceDetailAsync(invoiceDetail);
+            await _salon_hairContext.CommissionArrangement.AddRangeAsync(commissionArrangementFromInvoiceDetail);
+            await _salon_hairContext.SaveChangesAsync();
+        }
+        public async Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail)
+        {
+            var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
+            if (oldInvoiceDetail > invoiceDetail.Quantity)
+            {
+                var numberItemRemove = oldInvoiceDetail.Value - invoiceDetail.Quantity;
+                //Remove {numberItemRemove} last InvoiceStaffArrangement
+                var listInvoiceStaffArrangement = _salon_hairContext.CommissionArrangement.
+                    Where(e => e.InvoiceDetailId == invoiceDetail.Id).OrderByDescending(e => e.Id).Take(numberItemRemove.Value);
+
+                _salon_hairContext.CommissionArrangement.RemoveRange(listInvoiceStaffArrangement);
+            }
+            if (oldInvoiceDetail < invoiceDetail.Quantity)
+            {
+                var numberItemAddnew = invoiceDetail.Quantity - oldInvoiceDetail.Value;
+                //Add new {numberItemRemove} InvoiceStaffArrangement
+                List<CommissionArrangement> InvoiceStaffArrangements = new List<CommissionArrangement>();
+                for (int i = 0; i < numberItemAddnew; i++)
+                {
+                    InvoiceStaffArrangements.Add(
+                      InvoiceCommissionArrangement(invoiceDetail));
+                }
+            }
+
+            _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
+            await _salon_hairContext.SaveChangesAsync();
+
+        }
+        public async Task RemoveAsEditCommissionAsync(InvoiceDetail invoiceDetail)
+        {
+            invoiceDetail.Status = OBJECTSTATUS.DELETED;
+            var dataNeedRemove = _salon_hairContext.CommissionArrangement.Where(e => e.InvoiceDetailId == invoiceDetail.Id);
+            _salon_hairContext.CommissionArrangement.RemoveRange(dataNeedRemove);
+            _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
             await _salon_hairContext.SaveChangesAsync();
         }
     }

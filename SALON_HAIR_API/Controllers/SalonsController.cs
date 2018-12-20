@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using SALON_HAIR_API.ViewModels;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -121,7 +123,7 @@ namespace SALON_HAIR_API.Controllers
           
         }       
         [HttpPost("register")]
-        public async Task<IActionResult> PostAsRegiterSalon([FromBody] Salon salon)
+        public async Task<IActionResult> PostAsRegiterSalon([FromBody] RegisterSalonVM salonVM)
         {
 
             try
@@ -129,13 +131,19 @@ namespace SALON_HAIR_API.Controllers
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
-                }               
+                }
+                var salon = new Salon {
+                    Address = salonVM.Address,
+                    Name = salonVM.Name,
+                    Mobile = salonVM.Mobile,
+                    Email = salonVM.Email
+                };
                 await _salon.AddAsRegisterAsync(salon);
-                return CreatedAtAction("GetSalon", new { id = salon.Id }, salon);
+                return CreatedAtAction("GetSalon", new { id = salon.Id }, salonVM);
             }
             catch (Exception e)
             {
-                throw new UnexpectedException(salon, e);
+                throw new UnexpectedException(salonVM, e);
             }
 
         }
