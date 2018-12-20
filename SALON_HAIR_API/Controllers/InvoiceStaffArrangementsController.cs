@@ -28,7 +28,6 @@ namespace SALON_HAIR_API.Controllers
             _invoiceStaffArrangement = invoiceStaffArrangement;
             _user = user;
         }
-
         // GET: api/InvoiceStaffArrangements
         [HttpGet("{id}")]
         public IActionResult GetInvoiceStaffArrangement(long id)

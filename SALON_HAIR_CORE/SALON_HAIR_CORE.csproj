@@ -13,4 +13,8 @@
     <Folder Include="GenericEntity\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ULTIL_HELPER" Version="1.1.0" />
+  </ItemGroup>
+
 </Project>

@@ -61,4 +61,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public const string PERCENT = "PERCENT";
         public const string MONEY = "MONEY";
     }
+    public static class SYSTEMDEFAULT
+    {
+        public const string PASSWORD = "Abc123456";
+    }
 }

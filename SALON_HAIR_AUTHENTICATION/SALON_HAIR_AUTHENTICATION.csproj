@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="3.0.0" />
-    <PackageReference Include="ULTIL_HELPER" Version="1.0.4" />
+    <PackageReference Include="ULTIL_HELPER" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

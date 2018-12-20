@@ -13,7 +13,7 @@ namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+  
     public class SalonsController : CustomControllerBase
     {
         private readonly ISalon _salon;
@@ -25,6 +25,7 @@ namespace SALON_HAIR_API.Controllers
         }
 
         // GET: api/Salons
+        [Authorize]
         [HttpGet]
         public IActionResult GetSalon(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
@@ -34,6 +35,7 @@ namespace SALON_HAIR_API.Controllers
             return OkList(dataReturn);
         }
         // GET: api/Salons/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSalon([FromRoute] long id)
         {
@@ -59,6 +61,7 @@ namespace SALON_HAIR_API.Controllers
         }
 
         // PUT: api/Salons/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSalon([FromRoute] long id, [FromBody] Salon salon)
         {
@@ -96,6 +99,7 @@ namespace SALON_HAIR_API.Controllers
         }
 
         // POST: api/Salons
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostSalon([FromBody] Salon salon)
         {
@@ -106,18 +110,35 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                salon.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                salon.CreatedBy = salon.Email;
                 await _salon.AddAsync(salon);
                 return CreatedAtAction("GetSalon", new { id = salon.Id }, salon);
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(salon,e);
             }
           
-        }
+        }       
+        [HttpPost("register")]
+        public async Task<IActionResult> PostAsRegiterSalon([FromBody] Salon salon)
+        {
 
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }               
+                await _salon.AddAsRegisterAsync(salon);
+                return CreatedAtAction("GetSalon", new { id = salon.Id }, salon);
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(salon, e);
+            }
+
+        }
         // DELETE: api/Salons/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSalon([FromRoute] long id)

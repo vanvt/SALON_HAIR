@@ -167,6 +167,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                user.CreatedDate = DateTime.Now;
                 user.PasswordHash = SecurityHelper.BCryptPasswordEncoder(user.Password);
                 user.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _user.AddAsync(user);

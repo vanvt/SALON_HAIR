@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using System.Collections.Generic;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -32,8 +34,33 @@ namespace SALON_HAIR_API.Controllers
             var data = _cashBook.SearchAllFileds(keyword);
             data = GetByCurrentSpaBranch(data);
             data = GetByCurrentSalon(data);
-            data = data.Where(e => e.Created.Value.Date == GetDateRangeQuery(date).Date);
-
+            var data2 = data;
+            var dateQuery = GetDateRangeQuery(date).Date;
+            data = data.Where(e => e.Created.Value.Date == dateQuery);
+           
+            if(data.Count() == 0)
+            {
+                data2 = data2.Where(e => e.Created.Value.Date < dateQuery).OrderByDescending(e => e.Created).Take(1);
+                if (data2.Count() == 0)
+                {
+                    return OkList(new List<CashBook> { new CashBook{
+                        EarlyFund = 0,
+                        EndFund = 0,
+                        TotalExpenditure = 0,
+                        TotalRevenue = 0,                       
+                    } });
+                }
+                else
+                {
+                    var data3 = data2.FirstOrDefault();
+                    return OkList(new List<CashBook> { new CashBook{
+                        EarlyFund = data3.EndFund,
+                        EndFund = data3.EndFund,
+                        TotalExpenditure = data3.TotalExpenditure,
+                        TotalRevenue = data3.TotalRevenue
+                    } });
+                }
+            }
             var dataReturn =   _cashBook.LoadAllInclude(data);
             return OkList(dataReturn);
         }
