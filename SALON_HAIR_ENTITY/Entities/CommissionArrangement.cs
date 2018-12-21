@@ -19,6 +19,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public string ObjectName { get; set; }
         public string ObjectCode { get; set; }
         public decimal ObjectPrice { get; set; }
+        public decimal? ObjectPriceDiscount { get; set; }
         public bool? IsPaid { get; set; }
         public long? InvoiceDetailId { get; set; }
         public long? SalonId { get; set; }

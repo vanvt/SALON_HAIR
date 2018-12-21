@@ -124,14 +124,23 @@ namespace SALON_HAIR_CORE.Service
                 InvoiceId = invoice.Id
             };
             _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
+            var listCommision = _salon_hairContext.CommissionArrangement.Where(e => e.InvoiceId == invoice.Id).ToList().Where(e=>e.);
+            //For Commision/ get ObjectPrice to cacualate the commission
+           
 
             var listCashBookTransactionDetail = new List<CashBookTransactionDetail>();
-            var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions(invoice, listInvoiceDetail);
-            var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions(invoice, listInvoiceDetail);
-            var listStaffServiceCommissionTransaction = CreateStaffServiceCommissionTransaction(invoice, listInvoiceDetail);
-            var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction(invoice, listInvoiceDetail);
 
-             _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
+
+            var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions
+                (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList());
+            var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions
+                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).Where(e=>e.IsPaid==false).ToList());
+            var listStaffServiceCommissionTransaction = CreateStaffServiceCommissionTransaction
+                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList());
+            var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction
+              (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList());
+
+            _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
             _salon_hairContext.StaffPackageCommissionTransaction.AddRange(listStaffPackageCommissionTransaction);
             _salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceCommissionTransaction);
             _salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceServiceCommissionTransaction);
@@ -375,6 +384,9 @@ namespace SALON_HAIR_CORE.Service
             return cashBookTransactionIncome;
 
         }
+
+
+
         private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(Invoice invoice, List<InvoiceDetail> invoiceDetails)
         {
             var listStaffProductCommisionTransaction = new List<StaffProductCommissionTransaction>();
@@ -549,6 +561,77 @@ namespace SALON_HAIR_CORE.Service
             });
             return listStaffServiceCommissionTransaction;
         }
+
+
+        private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(List<CommissionArrangement> commissionArrangements)
+        {
+            var listStaffProductCommisionTransaction = new List<StaffProductCommissionTransaction>();
+            foreach (var item in commissionArrangements)
+            {
+                listStaffProductCommisionTransaction.Add(new StaffProductCommissionTransaction {
+                    SalonId = item.SalonId,
+                 
+                    SalonBranchId = item.SalonBranchId,
+                    ProductId = item.ObjectId,
+                    StaffId = item.SaleStaffId,
+                    CommissionValue = item.ObjectPrice
+                });
+            }            
+            return listStaffProductCommisionTransaction;
+        }
+        private List<StaffPackageCommissionTransaction> CreateStaffPackageCommissionTransactions(List<CommissionArrangement> commissionArrangements)
+        {
+            var listStaffProductCommisionTransaction = new List<StaffPackageCommissionTransaction>();
+            foreach (var item in commissionArrangements)
+            {
+                listStaffProductCommisionTransaction.Add(new StaffPackageCommissionTransaction
+                {
+                    SalonId = item.SalonId,
+                    SalonBranchId = item.SalonBranchId,
+                    PackageId = item.ObjectId,
+                    StaffId = item.SaleStaffId,
+                    CommissionValue = item.ObjectPrice
+                });
+            }
+            return listStaffProductCommisionTransaction;
+        }
+        private List<StaffServiceCommissionTransaction> CreateStaffServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements)
+        {
+            var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
+          
+            foreach (var item in commissionArrangements)
+            {
+                listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
+                {
+                    SalonId = item.SalonId,
+                    SalonBranchId = item.SalonBranchId,
+                    ServiceId = item.ObjectId,
+                    StaffId = item.SaleStaffId,
+                    CommissionValue = item.ObjectPrice
+                });
+            }
+           
+            return listStaffServiceCommissionTransaction;
+        }
+        private List<StaffServiceCommissionTransaction> CreateStaffServiceServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements)
+        {
+            var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
+
+            foreach (var item in commissionArrangements)
+            {
+                listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
+                {
+                    SalonId = item.SalonId,
+                    SalonBranchId = item.SalonBranchId,
+                    ServiceId = item.ObjectId,
+                    StaffId = item.ServiceStaffId,
+                    CommissionServiceValue = item.ObjectPrice
+                });
+            }
+
+            return listStaffServiceCommissionTransaction;
+        }
+
         private CashBookTransactionDetail CreateCashBookTransactionDetails(long? salonId, long? branchId,string description,decimal money,long? staffId)
         {
             return new CashBookTransactionDetail {

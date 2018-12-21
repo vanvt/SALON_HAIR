@@ -85,26 +85,7 @@ namespace SALON_HAIR_API.Controllers
                 invoiceDetail.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail.Updated = DateTime.Now;
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
-                var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;
-                //await _invoiceDetail.EditAsync(invoiceDetail);
-                //just for invoice_staff_arrangement
-                //switch (invoiceDetail.ObjectType)
-                //{
-                //    case "SERVICE":
-                //        await _invoiceDetail.EditAsServiceAsync(invoiceDetail, oldQuantity);
-                //        break;
-                //    case "PRODUCT":
-                //        await _invoiceDetail.EditAsync(invoiceDetail);
-                //        break;
-                //    case "PACKAGE":
-                //        await _invoiceDetail.EditAsPackgeAsync(invoiceDetail);
-                //        break;
-                //    case "EXTRA":
-                //        await _invoiceDetail.EditAsync(invoiceDetail);
-                //        break;
-                //    default:
-                //        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);
-                //}
+                var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;              
                await _invoiceDetail.EditAsEditCommissionAsync(invoiceDetail);
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
@@ -140,24 +121,7 @@ namespace SALON_HAIR_API.Controllers
                 }
                 invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
-                invoiceDetail.Created = DateTime.Now;
-                //switch (invoiceDetail.ObjectType)
-                //{
-                //    case "SERVICE":
-                //        await _invoiceDetail.AddAsServiceAsync(invoiceDetail);
-                //        break;
-                //    case "PRODUCT":
-                //        await _invoiceDetail.AddAsync(invoiceDetail);
-                //        break;
-                //    case "PACKAGE":
-                //        await _invoiceDetail.AddAsPackgeAsync(invoiceDetail);
-                //        break;
-                //    case "EXTRA":
-                //        await _invoiceDetail.AddAsync(invoiceDetail);
-                //        break;
-                //    default:
-                //        throw new BadRequestException($"System current not supported this type '{invoiceDetail.ObjectType}'", invoiceDetail);
-                //}
+                invoiceDetail.Created = DateTime.Now;                            
                 await _invoiceDetail.AddAsGenCommisonAsync(invoiceDetail);
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
@@ -203,7 +167,6 @@ namespace SALON_HAIR_API.Controllers
         {
             return _invoiceDetail.Any<InvoiceDetail>(e => e.Id == id);
         }
-
     }
 }
 

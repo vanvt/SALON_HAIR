@@ -30,6 +30,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public bool? IsPaid { get; set; }
         public long? SalonId { get; set; }
         public long? SalonBranchId { get; set; }
+        public decimal? TotalIncludeDiscount { get; set; }
+        public decimal? TotalExcludeDiscount { get; set; }
 
         public Invoice Invoice { get; set; }
         public Salon Salon { get; set; }

@@ -50,7 +50,6 @@ namespace SALON_HAIR_CORE.Service
             invoiceDetail.Status = "DELETED";
             return await base.EditAsync(invoiceDetail);
         }
-
         public async Task AddAsServiceAsync(InvoiceDetail invoiceDetail)
         {
             await _salon_hairContext.InvoiceDetail.AddAsync(invoiceDetail);
@@ -148,8 +147,7 @@ namespace SALON_HAIR_CORE.Service
             _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
             await _salon_hairContext.SaveChangesAsync();
             //throw new NotImplementedException();
-        }
-        
+        }        
         private InvoiceStaffArrangement InvoiceStaffArrangement(long? invoiceDetailId, long? invoiceId, long? serviceId, string createdBy)
         {
             return new InvoiceStaffArrangement
@@ -176,8 +174,9 @@ namespace SALON_HAIR_CORE.Service
                 ObjectType = invoiceDetail.ObjectType,
                 SalonBranchId = invoiceDetail.SalonBranchId,
                 SalonId = invoiceDetail.SalonId,
-                InvoiceDetailId = invoiceDetail.Id
-                
+                InvoiceDetailId = invoiceDetail.Id,
+                ObjectPriceDiscount = invoiceDetail.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? (invoiceDetail.ObjectPrice - (decimal)invoiceDetail.DiscountValue)
+                    : (invoiceDetail.ObjectPrice - (invoiceDetail.ObjectPrice * (decimal)invoiceDetail.DiscountValue / 100))
             };
         }
         private async Task<List<CommissionArrangement>> GetCommissionArrangementFromInvoiceDetailAsync(InvoiceDetail invoiceDetail)
@@ -196,6 +195,7 @@ namespace SALON_HAIR_CORE.Service
                         serviceCommision.ObjectType = INVOICEOBJECTTYPE.SERVICE;
                         serviceCommision.ObjectPrice = e.Service.Price;                        
                         commissionArrangements.Add(serviceCommision);
+                        
                     }
                 });
             }
@@ -204,6 +204,7 @@ namespace SALON_HAIR_CORE.Service
                 for (int i = 0; i < invoiceDetail.Quantity; i++)
                 {
                     commissionArrangements.Add(InvoiceCommissionArrangement(invoiceDetail));
+
                 }
             }            
             return commissionArrangements;
@@ -279,24 +280,24 @@ namespace SALON_HAIR_CORE.Service
                 case "EXTRA":                   
                     break;            
             }
-
+            var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
+            var discount = invoiceDetail.DiscountUnit.Equals("PERCENT") ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
             if (!invoiceDetail.IsPaid.Value)
-            {
-               
-                var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
-                var discount = invoiceDetail.DiscountUnit.Equals("PERCENT") ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
+            {                           
                 invoiceDetail.Total = total - discount;
             }
             else
             {
                 invoiceDetail.Total = 0;
             }
-         
+            invoiceDetail.TotalExcludeDiscount = total;
+            invoiceDetail.TotalIncludeDiscount = total - discount;
             return invoiceDetail;
 
         }
         public async Task EditAsServiceAsync(InvoiceDetail invoiceDetail, int? oldQuantity)
         {
+
         
             if (oldQuantity > invoiceDetail.Quantity)
             {
@@ -354,10 +355,21 @@ namespace SALON_HAIR_CORE.Service
                     InvoiceStaffArrangements.Add(
                       InvoiceCommissionArrangement(invoiceDetail));
                 }
-                _salon_hairContext.CommissionArrangement.RemoveRange(InvoiceStaffArrangements);
+                _salon_hairContext.CommissionArrangement.AddRange(InvoiceStaffArrangements);
             }
-          
+            if(oldInvoiceDetail == invoiceDetail.Quantity)
+            {
+                var listInvoiceStaffArrangement = _salon_hairContext.CommissionArrangement.
+                   Where(e => e.InvoiceDetailId == invoiceDetail.Id).ToList();
+                var objectPriceDiscount = invoiceDetail.DiscountValue.Equals(DISCOUNTUNIT.MONEY) ? invoiceDetail.ObjectPrice - invoiceDetail.DiscountValue.Value :
+                    invoiceDetail.ObjectPrice * (1 - invoiceDetail.DiscountValue / 100);
+                listInvoiceStaffArrangement.ForEach(e => {
+                    e.ObjectPriceDiscount = objectPriceDiscount;
+                });
+                _salon_hairContext.CommissionArrangement.UpdateRange(listInvoiceStaffArrangement);
+            }
             _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
+           
             await _salon_hairContext.SaveChangesAsync();
 
         }

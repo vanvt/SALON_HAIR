@@ -26,7 +26,6 @@ namespace SALON_HAIR_API.Controllers
             _cashBook = cashBook;
             _user = user;
         }
-
         // GET: api/CashBooks
         [HttpGet]
         public IActionResult GetCashBook(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", string date = "")
@@ -36,19 +35,13 @@ namespace SALON_HAIR_API.Controllers
             data = GetByCurrentSalon(data);
             var data2 = data;
             var dateQuery = GetDateRangeQuery(date).Date;
-            data = data.Where(e => e.Created.Value.Date == dateQuery);
-           
+            data = data.Where(e => e.Created.Value.Date == dateQuery);           
             if(data.Count() == 0)
             {
                 data2 = data2.Where(e => e.Created.Value.Date < dateQuery).OrderByDescending(e => e.Created).Take(1);
                 if (data2.Count() == 0)
                 {
-                    return OkList(new List<CashBook> { new CashBook{
-                        EarlyFund = 0,
-                        EndFund = 0,
-                        TotalExpenditure = 0,
-                        TotalRevenue = 0,                       
-                    } });
+                    return OkList(new List<CashBook>());
                 }
                 else
                 {

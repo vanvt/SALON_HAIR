@@ -921,6 +921,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnType("decimal(10,2)")
                     .HasDefaultValueSql("'0.00'");
 
+                entity.Property(e => e.ObjectPriceDiscount)
+                    .HasColumnName("object_price_discount")
+                    .HasColumnType("decimal(10,0)");
+
                 entity.Property(e => e.ObjectType)
                     .IsRequired()
                     .HasColumnName("object_type")
@@ -1950,6 +1954,14 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.Total)
                     .HasColumnName("total")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.TotalExcludeDiscount)
+                    .HasColumnName("total_exclude_discount")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.TotalIncludeDiscount)
+                    .HasColumnName("total_include_discount")
                     .HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.Updated)
