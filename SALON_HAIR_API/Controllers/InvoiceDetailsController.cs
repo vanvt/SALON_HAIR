@@ -86,7 +86,7 @@ namespace SALON_HAIR_API.Controllers
                 invoiceDetail.Updated = DateTime.Now;
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
                 var oldQuantity = _invoiceDetail.FindBy(e => e.Id == invoiceDetail.Id).AsNoTracking().FirstOrDefault().Quantity;              
-               await _invoiceDetail.EditAsEditCommissionAsync(invoiceDetail);
+               await _invoiceDetail.EditAsEditCommissionAsync(invoiceDetail, oldQuantity);
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }
 

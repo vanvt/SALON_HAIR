@@ -46,12 +46,8 @@ namespace SALON_HAIR_API.Controllers
                 else
                 {
                     var data3 = data2.FirstOrDefault();
-                    return OkList(new List<CashBook> { new CashBook{
-                        EarlyFund = data3.EndFund,
-                        EndFund = data3.EndFund,
-                        TotalExpenditure = data3.TotalExpenditure,
-                        TotalRevenue = data3.TotalRevenue
-                    } });
+                    data3.EndFund = data3.EarlyFund;
+                    return OkList(new List<CashBook> { data3 });
                 }
             }
             var dataReturn =   _cashBook.LoadAllInclude(data);

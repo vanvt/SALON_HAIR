@@ -16,6 +16,7 @@ namespace SALON_HAIR_CORE.Interface
         Task EditAsServiceAsync(InvoiceDetail invoiceDetail, int? oldQuantity);
         Task AddAsGenCommisonAsync(InvoiceDetail invoiceDetail);
         Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail);
+        Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail, int? oldQuantity);
         Task RemoveAsEditCommissionAsync(InvoiceDetail invoiceDetail);
     }
 }

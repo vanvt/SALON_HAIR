@@ -82,6 +82,8 @@ namespace SALON_HAIR_CORE.Service
            _salon_hairContext.WarehouseTransaction.Add(warehouseTransactionByInvoice);
             _salon_hairContext.Invoice.Update(dataUpdate);
             var cashBookIncome = CreateCashBookIncomeTransaction(dataUpdate, listInvoiceDetail);
+            ///Caculate commision by CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);
+            ///
             var cashBookOutcome = CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);
             _salon_hairContext.CashBookTransaction.Add(cashBookIncome);
             _salon_hairContext.CashBookTransaction.Add(cashBookOutcome);
@@ -129,6 +131,7 @@ namespace SALON_HAIR_CORE.Service
                 .Where(e=>e.SaleStaffId!=default || e.ServiceStaffId!=default);
             //For Commision/ get ObjectPrice to cacualate the commission           
             var listCashBookTransactionDetail = new List<CashBookTransactionDetail>();
+
             var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions
                 (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList());
             var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions
@@ -137,6 +140,8 @@ namespace SALON_HAIR_CORE.Service
                 (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList());
             var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction
               (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList());
+            #region Tracking staff service - product - package
+          
             _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
             _salon_hairContext.StaffPackageCommissionTransaction.AddRange(listStaffPackageCommissionTransaction);
             _salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceCommissionTransaction);
@@ -154,7 +159,7 @@ namespace SALON_HAIR_CORE.Service
             listStaffServiceServiceCommissionTransaction.ForEach(e => {
                 listCashBookTransactionDetail.Add(CreateCashBookTransactionDetails(e.SalonId, e.SalonBranchId, "Pay for do Service ", e.CommissionServiceValue, e.StaffId));
             });
-
+            #endregion 
             cashBookTransactionOutcome.CashBookTransactionDetail = listCashBookTransactionDetail;
             cashBookTransactionOutcome.Money = listCashBookTransactionDetail.Sum(e => e.Money);
             return cashBookTransactionOutcome;
@@ -381,8 +386,7 @@ namespace SALON_HAIR_CORE.Service
             return cashBookTransactionIncome;
 
         }
-
-
+        #region This code is not used any more, but I can't delete because I spent 2 hours to write them
 
         private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(Invoice invoice, List<InvoiceDetail> invoiceDetails)
         {
@@ -558,8 +562,7 @@ namespace SALON_HAIR_CORE.Service
             });
             return listStaffServiceCommissionTransaction;
         }
-
-
+        #endregion
         private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(List<CommissionArrangement> commissionArrangements)
         {
             var listStaffProductCommisionTransaction = new List<StaffProductCommissionTransaction>();
@@ -628,7 +631,6 @@ namespace SALON_HAIR_CORE.Service
 
             return listStaffServiceCommissionTransaction;
         }
-
         private CashBookTransactionDetail CreateCashBookTransactionDetails(long? salonId, long? branchId,string description,decimal money,long? staffId)
         {
             return new CashBookTransactionDetail {

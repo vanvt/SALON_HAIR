@@ -9,6 +9,8 @@ using SALON_HAIR_CORE.Interface;
 using ULTIL_HELPER;
 using Microsoft.AspNetCore.Authorization;
 using SALON_HAIR_API.Exceptions;
+using SALON_HAIR_API.ViewModels;
+
 namespace SALON_HAIR_API.Controllers
 {
     [Route("[controller]")]
@@ -18,11 +20,12 @@ namespace SALON_HAIR_API.Controllers
     {
         private readonly ICommissionArrangement _commissionArrangement;
         private readonly IUser _user;
-
-        public CommissionArrangementsController(ICommissionArrangement commissionArrangement, IUser user)
+        private readonly IInvoice _invoice;
+        public CommissionArrangementsController(IInvoice invoice,ICommissionArrangement commissionArrangement, IUser user)
         {
             _commissionArrangement = commissionArrangement;
             _user = user;
+            _invoice = invoice;
         }
 
         // GET: api/CommissionArrangements
@@ -30,8 +33,16 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetCommissionArrangement(long invoiceId, int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _commissionArrangement.SearchAllFileds(keyword);
-            var dataReturn =   _commissionArrangement.LoadAllInclude(data);
-            return OkList(dataReturn);
+            data = data.Where(e => e.InvoiceId == invoiceId);
+            var dataReturn =   _commissionArrangement.LoadAllInclude(data,nameof(Invoice),nameof(InvoiceDetail));
+            var invoiceNote = _invoice.FindBy(e => e.Id == invoiceId).Select(e => e.Note).FirstOrDefault();           
+            CommissionArrangementVM commissionArrangementVM = new CommissionArrangementVM
+            {
+                Id = invoiceId,
+                Note = invoiceNote,
+                InvoiceStaffArrangements = dataReturn
+            };
+            return Ok(commissionArrangementVM);
         }
         // GET: api/CommissionArrangements/5
         [HttpGet("{id}")]
@@ -60,21 +71,24 @@ namespace SALON_HAIR_API.Controllers
 
         // PUT: api/CommissionArrangements/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommissionArrangement([FromRoute] long id, [FromBody] CommissionArrangement commissionArrangement)
+        public async Task<IActionResult> PutCommissionArrangement([FromRoute] long id, [FromBody] CommissionArrangementVMPut commissionArrangement)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (id != commissionArrangement.Id)
-            {
-                return BadRequest();
-            }
+           
             try
             {
-                commissionArrangement.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                await _commissionArrangement.EditAsync(commissionArrangement);
-                return CreatedAtAction("GetCommissionArrangement", new { id = commissionArrangement.Id }, commissionArrangement);
+               
+                var invocie = _invoice.Find(id);
+                if (invocie == null) return NotFound();
+                invocie.Note = commissionArrangement.Note;
+
+                await _invoice.EditAsync(invocie);
+                await _commissionArrangement.EditRangeAsync(commissionArrangement.InvoiceStaffArrangements);
+
+                return CreatedAtAction("GetCommissionArrangement", new { id }, commissionArrangement);
             }
 
             catch (DbUpdateConcurrencyException)

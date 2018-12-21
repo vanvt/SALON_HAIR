@@ -333,21 +333,21 @@ namespace SALON_HAIR_CORE.Service
             await _salon_hairContext.CommissionArrangement.AddRangeAsync(commissionArrangementFromInvoiceDetail);
             await _salon_hairContext.SaveChangesAsync();
         }
-        public async Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail)
+        public async Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail,int? oldQuantity)
         {
-            var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
-            if (oldInvoiceDetail > invoiceDetail.Quantity)
+            //var oldInvoiceDetail = _salon_hairContext.InvoiceDetail.Find(invoiceDetail.Id).Quantity;
+            if (oldQuantity > invoiceDetail.Quantity)
             {
-                var numberItemRemove = oldInvoiceDetail.Value - invoiceDetail.Quantity;
+                var numberItemRemove = oldQuantity.Value - invoiceDetail.Quantity;
                 //Remove {numberItemRemove} last InvoiceStaffArrangement
                 var listInvoiceStaffArrangement = _salon_hairContext.CommissionArrangement.
                     Where(e => e.InvoiceDetailId == invoiceDetail.Id).OrderByDescending(e => e.Id).Take(numberItemRemove.Value);
 
                 _salon_hairContext.CommissionArrangement.RemoveRange(listInvoiceStaffArrangement);
             }
-            if (oldInvoiceDetail < invoiceDetail.Quantity)
+            if (oldQuantity < invoiceDetail.Quantity)
             {
-                var numberItemAddnew = invoiceDetail.Quantity - oldInvoiceDetail.Value;
+                var numberItemAddnew = invoiceDetail.Quantity - oldQuantity.Value;
                 //Add new {numberItemRemove} InvoiceStaffArrangement
                 List<CommissionArrangement> InvoiceStaffArrangements = new List<CommissionArrangement>();
                 for (int i = 0; i < numberItemAddnew; i++)
@@ -357,7 +357,7 @@ namespace SALON_HAIR_CORE.Service
                 }
                 _salon_hairContext.CommissionArrangement.AddRange(InvoiceStaffArrangements);
             }
-            if(oldInvoiceDetail == invoiceDetail.Quantity)
+            if(oldQuantity == invoiceDetail.Quantity)
             {
                 var listInvoiceStaffArrangement = _salon_hairContext.CommissionArrangement.
                    Where(e => e.InvoiceDetailId == invoiceDetail.Id).ToList();
@@ -380,6 +380,11 @@ namespace SALON_HAIR_CORE.Service
             _salon_hairContext.CommissionArrangement.RemoveRange(dataNeedRemove);
             _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
             await _salon_hairContext.SaveChangesAsync();
+        }
+
+        public Task EditAsEditCommissionAsync(InvoiceDetail invoiceDetail)
+        {
+            throw new NotImplementedException();
         }
     }
 }
