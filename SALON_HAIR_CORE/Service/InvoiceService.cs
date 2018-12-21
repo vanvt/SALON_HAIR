@@ -124,13 +124,11 @@ namespace SALON_HAIR_CORE.Service
                 InvoiceId = invoice.Id
             };
             _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
-            var listCommision = _salon_hairContext.CommissionArrangement.Where(e => e.InvoiceId == invoice.Id).ToList().Where(e=>e.);
-            //For Commision/ get ObjectPrice to cacualate the commission
-           
-
+            var listCommision = _salon_hairContext.CommissionArrangement
+                .Where(e => e.InvoiceId == invoice.Id).ToList()
+                .Where(e=>e.SaleStaffId!=default || e.ServiceStaffId!=default);
+            //For Commision/ get ObjectPrice to cacualate the commission           
             var listCashBookTransactionDetail = new List<CashBookTransactionDetail>();
-
-
             var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions
                 (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList());
             var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions
@@ -139,7 +137,6 @@ namespace SALON_HAIR_CORE.Service
                 (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList());
             var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction
               (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList());
-
             _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
             _salon_hairContext.StaffPackageCommissionTransaction.AddRange(listStaffPackageCommissionTransaction);
             _salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceCommissionTransaction);
@@ -644,4 +641,3 @@ namespace SALON_HAIR_CORE.Service
         }
     }
 }
-    
