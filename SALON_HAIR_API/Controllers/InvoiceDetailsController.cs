@@ -119,9 +119,11 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                invoiceDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
                 invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
-                invoiceDetail.Created = DateTime.Now;                            
+                invoiceDetail.Created = DateTime.Now;                  
+                
                 await _invoiceDetail.AddAsGenCommisonAsync(invoiceDetail);
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
             }

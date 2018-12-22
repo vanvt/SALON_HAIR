@@ -133,13 +133,13 @@ namespace SALON_HAIR_CORE.Service
             var listCashBookTransactionDetail = new List<CashBookTransactionDetail>();
 
             var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions
-                (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList());
+                (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList(),invoice.SalonId,invoice.SalonBranchId);
             var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions
-                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).Where(e=>e.IsPaid==false).ToList());
+                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).Where(e=>e.IsPaid==false).ToList(), invoice.SalonId, invoice.SalonBranchId);
             var listStaffServiceCommissionTransaction = CreateStaffServiceCommissionTransaction
-                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList());
+                (listCommision.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList(), invoice.SalonId, invoice.SalonBranchId);
             var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction
-              (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList());
+              (listCommision.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList(), invoice.SalonId, invoice.SalonBranchId);
             #region Tracking staff service - product - package
           
             _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
@@ -153,7 +153,7 @@ namespace SALON_HAIR_CORE.Service
             listStaffPackageCommissionTransaction.ForEach(e => {
                 listCashBookTransactionDetail.Add(CreateCashBookTransactionDetails(e.SalonId, e.SalonBranchId, "Pay for sale Package", e.CommissionValue, e.StaffId));
             });
-            listStaffPackageCommissionTransaction.ForEach(e => {
+            listStaffServiceCommissionTransaction.ForEach(e => {
                 listCashBookTransactionDetail.Add(CreateCashBookTransactionDetails(e.SalonId, e.SalonBranchId, "Pay for sale Service ", e.CommissionValue, e.StaffId));
             });
             listStaffServiceServiceCommissionTransaction.ForEach(e => {
@@ -266,6 +266,7 @@ namespace SALON_HAIR_CORE.Service
         private List<CashBookTransaction> CreateCashBookTransaction(Invoice invoice, List<InvoiceDetail> invoiceDetails)
         {
             List<CashBookTransaction> cashBookTransactions = new List<CashBookTransaction>();
+            #region Create Code
             var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == invoice.SalonId && e.ObjectName.Equals(nameof(CashBookTransaction))).FirstOrDefault();
 
             if (indexObject == null)
@@ -284,7 +285,7 @@ namespace SALON_HAIR_CORE.Service
             {
                 indexObject.ObjectIndex++;               
             }
-
+            #endregion
             //income on invoice
             var cashBookTransactionIncome = new CashBookTransaction
             {
@@ -317,15 +318,17 @@ namespace SALON_HAIR_CORE.Service
             _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
 
             var listCashBookTransactionDetail = new List<CashBookTransactionDetail>();
-            var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions(invoice, invoiceDetails);
-            var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions(invoice, invoiceDetails);
-            var listStaffServiceCommissionTransaction = CreateStaffServiceCommissionTransaction(invoice, invoiceDetails);
-            var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction(invoice, invoiceDetails);
+            var listProductId = invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).Select(e => e.ObjectId);
+            var listServiceId = invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Select(e => e.ObjectId);
+            var listPackageId = invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).Select(e => e.ObjectId);
+            var commissionArrangements = _salon_hairContext.CommissionArrangement.Where(e => e.InvoiceId == invoice.Id).ToList();
 
-           // _salon_hairContext.StaffProductCommissionTransaction.AddRange(listStaffProductCommissionTransaction);
-            //_salon_hairContext.StaffPackageCommissionTransaction.AddRange(listStaffPackageCommissionTransaction);
-            //_salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceCommissionTransaction);
-            //_salon_hairContext.StaffServiceCommissionTransaction.AddRange(listStaffServiceServiceCommissionTransaction);
+            var listStaffProductCommissionTransaction = CreateStaffProductCommissionTransactions(commissionArrangements.Where(e=>e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList(),invoice.SalonId,invoice.SalonBranchId);
+            var listStaffPackageCommissionTransaction = CreateStaffPackageCommissionTransactions(commissionArrangements.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).Where(e=>e.IsPaid==false).ToList(), invoice.SalonId, invoice.SalonBranchId);
+            var listStaffServiceCommissionTransaction = CreateStaffServiceCommissionTransaction(commissionArrangements.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e=>e.IsPaid==false).ToList(), invoice.SalonId, invoice.SalonBranchId);
+            var listStaffServiceServiceCommissionTransaction = CreateStaffServiceServiceCommissionTransaction(commissionArrangements.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).Where(e => e.IsPaid == true).ToList(), invoice.SalonId, invoice.SalonBranchId);
+
+       
 
             listStaffProductCommissionTransaction.ForEach(e=> {
                 listCashBookTransactionDetail.Add(CreateCashBookTransactionDetails(e.SalonId, e.SalonBranchId, "Pay for sale Product", e.CommissionValue, e.StaffId));
@@ -385,247 +388,83 @@ namespace SALON_HAIR_CORE.Service
 
             return cashBookTransactionIncome;
 
-        }
-        #region This code is not used any more, but I can't delete because I spent 2 hours to write them
-
-        private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(Invoice invoice, List<InvoiceDetail> invoiceDetails)
+        }     
+        private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(List<CommissionArrangement> commissionArrangements,long salonId,long branchId )
         {
-            var listStaffProductCommisionTransaction = new List<StaffProductCommissionTransaction>();
-
-            var listProductIdInvoice = invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).Select(e => e.ObjectId);
-            var listCommisonProduct = _salon_hairContext.CommissionProduct
-                .Where(e => e.StaffId == invoice.SalesmanId)
-                .Where(e => e.SalonBranchId == invoice.SalonBranchId)
-                .Where(e => listProductIdInvoice.Contains(e.ProductId)).ToList();
-
-            invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PRODUCT)).ToList().ForEach(e => {
-                decimal commissionValue = 0;
-                var commission = listCommisonProduct
-                    .Where(c => c.ProductId == e.ObjectId)
-                    .Where(c => c.StaffId == invoice.SalesmanId)
-                    .FirstOrDefault();
-                if (commission != null)
-                {
-                    if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
-                    {
-                        commissionValue = commission.CommissionValue;
-                    }
-                    else
-                    {
-                        //PERCENT
-                        //Check setting addvance
-                        commissionValue = e.Total.Value * (1 - commission.CommissionValue / 100);
-                    }
-                }
-                listStaffProductCommisionTransaction.Add(new StaffProductCommissionTransaction
-                {
-                    ProductId = e.ObjectId,
-                    Created = DateTime.Now,
-                    SalonBranchId = invoice.SalonBranchId,
-                    SalonId = invoice.SalonId,
-                    StaffId = invoice.SalesmanId,
-                    CommissionValue = commissionValue,
-
-                });
-            });
-            return listStaffProductCommisionTransaction;
-        }
-        private List<StaffPackageCommissionTransaction> CreateStaffPackageCommissionTransactions(Invoice invoice, List<InvoiceDetail> invoiceDetails)
-        {
-            var listStaffPackageCommisionTransaction = new List<StaffPackageCommissionTransaction>();
-
-            var listPackageIdInvoice = invoiceDetails.
-                Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE))
-                .Where(e=>e.IsPaid == false)
-                .Select(e => e.ObjectId);
-            var listCommisonPackage = _salon_hairContext.CommissionPackage
-                .Where(e => e.StaffId == invoice.SalesmanId)
-                .Where(e => e.SalonBranchId == invoice.SalonBranchId)
-                .Where(e => listPackageIdInvoice.Contains(e.PackageId)).ToList();
-                
-            invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE)).ToList().ForEach(e => {
-                decimal commissionValue = 0;
-                var commission = listCommisonPackage
-                    .Where(c => c.PackageId == e.ObjectId)
-                    .Where(c => c.StaffId == invoice.SalesmanId)
-                    .FirstOrDefault();
-                if (commission != null)
-                {
-                    if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
-                    {
-                        commissionValue = commission.CommissionValue;
-                    }
-                    else
-                    {
-                        //PERCENT
-                        //Check setting addvance
-                        commissionValue = e.Total.Value * (1 - commission.CommissionValue / 100);
-                    }
-                }
-                listStaffPackageCommisionTransaction.Add(new StaffPackageCommissionTransaction
-                {
-                    PackageId = e.ObjectId,
-                    Created = DateTime.Now,
-                    SalonBranchId = invoice.SalonBranchId,
-                    SalonId = invoice.SalonId,
-                    StaffId = invoice.SalesmanId,
-                    CommissionValue = commissionValue,
-                });
-            });
-            return listStaffPackageCommisionTransaction;
-        }
-        private List<StaffServiceCommissionTransaction> CreateStaffServiceCommissionTransaction(Invoice invoice, List<InvoiceDetail> invoiceDetails)
-        {
-            var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
-
-            var listPackageIdInvoice = invoiceDetails.
-                Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE))              
-                .Select(e => e.ObjectId);
-            var listCommisonPackage = _salon_hairContext.CommissionService
-                .Where(e => e.StaffId == invoice.SalesmanId)
-                .Where(e => e.SalonBranchId == invoice.SalonBranchId)
-                .Where(e => listPackageIdInvoice.Contains(e.ServiceId)).ToList();
-
-            invoiceDetails.Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.SERVICE)).ToList().ForEach(e => {
-                decimal commissionValue = 0;
-                var commission = listCommisonPackage
-                    .Where(c => c.ServiceId == e.ObjectId)
-                    .Where(c => c.StaffId == invoice.SalesmanId)
-                    .FirstOrDefault();
-                if (commission != null)
-                {
-                    if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
-                    {
-                        commissionValue = commission.CommissionValue;
-                    }
-                    else
-                    {
-                        //PERCENT
-                        //Check setting addvance
-                        commissionValue = e.Total.Value * (1 - commission.CommissionValue / 100);
-                    }
-                }
-                listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
-                {
-                    ServiceId = e.ObjectId,
-                    Created = DateTime.Now,
-                    SalonBranchId = invoice.SalonBranchId,
-                    SalonId = invoice.SalonId,
-                    StaffId = invoice.SalesmanId,
-                    CommissionValue = commissionValue,
-                });
-            });
-            return listStaffServiceCommissionTransaction;
-        }
-        private List<StaffServiceCommissionTransaction> CreateStaffServiceServiceCommissionTransaction(Invoice invoice, List<InvoiceDetail> invoiceDetails)
-        {
-            var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
-
-            var invoiceStaffArrangements = _salon_hairContext.InvoiceStaffArrangement.Where(e => e.InvoiceId == invoice.Id);
-            var listServiceIdInvoice = invoiceStaffArrangements.Select(e => e.Service);
-            var listStaffIdInvoice = invoiceStaffArrangements.Select(e => e.ServiceId);
-            var listCommisonService = _salon_hairContext.CommissionService
-                .Where(e => e.StaffId == invoice.SalesmanId)
-                .Where(e => e.SalonBranchId == invoice.SalonBranchId)
-                .Where(e => listServiceIdInvoice.Select(x=>x.Id).Contains(e.ServiceId)).ToList();
-            invoiceStaffArrangements.Where(e => e.StaffId!=null).ToList().ForEach(e => {
-                decimal commissionValue = 0;
-                var commission = listCommisonService
-                    .Where(c => c.ServiceId == e.ServiceId)
-                    .Where(c => c.StaffId == e.StaffId)
-                    .FirstOrDefault();
-                if (commission != null)
-                {
-                    if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
-                    {
-                        commissionValue = commission.CommissionServiceValue;
-                    }
-                    else
-                    {
-                        var servicePrice = listServiceIdInvoice.Where(x => x.Id == e.ServiceId).FirstOrDefault();
-                        if(servicePrice != null)
-                        {
-                            commissionValue = servicePrice.Price* (1 - commission.CommissionServiceValue / 100);
-                        }
-                    
-                    }
-                }
-                listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
-                {
-                    ServiceId = e.ServiceId,
-                    Created = DateTime.Now,
-                    SalonBranchId = invoice.SalonBranchId,
-                    SalonId = invoice.SalonId,
-                    StaffId = invoice.SalesmanId,
-                    CommissionServiceValue = commissionValue,
-                });
-            });
-            return listStaffServiceCommissionTransaction;
-        }
-        #endregion
-        private List<StaffProductCommissionTransaction> CreateStaffProductCommissionTransactions(List<CommissionArrangement> commissionArrangements)
-        {
+            commissionArrangements = commissionArrangements.Where(e => e.SaleStaffId != default).ToList();
+            var productCommision = _salon_hairContext.CommissionProduct
+                .Where(e => e.SalonBranchId == branchId)
+                .Where(e => commissionArrangements.Select(x => x.ObjectId).Contains(e.ProductId)).ToList();
             var listStaffProductCommisionTransaction = new List<StaffProductCommissionTransaction>();
             foreach (var item in commissionArrangements)
             {
                 listStaffProductCommisionTransaction.Add(new StaffProductCommissionTransaction {
-                    SalonId = item.SalonId,
-                 
-                    SalonBranchId = item.SalonBranchId,
+                    SalonId = salonId,
+                    SalonBranchId = branchId,
                     ProductId = item.ObjectId,
                     StaffId = item.SaleStaffId,
-                    CommissionValue = item.ObjectPrice
+                    //checkSetting AD
+                    CommissionValue = GetCommisionValueProduct(productCommision, item.ObjectPrice, item.ObjectPriceDiscount.Value, item.SaleStaffId.Value, item.ObjectId.Value)
                 });
             }            
             return listStaffProductCommisionTransaction;
-        }
-        private List<StaffPackageCommissionTransaction> CreateStaffPackageCommissionTransactions(List<CommissionArrangement> commissionArrangements)
+        }      
+        private List<StaffPackageCommissionTransaction> CreateStaffPackageCommissionTransactions(List<CommissionArrangement> commissionArrangements, long salonId, long branchId)
         {
+            commissionArrangements = commissionArrangements.Where(e => e.SaleStaffId != default).ToList();
             var listStaffProductCommisionTransaction = new List<StaffPackageCommissionTransaction>();
+            var packageCommision = _salon_hairContext.CommissionPackage
+             .Where(e => e.SalonBranchId == branchId)
+             .Where(e => commissionArrangements.Select(x => x.ObjectId).Contains(e.PackageId)).ToList();
             foreach (var item in commissionArrangements)
             {
                 listStaffProductCommisionTransaction.Add(new StaffPackageCommissionTransaction
                 {
-                    SalonId = item.SalonId,
-                    SalonBranchId = item.SalonBranchId,
+                    SalonId = salonId,
+                    SalonBranchId = branchId,
                     PackageId = item.ObjectId,
                     StaffId = item.SaleStaffId,
-                    CommissionValue = item.ObjectPrice
+                    CommissionValue = GetCommisionValuePackage(packageCommision, item.ObjectPrice, item.ObjectPriceDiscount.Value, item.SaleStaffId.Value, item.ObjectId.Value)
                 });
             }
             return listStaffProductCommisionTransaction;
         }
-        private List<StaffServiceCommissionTransaction> CreateStaffServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements)
+        private List<StaffServiceCommissionTransaction> CreateStaffServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements, long salonId, long branchId)
         {
+            commissionArrangements = commissionArrangements.Where(e => e.SaleStaffId != default).ToList();
             var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
-          
+            var packageCommision = _salon_hairContext.CommissionService
+             .Where(e => e.SalonBranchId == branchId)
+             .Where(e => commissionArrangements.Select(x => x.ObjectId).Contains(e.ServiceId)).ToList();
             foreach (var item in commissionArrangements)
             {
                 listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
                 {
-                    SalonId = item.SalonId,
-                    SalonBranchId = item.SalonBranchId,
+                    SalonId = salonId,
+                    SalonBranchId = branchId,
                     ServiceId = item.ObjectId,
                     StaffId = item.SaleStaffId,
-                    CommissionValue = item.ObjectPrice
+                    CommissionValue = GetCommisionValueService(packageCommision,item.ObjectPrice,item.ObjectPriceDiscount.Value,item.SaleStaffId.Value,item.ObjectId.Value)
                 });
             }
            
             return listStaffServiceCommissionTransaction;
         }
-        private List<StaffServiceCommissionTransaction> CreateStaffServiceServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements)
+        private List<StaffServiceCommissionTransaction> CreateStaffServiceServiceCommissionTransaction(List<CommissionArrangement> commissionArrangements, long salonId, long branchId)
         {
             var listStaffServiceCommissionTransaction = new List<StaffServiceCommissionTransaction>();
-
+               var packageCommision = _salon_hairContext.CommissionService
+             .Where(e => e.SalonBranchId == branchId)
+             .Where(e => commissionArrangements.Select(x => x.ObjectId).Contains(e.ServiceId)).ToList();
             foreach (var item in commissionArrangements)
             {
                 listStaffServiceCommissionTransaction.Add(new StaffServiceCommissionTransaction
                 {
-                    SalonId = item.SalonId,
-                    SalonBranchId = item.SalonBranchId,
+                    SalonId = salonId,
+                    SalonBranchId = branchId,
                     ServiceId = item.ObjectId,
                     StaffId = item.ServiceStaffId,
-                    CommissionServiceValue = item.ObjectPrice
+                    CommissionServiceValue = GetCommisionValueServiceSerivce(packageCommision, item.ObjectPrice,item.ObjectPriceDiscount.Value,item.ServiceStaffId.Value,item.ObjectId.Value)
                 });
             }
 
@@ -640,6 +479,63 @@ namespace SALON_HAIR_CORE.Service
                 Description = description,
                 StaffId = staffId
             };
+        }
+        private decimal GetCommisionValueProduct(List<CommissionProduct> commissionProducts, decimal price, decimal priceDiscout, long staffId, long productId)
+        {
+            var commission = commissionProducts
+             .Where(e => e.StaffId == staffId)
+             .Where(e => e.ProductId == productId).FirstOrDefault();
+            //Check setting Advance
+            var priceToCacalate = price;
+            if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
+            {
+                return  commission.CommissionValue;
+            }
+            return
+            priceToCacalate * (1 - commission.CommissionValue / 100);
+        }
+        private decimal GetCommisionValueService(List<CommissionService> commissionProducts, decimal price, decimal priceDiscout, long staffId, long serviceId)
+        {
+            var commission = _salon_hairContext.CommissionService
+             .Where(e => e.StaffId == staffId)
+             .Where(e => e.ServiceId == serviceId).FirstOrDefault();
+            //Check setting Advance
+            var priceToCacalate = price;
+            if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
+            {
+                return  commission.CommissionValue;
+            }
+            return
+            priceToCacalate * (1 - commission.CommissionValue / 100);
+        }
+        private decimal GetCommisionValuePackage(List<CommissionPackage> commissionProducts, decimal price, decimal priceDiscout, long staffId, long packageId)
+        {
+            var commission = _salon_hairContext.CommissionPackage
+             .Where(e => e.StaffId == staffId)
+             .Where(e => e.PackageId == packageId).FirstOrDefault();
+            //Check setting Advance
+            var priceToCacalate = price;
+            if (commission.CommissionUnit.Equals(DISCOUNTUNIT.MONEY))
+            {
+                return  commission.CommissionValue;
+            }
+            return
+            priceToCacalate * (1 - commission.CommissionValue / 100);
+        }
+        private decimal GetCommisionValueServiceSerivce(List<CommissionService> commissionProducts, decimal price, decimal priceDiscout, long staffId, long serviceId)
+        {
+          
+            var commission = commissionProducts
+             .Where(e => e.StaffId == staffId)
+             .Where(e => e.ServiceId == serviceId).FirstOrDefault();
+            //Check setting Advance
+            var priceToCacalate = price;
+            if (commission.CommissionServiceUnit.Equals(DISCOUNTUNIT.MONEY))
+            {
+                return  commission.CommissionServiceValue;
+            }
+            return
+            priceToCacalate * (1 - commission.CommissionServiceValue / 100);
         }
     }
 }

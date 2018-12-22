@@ -195,7 +195,8 @@ namespace SALON_HAIR_CORE.Service
                         serviceCommision.ObjectType = INVOICEOBJECTTYPE.SERVICE;
                         serviceCommision.ObjectPrice = e.Service.Price;                        
                         commissionArrangements.Add(serviceCommision);
-                        
+                        serviceCommision.SalonId = invoiceDetail.SalonId;
+                        serviceCommision.SalonBranchId = invoiceDetail.SalonBranchId;
                     }
                 });
             }
@@ -357,6 +358,7 @@ namespace SALON_HAIR_CORE.Service
                 }
                 _salon_hairContext.CommissionArrangement.AddRange(InvoiceStaffArrangements);
             }
+
             if(oldQuantity == invoiceDetail.Quantity)
             {
                 var listInvoiceStaffArrangement = _salon_hairContext.CommissionArrangement.
@@ -366,7 +368,8 @@ namespace SALON_HAIR_CORE.Service
                 listInvoiceStaffArrangement.ForEach(e => {
                     e.ObjectPriceDiscount = objectPriceDiscount;
                 });
-                _salon_hairContext.CommissionArrangement.UpdateRange(listInvoiceStaffArrangement);
+                //_salon_hairContext.CommissionArrangement.UpdateRange(listInvoiceStaffArrangement);
+                invoiceDetail.CommissionArrangement = listInvoiceStaffArrangement;
             }
             _salon_hairContext.InvoiceDetail.Update(invoiceDetail);
            

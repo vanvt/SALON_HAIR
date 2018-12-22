@@ -108,7 +108,7 @@ namespace SALON_HAIR_API.Controllers
                 await _invoice.EditAsync(invoice);
                
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
-                //var PackgeAvailables = GetPackgeAvailablesByCustomerId(invoice.CustomerId);
+                
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id } , invoice);
             }
 
