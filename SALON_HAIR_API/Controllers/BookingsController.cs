@@ -130,6 +130,44 @@ namespace SALON_HAIR_API.Controllers
             }
         }
 
+        [HttpPut("prepay/{id}")]
+        public async Task<IActionResult> PutBookingAsPrePay([FromRoute] long id, [FromBody] Booking booking)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != booking.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+
+                booking.Date = DateTime.Parse(booking.DateString);
+                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                await _booking.EditAsPrePayAsync(booking);
+                booking.Customer = _customer.Find(booking.CustomerId);
+                return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BookingExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(booking, e);
+            }
+        }
+
         // POST: api/Bookings
         [HttpPost]
         public async Task<IActionResult> PostBooking([FromBody] Booking booking)

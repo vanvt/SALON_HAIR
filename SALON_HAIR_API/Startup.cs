@@ -145,6 +145,7 @@ namespace WebApplication4
             services.AddScoped<ICustomerPackage, CustomerPackageService>();
             services.AddScoped<ICashBook, CashBookService>();
             services.AddScoped<ICashBookTransaction, CashBookTransactionService>();
+            services.AddScoped<ICashBookTransactionCategory, CashBookTransactionCategoryService>();
             services.AddScoped<ICustomerChannel, CustomerChannelService>();
             services.AddScoped<ICustomerSource, CustomerSourceService>();
             services.AddScoped<ICurrencyUnit, CurrencyUnitService>();

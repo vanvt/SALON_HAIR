@@ -11,6 +11,7 @@ namespace SALON_HAIR_CORE.Interface
         Task AddRemoveNoNeedAsync(Booking booking);
         Task EditAsyncCheckinAsync(Booking booking);
         Task EditAsyncCheckoutAsync(Booking booking);
+        Task EditAsPrePayAsync(Booking booking);
     }
 }
 

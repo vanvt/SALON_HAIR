@@ -24,10 +24,18 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Description { get; set; }
         public decimal? Money { get; set; }
         public long? InvoiceId { get; set; }
+        public long? CashBookTransactionCategoryId { get; set; }
+        public long? PaymentMethodId { get; set; }
+        public long? CustomerId { get; set; }
+        public long? StaffId { get; set; }
 
+        public CashBookTransactionCategory CashBookTransactionCategory { get; set; }
+        public Customer Customer { get; set; }
         public Invoice Invoice { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
+        public Staff Staff { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
     }
 }

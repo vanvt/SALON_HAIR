@@ -108,6 +108,31 @@ namespace SALON_HAIR_API.Controllers
             }
         }
 
+        [HttpPost("package-on-bill")]
+        public async Task<IActionResult> PostInvoiceDetailPackgeOnBill([FromBody] InvoiceDetail invoiceDetail)
+        {
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+               
+                invoiceDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+                invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
+                invoiceDetail.Created = DateTime.Now;
+                await _invoiceDetail.AddAsGenCommisonAsync(invoiceDetail);
+                return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
+
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(invoiceDetail, e);
+            }
+
+        }
         // POST: api/InvoiceDetails
         [HttpPost]
         public async Task<IActionResult> PostInvoiceDetail([FromBody] InvoiceDetail invoiceDetail)
@@ -122,14 +147,13 @@ namespace SALON_HAIR_API.Controllers
                 invoiceDetail.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
                 invoiceDetail.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 invoiceDetail = _invoiceDetail.GetObjectDetail(invoiceDetail);
-                invoiceDetail.Created = DateTime.Now;                  
-                
+                invoiceDetail.Created = DateTime.Now;                                  
                 await _invoiceDetail.AddAsGenCommisonAsync(invoiceDetail);
                 return CreatedAtAction("GetInvoiceDetail", new { id = invoiceDetail.Id }, invoiceDetail);
+
             }
             catch (Exception e)
             {
-
                 throw new UnexpectedException(invoiceDetail, e);
             }
 

@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             BookingDetail = new HashSet<BookingDetail>();
             BookingLog = new HashSet<BookingLog>();
+            BookingPrepayPayment = new HashSet<BookingPrepayPayment>();
             Invoice = new HashSet<Invoice>();
         }
 
@@ -41,6 +42,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public CustomerSource SourceChannel { get; set; }
         public ICollection<BookingDetail> BookingDetail { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<BookingPrepayPayment> BookingPrepayPayment { get; set; }
         public ICollection<Invoice> Invoice { get; set; }
     }
 }

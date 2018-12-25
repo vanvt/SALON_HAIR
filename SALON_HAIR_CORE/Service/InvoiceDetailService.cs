@@ -194,9 +194,10 @@ namespace SALON_HAIR_CORE.Service
                         serviceCommision.ObjectId = e.ServiceId;
                         serviceCommision.ObjectType = INVOICEOBJECTTYPE.SERVICE;
                         serviceCommision.ObjectPrice = e.Service.Price;                        
-                        commissionArrangements.Add(serviceCommision);
+                     
                         serviceCommision.SalonId = invoiceDetail.SalonId;
                         serviceCommision.SalonBranchId = invoiceDetail.SalonBranchId;
+                        commissionArrangements.Add(serviceCommision);
                     }
                 });
             }
@@ -255,31 +256,48 @@ namespace SALON_HAIR_CORE.Service
             await _salon_hairContext.SaveChangesAsync();
         }
         public InvoiceDetail GetObjectDetail(InvoiceDetail invoiceDetail)
-        {
-           
-     
-
+        {             
             switch (invoiceDetail.ObjectType)
             {
-                case "SERVICE":
+                case INVOICEOBJECTTYPE.SERVICE:
                     var service = _salon_hairContext.Service.Find(invoiceDetail.ObjectId);
                     invoiceDetail.ObjectName = service.Name;
                     //invoiceDetail.ObjectPrice = service.Price;
                    
                     break;
-                case "PRODUCT":
+                case INVOICEOBJECTTYPE.PRODUCT:
                     var product = _salon_hairContext.Product.Find(invoiceDetail.ObjectId);                   
                     invoiceDetail.ObjectName = product.Name;
                     //invoiceDetail.ObjectPrice = product.Price;
                     invoiceDetail.ObjectCode = product.Code;
                     break;
-                case "PACKAGE":
+                case INVOICEOBJECTTYPE.PACKAGE:
                     var package = _salon_hairContext.Package.Find(invoiceDetail.ObjectId);
                     invoiceDetail.ObjectName = package.Name;
                     //invoiceDetail.ObjectPrice = package.Price;                
                     break;
-                case "EXTRA":                   
-                    break;            
+                case INVOICEOBJECTTYPE.EXTRA:                   
+                    break;
+                case INVOICEOBJECTTYPE.PACKAGE_ON_BILL:
+                    //var service_packge = _salon_hairContext.Service.Find(invoiceDetail.ObjectId);
+                    //invoiceDetail.ObjectName = service_packge.Name;
+                    var package_on_bill = new Package
+                    {
+                        SalonId = invoiceDetail.SalonId.Value,
+                        PackageSalonBranch = new List<PackageSalonBranch> { new PackageSalonBranch { SalonBranchId = invoiceDetail.SalonBranchId.Value } },
+                        CreatedBy = invoiceDetail.CreatedBy,
+                        Created = DateTime.Now,
+                        Name = invoiceDetail.ObjectName,
+                        ServicePackage = new List<ServicePackage> { new ServicePackage { Created = DateTime.Now,CreatedBy = invoiceDetail.CreatedBy,ServiceId = invoiceDetail.ObjectId.Value, } },
+                        Price = invoiceDetail.ObjectPrice,
+                        NumberOfUse = 1,
+                        UsedInMonth = 1,
+                        OriginalPrice = invoiceDetail.ObjectPrice,                        
+                    };
+                    _salon_hairContext.Package.Add(package_on_bill);
+                    invoiceDetail.ObjectId = package_on_bill.Id;
+                    break;
+
             }
             var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
             var discount = invoiceDetail.DiscountUnit.Equals("PERCENT") ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;

@@ -14,9 +14,11 @@ namespace SALON_HAIR_CORE.Service
     public class BookingService: GenericRepository<Booking> ,IBooking
     {
         private salon_hairContext _salon_hairContext;
-        public BookingService(salon_hairContext salon_hairContext) : base(salon_hairContext)
+        private ISysObjectAutoIncreament _sysObjectAutoIncreamentService; 
+        public BookingService(ISysObjectAutoIncreament sysObjectAutoIncreamentService,salon_hairContext salon_hairContext) : base(salon_hairContext)
         {
             _salon_hairContext = salon_hairContext;
+            _sysObjectAutoIncreamentService = sysObjectAutoIncreamentService;
         }        
         public new void Edit(Booking booking)
         {
@@ -235,6 +237,48 @@ namespace SALON_HAIR_CORE.Service
             booking.SelectedPackage = null;
             booking.BookingStatus = BOOKINGSTATUS.CHECKOUT;
             booking.Updated = DateTime.Now;          
+            await _salon_hairContext.SaveChangesAsync();
+        }
+
+        public async Task EditAsPrePayAsync(Booking booking)
+        {
+            var cashBookTransactions = new List<CashBookTransaction>();
+            //Get payment Method booking
+            var paymentMethod = _salon_hairContext.BookingPrepayPayment.Where(e => e.BookingId == booking.Id);
+
+            var cashBookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory
+                .Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.PREPAY))
+                .Where(e=>e.SalonId==booking.SalonId).Select(e=>e.Id).FirstOrDefault();
+
+            var sysObjectAutoIncreamentService =  _sysObjectAutoIncreamentService.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), booking.SalonId);
+
+            if (cashBookTransactionCategoryId == default) throw new Exception ($"Can't found the code:  {CASH_BOOK_TRANSACTION_CATEGORY.PREPAY} in the system.");
+
+            paymentMethod.ToList().ForEach(e => {
+                // Add CashBookTransaction for every Payment Method
+                cashBookTransactions.Add(new CashBookTransaction {
+                    Action = CASHBOOKTRANSACTIONACTION.INCOME,
+                    Created = DateTime.Now,
+                    CreatedBy = booking.UpdatedBy,
+                    CustomerId = booking.CustomerId,
+                    PaymentMethodId = e.BookingMethodId,
+                    Money = e.Total,
+                    SalonBranchId = booking.SalonBranchId,
+                    SalonId = booking.SalonId,
+                    CashBookTransactionCategoryId = cashBookTransactionCategoryId,
+                    Code = GENERATECODE.BOOKING + sysObjectAutoIncreamentService.ObjectIndex.ToString(GENERATECODE.FORMATSTRING),                    
+                });
+                sysObjectAutoIncreamentService.ObjectIndex++;
+            });
+
+            await _sysObjectAutoIncreamentService.CreateOrUpdateAsync(_salon_hairContext,sysObjectAutoIncreamentService);
+
+            booking.BookingStatus = BOOKINGSTATUS.PREPAID;
+
+            await _salon_hairContext.CashBookTransaction.AddRangeAsync(cashBookTransactions);
+
+            _salon_hairContext.Booking.Update(booking);
+
             await _salon_hairContext.SaveChangesAsync();
         }
     }

@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
+            BookingPrepayPayment = new HashSet<BookingPrepayPayment>();
             CashBook = new HashSet<CashBook>();
             CashBookTransaction = new HashSet<CashBookTransaction>();
             CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
@@ -17,7 +18,10 @@ namespace SALON_HAIR_ENTITY.Entities
             CommissionProduct = new HashSet<CommissionProduct>();
             CommissionService = new HashSet<CommissionService>();
             Customer = new HashSet<Customer>();
+            CustomerDebt = new HashSet<CustomerDebt>();
+            CustomerDebtTransaction = new HashSet<CustomerDebtTransaction>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
+            InvoicePayment = new HashSet<InvoicePayment>();
             PackageSalonBranch = new HashSet<PackageSalonBranch>();
             Product = new HashSet<Product>();
             ProductSalonBranch = new HashSet<ProductSalonBranch>();
@@ -60,6 +64,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Salon Salon { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<BookingPrepayPayment> BookingPrepayPayment { get; set; }
         public ICollection<CashBook> CashBook { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
@@ -68,7 +73,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CommissionProduct> CommissionProduct { get; set; }
         public ICollection<CommissionService> CommissionService { get; set; }
         public ICollection<Customer> Customer { get; set; }
+        public ICollection<CustomerDebt> CustomerDebt { get; set; }
+        public ICollection<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
+        public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<PackageSalonBranch> PackageSalonBranch { get; set; }
         public ICollection<Product> Product { get; set; }
         public ICollection<ProductSalonBranch> ProductSalonBranch { get; set; }

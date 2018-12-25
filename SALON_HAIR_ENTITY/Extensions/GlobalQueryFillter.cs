@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.Entities
             builder.Entity<Authority>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<AuthorityRouter>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Booking>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<BookingPrepayPayment>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<BookingDetailService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));          
             builder.Entity<BookingLog>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
@@ -17,7 +18,8 @@ namespace SALON_HAIR_ENTITY.Entities
             builder.Entity<CommissionPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionArrangement>().HasQueryFilter(e => !e.Status.Equals("DELETED"));            
             builder.Entity<CashBook>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
-            builder.Entity<CashBookTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED")); 
+            builder.Entity<CashBookTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CashBookTransactionCategory>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CashBookTransactionDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionProduct>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CommissionService>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
@@ -25,6 +27,8 @@ namespace SALON_HAIR_ENTITY.Entities
             builder.Entity<Customer>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerChannel>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<CustomerSource>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CustomerDebt>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CustomerDebtTransaction>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<DiscountUnit>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Invoice>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<InvoiceDetail>().HasQueryFilter(e => !e.Status.Equals("DELETED"));

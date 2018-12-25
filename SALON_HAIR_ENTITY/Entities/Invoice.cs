@@ -9,6 +9,7 @@ namespace SALON_HAIR_ENTITY.Entities
         {
             CashBookTransaction = new HashSet<CashBookTransaction>();
             CommissionArrangement = new HashSet<CommissionArrangement>();
+            CustomerDebtTransaction = new HashSet<CustomerDebtTransaction>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
             InvoicePayment = new HashSet<InvoicePayment>();
             InvoiceStaffArrangement = new HashSet<InvoiceStaffArrangement>();
@@ -38,6 +39,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public decimal TotalDetails { get; set; }
         public string PaymentStatus { get; set; }
         public long? BookingId { get; set; }
+        public decimal Prepay { get; set; }
 
         public Booking Booking { get; set; }
         public User Cashier { get; set; }
@@ -45,6 +47,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public Staff Salesman { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
         public ICollection<CommissionArrangement> CommissionArrangement { get; set; }
+        public ICollection<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<InvoiceStaffArrangement> InvoiceStaffArrangement { get; set; }

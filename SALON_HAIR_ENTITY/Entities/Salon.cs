@@ -10,15 +10,20 @@ namespace SALON_HAIR_ENTITY.Entities
             Authority = new HashSet<Authority>();
             Booking = new HashSet<Booking>();
             BookingLog = new HashSet<BookingLog>();
+            BookingPrepayPayment = new HashSet<BookingPrepayPayment>();
             CashBook = new HashSet<CashBook>();
             CashBookTransaction = new HashSet<CashBookTransaction>();
+            CashBookTransactionCategory = new HashSet<CashBookTransactionCategory>();
             CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
             CommissionArrangement = new HashSet<CommissionArrangement>();
             CurrencyUnit = new HashSet<CurrencyUnit>();
             Customer = new HashSet<Customer>();
             CustomerChannel = new HashSet<CustomerChannel>();
+            CustomerDebt = new HashSet<CustomerDebt>();
+            CustomerDebtTransaction = new HashSet<CustomerDebtTransaction>();
             CustomerPackage = new HashSet<CustomerPackage>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
+            InvoicePayment = new HashSet<InvoicePayment>();
             PaymentBanking = new HashSet<PaymentBanking>();
             PaymentMethod = new HashSet<PaymentMethod>();
             Product = new HashSet<Product>();
@@ -55,15 +60,20 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<Authority> Authority { get; set; }
         public ICollection<Booking> Booking { get; set; }
         public ICollection<BookingLog> BookingLog { get; set; }
+        public ICollection<BookingPrepayPayment> BookingPrepayPayment { get; set; }
         public ICollection<CashBook> CashBook { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
+        public ICollection<CashBookTransactionCategory> CashBookTransactionCategory { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
         public ICollection<CommissionArrangement> CommissionArrangement { get; set; }
         public ICollection<CurrencyUnit> CurrencyUnit { get; set; }
         public ICollection<Customer> Customer { get; set; }
         public ICollection<CustomerChannel> CustomerChannel { get; set; }
+        public ICollection<CustomerDebt> CustomerDebt { get; set; }
+        public ICollection<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
         public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
+        public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<PaymentBanking> PaymentBanking { get; set; }
         public ICollection<PaymentMethod> PaymentMethod { get; set; }
         public ICollection<Product> Product { get; set; }

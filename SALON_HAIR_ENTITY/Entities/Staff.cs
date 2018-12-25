@@ -7,6 +7,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public Staff()
         {
+            CashBookTransaction = new HashSet<CashBookTransaction>();
             CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
             CommissionArrangementSaleStaff = new HashSet<CommissionArrangement>();
             CommissionArrangementServiceStaff = new HashSet<CommissionArrangement>();
@@ -36,6 +37,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
         public Salon Salon { get; set; }
         public StaffGroup StaffGroup { get; set; }
+        public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
         public ICollection<CommissionArrangement> CommissionArrangementSaleStaff { get; set; }
         public ICollection<CommissionArrangement> CommissionArrangementServiceStaff { get; set; }
