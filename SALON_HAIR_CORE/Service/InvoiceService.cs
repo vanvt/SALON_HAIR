@@ -86,7 +86,6 @@ namespace SALON_HAIR_CORE.Service
             var warehouseTransactionByInvoice = WarehouseTransactionByInvoice(dataUpdate, listInvoiceDetail);
            _salon_hairContext.WarehouseTransaction.Add(warehouseTransactionByInvoice);
             #endregion
-
             //var cashBookIncome = CreateCashBookIncomeTransaction(dataUpdate, listInvoiceDetail);
             #region cashbook transaction           
             var listcashBookIncome = new List<CashBookTransaction>();

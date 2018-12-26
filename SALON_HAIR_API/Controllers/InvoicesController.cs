@@ -96,20 +96,16 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                Invoice invoiceUpdate = _invoice.Find(invoice.Id);
-
-
+                //Invoice invoiceUpdate = _invoice.Find(invoice.Id);
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 //invoiceUpdate.DiscountUnit = invoice.DiscountUnit;
                 //invoiceUpdate.IsDisplay = invoice.IsDisplay;
                 //invoiceUpdate.DiscountValue = invoice.DiscountValue;
                 //invoiceUpdate.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
-                invoice.TotalDetails = invoiceUpdate.TotalDetails;
-                invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
+                //invoice.TotalDetails = invoiceUpdate.TotalDetails;
+                //invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoice.TotalDetails - invoice.DiscountValue : invoice.TotalDetails * (1 - invoice.DiscountValue / 100);
                 await _invoice.EditAsync(invoice);
-               
-                invoice = _invoice.LoadAllCollecttion(invoice) ;
-                
+                invoice = _invoice.LoadAllCollecttion(invoice) ;                
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id } , invoice);
             }
 
@@ -123,11 +119,91 @@ namespace SALON_HAIR_API.Controllers
                 {
                     throw;
                 }
-            }           
+            }
             catch (Exception e)
             {
-
                   throw new UnexpectedException(invoice,e);
+            }
+        }
+        [HttpPut("change-customer/{id}")]
+        public async Task<IActionResult> PutAsChangeCustomerInvoice([FromRoute] long id, [FromBody] Invoice invoice)
+        {
+           
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != invoice.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                Invoice invoiceUpdate = _invoice.Find(invoice.Id);
+                invoiceUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                invoiceUpdate.CustomerId = invoice.CustomerId;
+                await _invoice.EditAsync(invoiceUpdate);
+
+                invoiceUpdate = _invoice.LoadAllCollecttion(invoiceUpdate);
+
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoiceUpdate);
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!InvoiceExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(invoice, e);
+            }
+        }
+        [HttpPut("close-invoice/{id}")]
+        public async Task<IActionResult> PutAsCloseInvoice([FromRoute] long id, [FromBody] Invoice invoice)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != invoice.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                Invoice invoiceUpdate = _invoice.Find(invoice.Id);
+
+                invoiceUpdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                invoiceUpdate.IsDisplay = false;
+                await _invoice.EditAsync(invoiceUpdate);
+
+                invoiceUpdate = _invoice.LoadAllCollecttion(invoiceUpdate);
+
+                return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoiceUpdate);
+            }
+
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!InvoiceExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new UnexpectedException(invoice, e);
             }
         }
         // POST: api/Invoices
