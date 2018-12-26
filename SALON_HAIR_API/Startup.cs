@@ -134,6 +134,7 @@ namespace WebApplication4
             services.AddScoped<IBooking, BookingService>();
             services.AddScoped<IBookingDetail, SALON_HAIR_CORE.Service.BookingDetailService>();
             services.AddScoped<IBookingDetailService, BookingDetailServiceService>();
+
             //services.AddScoped<IBookingDetail, BookingDetailService>();
             services.AddScoped<IBookingLog, BookingLogService>();
             services.AddScoped<IBookingStatus, BookingStatusService>();
@@ -143,6 +144,8 @@ namespace WebApplication4
             services.AddScoped<ICommissionService, CommissionServiceService>();
             services.AddScoped<ICustomer, CustomerService>();
             services.AddScoped<ICustomerPackage, CustomerPackageService>();
+            services.AddScoped<ICustomerDebtTransactionPayment, CustomerDebtTransactionPaymentService>();
+            
             services.AddScoped<ICashBook, CashBookService>();
             services.AddScoped<ICashBookTransaction, CashBookTransactionService>();
             services.AddScoped<ICashBookTransactionCategory, CashBookTransactionCategoryService>();

@@ -36,6 +36,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public virtual DbSet<CustomerChannel> CustomerChannel { get; set; }
         public virtual DbSet<CustomerDebt> CustomerDebt { get; set; }
         public virtual DbSet<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
+        public virtual DbSet<CustomerDebtTransactionPayment> CustomerDebtTransactionPayment { get; set; }
         public virtual DbSet<CustomerPackage> CustomerPackage { get; set; }
         public virtual DbSet<CustomerPackageTransaction> CustomerPackageTransaction { get; set; }
         public virtual DbSet<CustomerSource> CustomerSource { get; set; }
@@ -1728,6 +1729,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.SalonId)
                     .HasName("customer_debt_salon_idx");
 
+                entity.HasIndex(e => new { e.SalonBranchId, e.CustomerId, e.SalonId })
+                    .HasName("unique_index")
+                    .IsUnique();
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
@@ -1786,6 +1791,9 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("customer_debt_transaction");
 
+                entity.HasIndex(e => e.CashBookTransactionId)
+                    .HasName("customer_debt_transaction_cashbook_transaction_idx");
+
                 entity.HasIndex(e => e.CustomerId)
                     .HasName("customer_debt_transaction_customer_idx");
 
@@ -1805,6 +1813,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.Action)
                     .HasColumnName("action")
                     .HasColumnType("varchar(45)");
+
+                entity.Property(e => e.CashBookTransactionId)
+                    .HasColumnName("cash_book_transaction_id")
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.Created)
                     .HasColumnName("created")
@@ -1847,6 +1859,11 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
 
+                entity.HasOne(d => d.CashBookTransaction)
+                    .WithMany(p => p.CustomerDebtTransaction)
+                    .HasForeignKey(d => d.CashBookTransactionId)
+                    .HasConstraintName("customer_debt_transaction_cashbook_transaction");
+
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.CustomerDebtTransaction)
                     .HasForeignKey(d => d.CustomerId)
@@ -1868,6 +1885,101 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasForeignKey(d => d.SalonId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("customer_debt_transaction_salon");
+            });
+
+            modelBuilder.Entity<CustomerDebtTransactionPayment>(entity =>
+            {
+                entity.ToTable("customer_debt_transaction_payment");
+
+                entity.HasIndex(e => e.CustomerDebtTransactionId)
+                    .HasName("customer_debt_transaction_payment_customer_debt_transaction_idx");
+
+                entity.HasIndex(e => e.SalonBranchId)
+                    .HasName("customer_debt_transaction_payment_branch_idx");
+
+                entity.HasIndex(e => e.SalonId)
+                    .HasName("customer_debt_transaction_payment_salon_idx");
+
+                entity.HasIndex(e => e.TransactionBankingId)
+                    .HasName("customer_debt_transaction_payment_banking_idx");
+
+                entity.HasIndex(e => e.TransactionMethodId)
+                    .HasName("customer_debt_transaction_payment_meothd_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Created)
+                    .HasColumnName("created")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasColumnName("created_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.CustomerDebtTransactionId)
+                    .HasColumnName("customer_debt_transaction_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonBranchId)
+                    .HasColumnName("salon_branch_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.SalonId)
+                    .HasColumnName("salon_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasColumnName("status")
+                    .HasColumnType("varchar(250)")
+                    .HasDefaultValueSql("'ENABLE'");
+
+                entity.Property(e => e.Total)
+                    .HasColumnName("total")
+                    .HasColumnType("decimal(10,0)");
+
+                entity.Property(e => e.TransactionBankingId)
+                    .HasColumnName("transaction_banking_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.TransactionMethodId)
+                    .HasColumnName("transaction_method_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Updated)
+                    .HasColumnName("updated")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasColumnName("updated_by")
+                    .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.CustomerDebtTransaction)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.CustomerDebtTransactionId)
+                    .HasConstraintName("customer_debt_transaction_payment_customer_debt_transaction");
+
+                entity.HasOne(d => d.SalonBranch)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.SalonBranchId)
+                    .HasConstraintName("customer_debt_transaction_payment_branch");
+
+                entity.HasOne(d => d.Salon)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.SalonId)
+                    .HasConstraintName("customer_debt_transaction_payment_salon");
+
+                entity.HasOne(d => d.TransactionBanking)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.TransactionBankingId)
+                    .HasConstraintName("customer_debt_transaction_payment_banking");
+
+                entity.HasOne(d => d.TransactionMethod)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.TransactionMethodId)
+                    .HasConstraintName("customer_debt_transaction_payment_meothd");
             });
 
             modelBuilder.Entity<CustomerPackage>(entity =>

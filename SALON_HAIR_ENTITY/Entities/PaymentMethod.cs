@@ -10,6 +10,7 @@ namespace SALON_HAIR_ENTITY.Entities
             BookingPrepayPayment = new HashSet<BookingPrepayPayment>();
             CashBook = new HashSet<CashBook>();
             CashBookTransaction = new HashSet<CashBookTransaction>();
+            CustomerDebtTransactionPayment = new HashSet<CustomerDebtTransactionPayment>();
             InvoicePayment = new HashSet<InvoicePayment>();
             PaymentBankingMethod = new HashSet<PaymentBankingMethod>();
         }
@@ -28,6 +29,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<BookingPrepayPayment> BookingPrepayPayment { get; set; }
         public ICollection<CashBook> CashBook { get; set; }
         public ICollection<CashBookTransaction> CashBookTransaction { get; set; }
+        public ICollection<CustomerDebtTransactionPayment> CustomerDebtTransactionPayment { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }
         public ICollection<PaymentBankingMethod> PaymentBankingMethod { get; set; }
     }

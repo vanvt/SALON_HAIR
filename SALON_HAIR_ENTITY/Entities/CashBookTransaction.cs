@@ -8,6 +8,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public CashBookTransaction()
         {
             CashBookTransactionDetail = new HashSet<CashBookTransactionDetail>();
+            CustomerDebtTransaction = new HashSet<CustomerDebtTransaction>();
         }
 
         public long Id { get; set; }
@@ -37,5 +38,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public SalonBranch SalonBranch { get; set; }
         public Staff Staff { get; set; }
         public ICollection<CashBookTransactionDetail> CashBookTransactionDetail { get; set; }
+        public ICollection<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
     }
 }

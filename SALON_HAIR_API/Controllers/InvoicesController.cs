@@ -62,7 +62,7 @@ namespace SALON_HAIR_API.Controllers
         public async Task<IActionResult> GetInvoice([FromRoute] long id)
         {
             try
-            {              
+            {
                 var start = DateTime.Now;
                 if (!ModelState.IsValid)
                 {
@@ -96,7 +96,7 @@ namespace SALON_HAIR_API.Controllers
             }
             try
             {
-                //Invoice invoiceUpdate = _invoice.Find(invoice.Id);
+                Invoice invoiceUpdate = _invoice.Find(invoice.Id);
 
 
                 invoice.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
@@ -104,7 +104,8 @@ namespace SALON_HAIR_API.Controllers
                 //invoiceUpdate.IsDisplay = invoice.IsDisplay;
                 //invoiceUpdate.DiscountValue = invoice.DiscountValue;
                 //invoiceUpdate.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
-                invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoice.TotalDetails - invoice.DiscountValue : invoice.TotalDetails * (1 - invoice.DiscountValue / 100);
+                invoice.TotalDetails = invoiceUpdate.TotalDetails;
+                invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
                 await _invoice.EditAsync(invoice);
                
                 invoice = _invoice.LoadAllCollecttion(invoice) ;
@@ -200,7 +201,6 @@ namespace SALON_HAIR_API.Controllers
 
                 throw new UnexpectedException(invoiceids, e);
             }
-
         }
         [HttpPut("pay-invoice/{id}")]
         public async Task<IActionResult> PayInvoice([FromRoute] long id, [FromBody] Invoice invoice)

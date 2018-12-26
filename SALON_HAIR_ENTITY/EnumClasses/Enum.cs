@@ -73,6 +73,7 @@ namespace SALON_HAIR_ENTITY.Entities
     {
         public const string SALE = "SALE";
         public const string PREPAY = "PREPAY";
+        public const string DEBT_RECOVERY = "DEBT_RECOVERY";
     }
     public static class GENERATECODE {
         public const string BOOKING = "ES";

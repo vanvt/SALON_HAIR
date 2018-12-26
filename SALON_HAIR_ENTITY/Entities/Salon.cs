@@ -21,6 +21,7 @@ namespace SALON_HAIR_ENTITY.Entities
             CustomerChannel = new HashSet<CustomerChannel>();
             CustomerDebt = new HashSet<CustomerDebt>();
             CustomerDebtTransaction = new HashSet<CustomerDebtTransaction>();
+            CustomerDebtTransactionPayment = new HashSet<CustomerDebtTransactionPayment>();
             CustomerPackage = new HashSet<CustomerPackage>();
             InvoiceDetail = new HashSet<InvoiceDetail>();
             InvoicePayment = new HashSet<InvoicePayment>();
@@ -71,6 +72,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public ICollection<CustomerChannel> CustomerChannel { get; set; }
         public ICollection<CustomerDebt> CustomerDebt { get; set; }
         public ICollection<CustomerDebtTransaction> CustomerDebtTransaction { get; set; }
+        public ICollection<CustomerDebtTransactionPayment> CustomerDebtTransactionPayment { get; set; }
         public ICollection<CustomerPackage> CustomerPackage { get; set; }
         public ICollection<InvoiceDetail> InvoiceDetail { get; set; }
         public ICollection<InvoicePayment> InvoicePayment { get; set; }

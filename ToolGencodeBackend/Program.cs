@@ -75,14 +75,7 @@ namespace ToolGencodeBackend
 
                 //depen += $"services.AddScoped<I{nameEnity}, {nameEnity}Service>();\n";
             }
-
-
-
-
-
-
-
-
+            
             System.IO.File.WriteAllText($@"C:\Users\votha\OneDrive\Desktop\test\GlobalFilterQuery.cs", GlobalFilterQuery.GenGlobalFilterQuery(db));
             System.IO.File.WriteAllText($@"C:\Users\votha\OneDrive\Desktop\test\DependencyInjection.cs", DependencyInjection.GenDependencyInjection(db));
 
@@ -142,6 +135,5 @@ namespace ToolGencodeBackend
              
             }
         }
-
     }
 }

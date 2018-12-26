@@ -4,12 +4,12 @@ using Xunit;
 using System;
 namespace XUnitTestProject1
 {   
-    public class customerController
+    public class customerDebtTransactionPaymentController
     {
         [Fact]
-        public void customer()
+        public void customerDebtTransactionPayment()
         {
-            var client = new RestClient(ConfigTest.url+ "customers?keyword=012");
+            var client = new RestClient(ConfigTest.url+"customerDebtTransactionPayments");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");

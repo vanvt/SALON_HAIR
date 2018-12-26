@@ -4,9 +4,9 @@ namespace SALON_HAIR_ENTITY.Entities
     public static class GlobalQueryFillter
     {
         public static ModelBuilder BuilCustomFillter( ModelBuilder  builder)
-        {
-             
+        {            
             builder.Entity<CustomerPackage>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
+            builder.Entity<CustomerDebtTransactionPayment>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Authority>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<AuthorityRouter>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
             builder.Entity<Booking>().HasQueryFilter(e => !e.Status.Equals("DELETED"));
