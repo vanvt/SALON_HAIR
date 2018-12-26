@@ -34,7 +34,6 @@ namespace SALON_HAIR_CORE.Service
         public new async Task<int> AddAsync(Booking booking)
         {
             booking.Created = DateTime.Now;
-
             return await base.AddAsync(booking);
         }
         public new void Add(Booking booking)
@@ -147,6 +146,7 @@ namespace SALON_HAIR_CORE.Service
         public async Task EditAsyncCheckinAsync(Booking booking)
         {
             //Create new invoice
+            var bookingPayment = _salon_hairContext.BookingPrepayPayment.Where(e => e.BookingId == booking.Id).AsNoTracking();
             booking.SelectedPackage = null;
             var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == booking.SalonId && e.ObjectName.Equals(nameof(Invoice))).FirstOrDefault();
 
@@ -178,8 +178,7 @@ namespace SALON_HAIR_CORE.Service
                 Code = "ES" + indexObject.ObjectIndex.ToString("000000"),
                 Created = DateTime.Now,
                 CreatedBy = booking.CreatedBy,
-                
-                
+                Prepay = bookingPayment.Sum(e => e.Total).Value
             };
             var listServiceBooking = new List<InvoiceDetail>();
          
@@ -231,7 +230,6 @@ namespace SALON_HAIR_CORE.Service
          await  _salon_hairContext.SaveChangesAsync();
 
         }
-
         public async Task EditAsyncCheckoutAsync(Booking booking)
         {
             booking.SelectedPackage = null;
@@ -239,7 +237,6 @@ namespace SALON_HAIR_CORE.Service
             booking.Updated = DateTime.Now;          
             await _salon_hairContext.SaveChangesAsync();
         }
-
         public async Task EditAsPrePayAsync(Booking booking)
         {
             var cashBookTransactions = new List<CashBookTransaction>();

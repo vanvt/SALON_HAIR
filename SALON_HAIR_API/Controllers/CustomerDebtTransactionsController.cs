@@ -94,7 +94,7 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(customerDebtTransaction,e);
             }
         }
-
+      
         // POST: api/CustomerDebtTransactions
         [HttpPost]
         public async Task<IActionResult> PostCustomerDebtTransaction([FromBody] CustomerDebtTransaction customerDebtTransaction)
@@ -107,7 +107,8 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 customerDebtTransaction.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
-                await _customerDebtTransaction.AddAsync(customerDebtTransaction);
+                customerDebtTransaction.Action = DEPT_BEHAVIOR.PAY;
+                await _customerDebtTransaction.AddAsyncAsGenCashBookAsync(customerDebtTransaction);
                 return CreatedAtAction("GetCustomerDebtTransaction", new { id = customerDebtTransaction.Id }, customerDebtTransaction);
             }
             catch (Exception e)

@@ -300,6 +300,7 @@ namespace SALON_HAIR_CORE.Service
 
             }
             var total = invoiceDetail.Quantity.Value * invoiceDetail.ObjectPrice;
+            invoiceDetail.DiscountValue = invoiceDetail.DiscountValue.HasValue ? invoiceDetail.DiscountValue.Value : 0;
             var discount = invoiceDetail.DiscountUnit.Equals("PERCENT") ? (total * invoiceDetail.DiscountValue.Value) / 100 : invoiceDetail.DiscountValue.Value;
             if (!invoiceDetail.IsPaid.Value)
             {                           

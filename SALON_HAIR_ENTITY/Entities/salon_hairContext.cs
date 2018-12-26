@@ -1792,7 +1792,7 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.ToTable("customer_debt_transaction");
 
                 entity.HasIndex(e => e.CashBookTransactionId)
-                    .HasName("customer_debt_transaction_cashbook_transaction_idx");
+                    .HasName("customer_debt_transaction_cash_book_transaction_idx");
 
                 entity.HasIndex(e => e.CustomerId)
                     .HasName("customer_debt_transaction_customer_idx");
@@ -1830,6 +1830,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("customer_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("varchar(450)");
+
                 entity.Property(e => e.InvoiceId)
                     .HasColumnName("invoice_id")
                     .HasColumnType("bigint(20)");
@@ -1862,7 +1866,7 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasOne(d => d.CashBookTransaction)
                     .WithMany(p => p.CustomerDebtTransaction)
                     .HasForeignKey(d => d.CashBookTransactionId)
-                    .HasConstraintName("customer_debt_transaction_cashbook_transaction");
+                    .HasConstraintName("customer_debt_transaction_cash_book_transaction");
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.CustomerDebtTransaction)
@@ -1894,17 +1898,17 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.CustomerDebtTransactionId)
                     .HasName("customer_debt_transaction_payment_customer_debt_transaction_idx");
 
+                entity.HasIndex(e => e.PaymentBankingId)
+                    .HasName("customer_debt_transaction_payment_banking_idx");
+
+                entity.HasIndex(e => e.PaymentMethodId)
+                    .HasName("customer_debt_transaction_payment_meothd_idx");
+
                 entity.HasIndex(e => e.SalonBranchId)
                     .HasName("customer_debt_transaction_payment_branch_idx");
 
                 entity.HasIndex(e => e.SalonId)
                     .HasName("customer_debt_transaction_payment_salon_idx");
-
-                entity.HasIndex(e => e.TransactionBankingId)
-                    .HasName("customer_debt_transaction_payment_banking_idx");
-
-                entity.HasIndex(e => e.TransactionMethodId)
-                    .HasName("customer_debt_transaction_payment_meothd_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -1920,6 +1924,14 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.CustomerDebtTransactionId)
                     .HasColumnName("customer_debt_transaction_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.PaymentBankingId)
+                    .HasColumnName("payment_banking_id")
+                    .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.PaymentMethodId)
+                    .HasColumnName("payment_method_id")
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.SalonBranchId)
@@ -1940,14 +1952,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("total")
                     .HasColumnType("decimal(10,0)");
 
-                entity.Property(e => e.TransactionBankingId)
-                    .HasColumnName("transaction_banking_id")
-                    .HasColumnType("bigint(20)");
-
-                entity.Property(e => e.TransactionMethodId)
-                    .HasColumnName("transaction_method_id")
-                    .HasColumnType("bigint(20)");
-
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")
                     .HasColumnType("datetime");
@@ -1961,6 +1965,16 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasForeignKey(d => d.CustomerDebtTransactionId)
                     .HasConstraintName("customer_debt_transaction_payment_customer_debt_transaction");
 
+                entity.HasOne(d => d.PaymentBanking)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.PaymentBankingId)
+                    .HasConstraintName("customer_debt_transaction_payment_banking");
+
+                entity.HasOne(d => d.PaymentMethod)
+                    .WithMany(p => p.CustomerDebtTransactionPayment)
+                    .HasForeignKey(d => d.PaymentMethodId)
+                    .HasConstraintName("customer_debt_transaction_payment_meothd");
+
                 entity.HasOne(d => d.SalonBranch)
                     .WithMany(p => p.CustomerDebtTransactionPayment)
                     .HasForeignKey(d => d.SalonBranchId)
@@ -1970,16 +1984,6 @@ namespace SALON_HAIR_ENTITY.Entities
                     .WithMany(p => p.CustomerDebtTransactionPayment)
                     .HasForeignKey(d => d.SalonId)
                     .HasConstraintName("customer_debt_transaction_payment_salon");
-
-                entity.HasOne(d => d.TransactionBanking)
-                    .WithMany(p => p.CustomerDebtTransactionPayment)
-                    .HasForeignKey(d => d.TransactionBankingId)
-                    .HasConstraintName("customer_debt_transaction_payment_banking");
-
-                entity.HasOne(d => d.TransactionMethod)
-                    .WithMany(p => p.CustomerDebtTransactionPayment)
-                    .HasForeignKey(d => d.TransactionMethodId)
-                    .HasConstraintName("customer_debt_transaction_payment_meothd");
             });
 
             modelBuilder.Entity<CustomerPackage>(entity =>

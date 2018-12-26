@@ -23,6 +23,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public decimal? Money { get; set; }
         public long? InvoiceId { get; set; }
         public long? CashBookTransactionId { get; set; }
+        public string Description { get; set; }
 
         public CashBookTransaction CashBookTransaction { get; set; }
         public Customer Customer { get; set; }

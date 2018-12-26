@@ -11,17 +11,17 @@ namespace SALON_HAIR_ENTITY.Entities
         public DateTime? Updated { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
-        public long? TransactionMethodId { get; set; }
+        public long? PaymentMethodId { get; set; }
         public decimal? Total { get; set; }
-        public long? TransactionBankingId { get; set; }
+        public long? PaymentBankingId { get; set; }
         public long? SalonId { get; set; }
         public long? SalonBranchId { get; set; }
         public long? CustomerDebtTransactionId { get; set; }
 
         public CustomerDebtTransaction CustomerDebtTransaction { get; set; }
+        public PaymentBanking PaymentBanking { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
-        public PaymentBanking TransactionBanking { get; set; }
-        public PaymentMethod TransactionMethod { get; set; }
     }
 }
