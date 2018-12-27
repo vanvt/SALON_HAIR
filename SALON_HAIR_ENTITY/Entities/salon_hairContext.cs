@@ -4641,6 +4641,12 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("spa_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.IsNew)
+                    .IsRequired()
+                    .HasColumnName("is_new")
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("'b\\'1\\''");
+
                 entity.Property(e => e.ObjectIndex)
                     .HasColumnName("object_index")
                     .HasColumnType("bigint(20)")

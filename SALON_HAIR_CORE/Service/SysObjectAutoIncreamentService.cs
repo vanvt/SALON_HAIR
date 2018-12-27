@@ -26,7 +26,9 @@ namespace SALON_HAIR_CORE.Service
                 {
                     SpaId = salonId,
                     ObjectIndex = 1,
-                    ObjectName = objectName
+                    ObjectName = objectName,
+                    IsNew = true
+                    
                 };
                 await _salon_hairContext.SysObjectAutoIncreament.AddAsync(
                  indexObject
@@ -34,6 +36,7 @@ namespace SALON_HAIR_CORE.Service
             }
             else
             {
+                indexObject.IsNew = false;
                 indexObject.ObjectIndex++;
                 _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
             }
@@ -50,11 +53,13 @@ namespace SALON_HAIR_CORE.Service
                 {
                     SpaId = salonId,
                     ObjectIndex = 1,
-                    ObjectName = objectName
+                    ObjectName = objectName,
+                    IsNew = true,
                 };               
             }
             else
             {
+                indexObject.IsNew = false;
                 indexObject.ObjectIndex++;
                
             }           
@@ -70,7 +75,8 @@ namespace SALON_HAIR_CORE.Service
                 {
                     SpaId = salonId,
                     ObjectIndex = jumdIndex,
-                    ObjectName = objectName
+                    ObjectName = objectName,
+                    IsNew =  true
                 };
                 await salon_hairContext.SysObjectAutoIncreament.AddAsync(
                  indexObject
@@ -78,6 +84,7 @@ namespace SALON_HAIR_CORE.Service
             }
             else
             {
+                indexObject.IsNew = false;
                 indexObject.ObjectIndex = indexObject.ObjectIndex + jumdIndex;
                 salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
             }
@@ -86,7 +93,7 @@ namespace SALON_HAIR_CORE.Service
         public async Task<SysObjectAutoIncreament> CreateOrUpdateAsync(salon_hairContext salon_hairContext, SysObjectAutoIncreament indexObject)
         {
           
-            if (salon_hairContext.SysObjectAutoIncreament.Local.Any(e=>e == indexObject))
+            if (indexObject.IsNew==false)
             {
                 salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
             }
@@ -96,7 +103,6 @@ namespace SALON_HAIR_CORE.Service
             }
             return indexObject;
         }
-
     }
 }
     

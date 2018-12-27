@@ -8,5 +8,6 @@ namespace SALON_HAIR_ENTITY.Entities
         public string ObjectName { get; set; }
         public long ObjectIndex { get; set; }
         public long SpaId { get; set; }
+        public bool? IsNew { get; set; }
     }
 }

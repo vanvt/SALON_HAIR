@@ -144,11 +144,14 @@ namespace SALON_HAIR_API.Controllers
             try
             {
 
-                booking.Date = DateTime.Parse(booking.DateString);
-                booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
-                await _booking.EditAsPrePayAsync(booking);
-                booking.Customer = _customer.Find(booking.CustomerId);
-                return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+                var bookingupdate = _booking.Find(id);
+                //booking.Date = DateTime.Parse(booking.DateString);
+                bookingupdate.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                bookingupdate.BookingPrepayPayment = booking.BookingPrepayPayment;
+                await _booking.EditAsPrePayAsync(bookingupdate);
+                bookingupdate.Customer = _customer.Find(bookingupdate.CustomerId);
+               
+                return CreatedAtAction("GetBooking", new { id = bookingupdate.Id }, bookingupdate);
             }
 
             catch (DbUpdateConcurrencyException)

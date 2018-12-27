@@ -32,8 +32,9 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetService(int page = 1, int rowPerPage = 50, string keyword = "", long serviceCategoryId = 0, string orderBy = "", string orderType = "")
         {
-            var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType)
-                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType);
+            firstQuery = GetByCurrentSalon(firstQuery);
+            firstQuery = GetByCurrentSpaBranch(firstQuery);
             var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
             if (serviceCategoryId != 0)
             {
@@ -188,7 +189,7 @@ namespace SALON_HAIR_API.Controllers
             }
             return data;
         }
-        private IQueryable<Product> GetByCurrentSalon(IQueryable<Product> data)
+        private IQueryable<Service> GetByCurrentSalon(IQueryable<Service> data)
         {
             var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
             data = data.Where(e => e.SalonId == salonId);

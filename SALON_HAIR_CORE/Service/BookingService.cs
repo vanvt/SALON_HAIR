@@ -241,7 +241,7 @@ namespace SALON_HAIR_CORE.Service
         {
             var cashBookTransactions = new List<CashBookTransaction>();
             //Get payment Method booking
-            var paymentMethod = _salon_hairContext.BookingPrepayPayment.Where(e => e.BookingId == booking.Id);
+            //var paymentMethod = _salon_hairContext.BookingPrepayPayment.Where(e => e.BookingId == booking.Id);
 
             var cashBookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory
                 .Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.PREPAY))
@@ -251,7 +251,7 @@ namespace SALON_HAIR_CORE.Service
 
             if (cashBookTransactionCategoryId == default) throw new Exception ($"Can't found the code:  {CASH_BOOK_TRANSACTION_CATEGORY.PREPAY} in the system.");
 
-            paymentMethod.ToList().ForEach(e => {
+            booking.BookingPrepayPayment.ToList().ForEach(e => {
                 // Add CashBookTransaction for every Payment Method
                 cashBookTransactions.Add(new CashBookTransaction {
                     Action = CASHBOOKTRANSACTIONACTION.INCOME,
@@ -271,7 +271,7 @@ namespace SALON_HAIR_CORE.Service
             await _sysObjectAutoIncreamentService.CreateOrUpdateAsync(_salon_hairContext,sysObjectAutoIncreamentService);
 
             booking.BookingStatus = BOOKINGSTATUS.PREPAID;
-
+           
             await _salon_hairContext.CashBookTransaction.AddRangeAsync(cashBookTransactions);
 
             _salon_hairContext.Booking.Update(booking);

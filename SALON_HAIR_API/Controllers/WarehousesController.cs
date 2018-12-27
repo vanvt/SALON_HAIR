@@ -41,7 +41,7 @@ namespace SALON_HAIR_API.Controllers
                 var listProductSearch = _product.SearchAllFileds(keyword)
                 .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))).Select(e => e.Id).ToList();
                 data = data.Where(e => listProductSearch.Contains(e.ProductId.Value));
-            }          
+            }
             if (warehouseStatusId != 0)
             {
                 data = data.Where(e => e.WarehouseStatusId == warehouseStatusId);
