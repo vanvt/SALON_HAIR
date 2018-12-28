@@ -10,4 +10,3 @@ namespace SALON_HAIR_CORE.Interface
         Task AddIncludeCommisionAsync(Product product);
     }
 }
-

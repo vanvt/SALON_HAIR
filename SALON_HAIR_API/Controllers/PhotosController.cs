@@ -109,9 +109,7 @@ namespace SALON_HAIR_API.Controllers
                 var fileImage = fileImageCollect.Files[0];
                 if (fileImage == null || fileImage.Length == 0)
                     return Content("file not selected");
-
-               
-               
+ 
                 var uniqueFile = DateTime.Now.ToString("yyyyMMddhhmmss");
                
                 var fileStore = uniqueFile + "-" + fileImage.FileName;

@@ -6,9 +6,9 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class salon_hairContext : DbContext
     {
-        //public salon_hairContext()
-        //{
-        //}
+        public salon_hairContext()
+        {
+        }
 
         public salon_hairContext(DbContextOptions<salon_hairContext> options)
             : base(options)
@@ -100,7 +100,6 @@ namespace SALON_HAIR_ENTITY.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder = GlobalQueryFillter.BuilCustomFillter(modelBuilder);
             modelBuilder.Entity<Authority>(entity =>
             {
                 entity.ToTable("authority");
@@ -1999,7 +1998,7 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.SalonId)
                     .HasName("customer_package_salon_idx");
 
-                entity.HasIndex(e => new { e.PackageId, e.CustomerId, e.SalonId })
+                entity.HasIndex(e => new { e.SalonId, e.PackageId, e.CustomerId, e.Day, e.Month, e.Year })
                     .HasName("unique_index")
                     .IsUnique();
 
@@ -2018,6 +2017,18 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.CustomerId)
                     .HasColumnName("customer_id")
                     .HasColumnType("bigint(20)");
+
+                entity.Property(e => e.Day)
+                    .HasColumnName("day")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ExpireDate)
+                    .HasColumnName("expire_date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Month)
+                    .HasColumnName("month")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.NumberOfPaid)
                     .HasColumnName("number_of_paid")
@@ -2051,6 +2062,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.Year)
+                    .HasColumnName("year")
+                    .HasColumnType("int(11)");
 
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.CustomerPackage)
@@ -2093,6 +2108,14 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("customer_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.Day)
+                    .HasColumnName("day")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Month)
+                    .HasColumnName("month")
+                    .HasColumnType("int(11)");
+
                 entity.Property(e => e.PackageId)
                     .HasColumnName("package_id")
                     .HasColumnType("bigint(20)");
@@ -2121,6 +2144,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.Year)
+                    .HasColumnName("year")
+                    .HasColumnType("int(11)");
             });
 
             modelBuilder.Entity<CustomerSource>(entity =>
@@ -2358,6 +2385,9 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("invoice_detail");
 
+                entity.HasIndex(e => e.CustomerPackageId)
+                    .HasName("invoice_detail_customer_package_idx");
+
                 entity.HasIndex(e => e.DiscountUnit)
                     .HasName("invoice_detail_commission_unit_idx");
 
@@ -2381,6 +2411,10 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.CreatedBy)
                     .HasColumnName("created_by")
                     .HasColumnType("varchar(255)");
+
+                entity.Property(e => e.CustomerPackageId)
+                    .HasColumnName("customer_package_id")
+                    .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.DiscountUnit)
                     .IsRequired()
@@ -2461,6 +2495,11 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.CustomerPackage)
+                    .WithMany(p => p.InvoiceDetail)
+                    .HasForeignKey(d => d.CustomerPackageId)
+                    .HasConstraintName("invoice_detail_customer_package");
 
                 entity.HasOne(d => d.Invoice)
                     .WithMany(p => p.InvoiceDetail)
@@ -4900,7 +4939,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.Quantity)
                     .HasColumnName("quantity")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0) unsigned");
 
                 entity.Property(e => e.SalonBranchId)
                     .HasColumnName("salon_branch_id")
@@ -4916,7 +4955,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.TotalVolume)
                     .HasColumnName("total_volume")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0) unsigned");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")
@@ -4951,6 +4990,7 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasOne(d => d.WarehouseStatus)
                     .WithMany(p => p.Warehouse)
                     .HasForeignKey(d => d.WarehouseStatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("warehouse_status");
             });
 

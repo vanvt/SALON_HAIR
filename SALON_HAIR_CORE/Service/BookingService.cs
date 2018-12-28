@@ -201,7 +201,6 @@ namespace SALON_HAIR_CORE.Service
                 listServiceBooking.Add(packageSelected);
             }
            
-           
             //Get services 
            var listService =  _salon_hairContext.BookingDetailService.Where(e => e.BookingDetail.BookingId == booking.Id).Where(e=>e.IsPaid==false) 
                 .AsNoTracking().GroupBy(e=>e.Service).Select(e=>new {Service = e.Key ,ServiceCount =  e.Count()});

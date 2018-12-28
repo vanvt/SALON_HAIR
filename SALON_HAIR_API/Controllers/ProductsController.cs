@@ -50,9 +50,10 @@ namespace SALON_HAIR_API.Controllers
             {
                 data = data.Where(e => e.ProductStatusId == productStatusId);
             }
-
+            
             data = data.OrderByDescending(e => e.Id);
-            return OkList(_product.Paging(data, page, rowPerPage).Include(e => e.Unit).Include(e => e.Photo));
+            data = data.Include(e => e.Unit).Include(e => e.Photo);
+            return OkList(data);
         }
         // GET: api/Products/5
         [HttpGet("{id}")]

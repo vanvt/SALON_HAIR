@@ -17,5 +17,8 @@ namespace SALON_HAIR_ENTITY.Entities
         public string Action { get; set; }
         public long? CustomerId { get; set; }
         public long? SalonBranchId { get; set; }
+        public int? Day { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
     }
 }

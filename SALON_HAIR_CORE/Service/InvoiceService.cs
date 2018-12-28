@@ -90,17 +90,22 @@ namespace SALON_HAIR_CORE.Service
             #region cashbook transaction           
             var listcashBookIncome = new List<CashBookTransaction>();
             var sysObjectAutoIncreamentService = _sysObjectAutoIncreamentService.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), dataUpdate.SalonId);
-            var paymentMethod = _salon_hairContext.InvoicePayment.Where(e => e.InvoiceId == dataUpdate.Id).Include(e=>e.InvoiceMethod).AsNoTracking().ToList();
+            //var paymentMethod = _salon_hairContext.InvoicePayment.Where(e => e.InvoiceId == dataUpdate.Id).Include(e=>e.InvoiceMethod).AsNoTracking().ToList();
             var cashbookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory.Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.SALE)).Select(e => e.Id).FirstOrDefault();
-            paymentMethod.Where(e=>!e.InvoiceMethod.Code.Equals(PAYMENT_METHOD.DEBIT)).ToList().ForEach(e => {
+            var listMethodId = dataUpdate.InvoicePayment.Select(e => e.InvoiceMethodId);
+            var paymentMethod = _salon_hairContext.PaymentMethod
+                .Where(e => listMethodId.Contains(e.Id))          
+                .ToList();
+            paymentMethod.Where(e=>!e.Code.Equals(PAYMENT_METHOD.DEBIT)).ToList().ForEach(e => {
                 var code = GENERATECODE.BOOKING + sysObjectAutoIncreamentService.ObjectIndex.ToString(GENERATECODE.FORMATSTRING);
-                listcashBookIncome.Add(CreateCashBookIncomeTransaction(e, dataUpdate, cashbookTransactionCategoryId, code));
+                listcashBookIncome.Add(CreateCashBookIncomeTransaction(dataUpdate.InvoicePayment.Where(x=>x.InvoiceMethodId==e.Id).FirstOrDefault(), dataUpdate, cashbookTransactionCategoryId, code));
                 sysObjectAutoIncreamentService.ObjectIndex++;
             });
             #endregion
 
             #region customer dept transaction
-            paymentMethod.Where(e => e.InvoiceMethod.Code.Equals(PAYMENT_METHOD.DEBIT)).ToList().ForEach(e => {
+            paymentMethod.Where(e => e.Code.Equals(PAYMENT_METHOD.DEBIT)).ToList().ForEach(e => {
+                var xxx = dataUpdate.InvoicePayment.Where(x => x.InvoiceMethodId == e.Id).FirstOrDefault().Total;
                 var customerDeptransaction = new CustomerDebtTransaction {
                   CustomerId = dataUpdate.CustomerId,
                   CreatedBy = dataUpdate.CreatedBy,
@@ -109,22 +114,23 @@ namespace SALON_HAIR_CORE.Service
                   InvoiceId = dataUpdate.Id,
                   SalonBranchId = dataUpdate.SalonBranchId,
                   SalonId = dataUpdate.SalonId,
-                  Money = e.Total,                          
+                  Money = xxx
                 };
                 _salon_hairContext.CustomerDebtTransaction.Add(customerDeptransaction);
-            });           
+            });
             #endregion
 
-                ///Caculate commision by CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);
-                ///
-                //var cashBookOutcome = CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);3
-                _salon_hairContext.Invoice.Update(dataUpdate);
+            ///Caculate commision by CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);
+            ///
+            //var cashBookOutcome = CreateCashBookOutcomeTransaction(dataUpdate, listInvoiceDetail);3
+            dataUpdate.CashBookTransaction = listcashBookIncome;
+            _salon_hairContext.Invoice.Update(dataUpdate);
+
             await _sysObjectAutoIncreamentService.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
-            _salon_hairContext.CashBookTransaction.AddRange(listcashBookIncome);
+           // _salon_hairContext.CashBookTransaction.AddRange(listcashBookIncome);
            // _salon_hairContext.CashBookTransaction.Add(cashBookOutcome);
             await _salon_hairContext.SaveChangesAsync();
         }
-
         private CashBookTransaction CreateCashBookOutcomeTransaction(Invoice invoice, List<InvoiceDetail> listInvoiceDetail)
         {
             var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == invoice.SalonId && e.ObjectName.Equals(nameof(CashBookTransaction))).FirstOrDefault();
@@ -199,7 +205,6 @@ namespace SALON_HAIR_CORE.Service
             cashBookTransactionOutcome.Money = listCashBookTransactionDetail.Sum(e => e.Money);
             return cashBookTransactionOutcome;
         }
-
         private List<CustomerPackageTransaction> GetCustomerPackageTransactionsByInvoiceDetail(Invoice dataUpdate, List<InvoiceDetail> invoiceDetails)
         {
             //Get list package
@@ -207,8 +212,12 @@ namespace SALON_HAIR_CORE.Service
                 .Where(e => e.Status.Equals(OBJECTSTATUS.ENABLE))
                 .Where(e => e.ObjectType.Equals(INVOICEOBJECTTYPE.PACKAGE));
 
+            var listcustomerPackage = listPackge.Select(e => e.CustomerPackageId);
             var listCustomerPackageTransaction = new List<CustomerPackageTransaction>();
+            var customerPackage = _salon_hairContext.CustomerPackage.Where(e => listcustomerPackage.Contains(e.PackageId));
+
             listPackge.ToList().ForEach(e => {
+
                 listCustomerPackageTransaction.Add(new CustomerPackageTransaction
                 {
                     CreatedBy = dataUpdate.CreatedBy,
@@ -218,7 +227,10 @@ namespace SALON_HAIR_CORE.Service
                     PackageId = e.ObjectId,
                     Quantity = e.Quantity,
                     SalonId = dataUpdate.SalonId,
-                    SalonBranchId = dataUpdate.SalonBranchId
+                    SalonBranchId = dataUpdate.SalonBranchId,
+                    Day = e.IsPaid.Value? customerPackage.Where(x => x.Id == e.CustomerPackageId).FirstOrDefault().Day:DateTime.Now.Day  ,
+                    Month = e.IsPaid.Value?  customerPackage.Where(x => x.Id == e.CustomerPackageId).FirstOrDefault().Month :DateTime.Now.Month ,
+                    Year = e.IsPaid.Value?  customerPackage.Where(x => x.Id == e.CustomerPackageId).FirstOrDefault().Year:DateTime.Now.Year 
                 });
             });
             return listCustomerPackageTransaction;
@@ -574,9 +586,8 @@ namespace SALON_HAIR_CORE.Service
             priceToCacalate * (1 - commission.CommissionValue / 100);
         }
         private decimal GetCommisionValueServiceSerivce(List<CommissionService> commissionProducts, decimal price, decimal priceDiscout, long staffId, long serviceId)
-        {
-          
-            var commission = commissionProducts
+        {          
+             var commission = commissionProducts
              .Where(e => e.StaffId == staffId)
              .Where(e => e.ServiceId == serviceId).FirstOrDefault();
             //Check setting Advance

@@ -91,8 +91,7 @@ namespace SALON_HAIR_CORE.Service
             return indexObject;
         }
         public async Task<SysObjectAutoIncreament> CreateOrUpdateAsync(salon_hairContext salon_hairContext, SysObjectAutoIncreament indexObject)
-        {
-          
+        {          
             if (indexObject.IsNew==false)
             {
                 salon_hairContext.SysObjectAutoIncreament.Update(indexObject);

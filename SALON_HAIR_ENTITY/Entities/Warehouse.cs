@@ -17,7 +17,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? ProductId { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? TotalVolume { get; set; }
-        public long? WarehouseStatusId { get; set; }
+        public long WarehouseStatusId { get; set; }
 
         public Product Product { get; set; }
         public Salon Salon { get; set; }

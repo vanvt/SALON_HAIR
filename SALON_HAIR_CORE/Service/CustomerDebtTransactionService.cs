@@ -82,9 +82,6 @@ namespace SALON_HAIR_CORE.Service
             });
 
             await _sysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
-
-         
-
             await _salon_hairContext.CashBookTransaction.AddRangeAsync(cashBookTransactions);
             customerDebtTransaction.Money = customerDebtTransaction.CustomerDebtTransactionPayment.Sum(e => e.Total);
             _salon_hairContext.CustomerDebtTransaction.Add(customerDebtTransaction);          

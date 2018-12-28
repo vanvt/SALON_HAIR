@@ -32,7 +32,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? SalonBranchId { get; set; }
         public decimal? TotalIncludeDiscount { get; set; }
         public decimal? TotalExcludeDiscount { get; set; }
+        public long? CustomerPackageId { get; set; }
 
+        public CustomerPackage CustomerPackage { get; set; }
         public Invoice Invoice { get; set; }
         public Salon Salon { get; set; }
         public SalonBranch SalonBranch { get; set; }
