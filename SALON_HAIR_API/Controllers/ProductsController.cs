@@ -41,7 +41,7 @@ namespace SALON_HAIR_API.Controllers
         {
             var data = _product.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);
-            data = GetByCurrentSpaBranch(data);                
+            data = GetByCurrentSpaBranch(data);
             if (productCategoryId != 0)
             {
                 data = data.Where(e => e.ProductCategoryId == productCategoryId);
@@ -50,7 +50,6 @@ namespace SALON_HAIR_API.Controllers
             {
                 data = data.Where(e => e.ProductStatusId == productStatusId);
             }
-            
             data = data.OrderByDescending(e => e.Id);
             data = data.Include(e => e.Unit).Include(e => e.Photo);
             return OkList(data);

@@ -76,7 +76,8 @@ namespace SALON_HAIR_CORE.Service
                     SalonId = customerDebtTransaction.SalonId,
                     CashBookTransactionCategoryId = cashBookTransactionCategoryId,
                     Code = GENERATECODE.BOOKING + sysObjectAutoIncreamentService.ObjectIndex.ToString(GENERATECODE.FORMATSTRING),
-                    
+                    Cashier = customerDebtTransaction.CreatedBy
+
                 });
                 sysObjectAutoIncreamentService.ObjectIndex++;
             });

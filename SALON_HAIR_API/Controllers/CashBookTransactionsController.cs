@@ -28,12 +28,20 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/CashBookTransactions
         [HttpGet]
-        public IActionResult GetCashBookTransaction(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",string date = "")
+        public IActionResult GetCashBookTransaction(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",string date = "", string paymentMethodCode = "",string cashBookTransactionCategory="")
         {
             var data = _cashBookTransaction.SearchAllFileds(keyword);          
             data = GetByCurrentSpaBranch(data);
             data = GetByCurrentSalon(data);
             data = data.Where(e => e.Created.Value.Date == GetDateRangeQuery(date).Date);
+            if (!string.IsNullOrEmpty(paymentMethodCode))
+            {
+                data = data.Where(e => e.PaymentMethod.Code.Equals(paymentMethodCode));
+            }
+            if (!string.IsNullOrEmpty(cashBookTransactionCategory))
+            {
+                data = data.Where(e => e.CashBookTransactionCategory.Code.Equals(cashBookTransactionCategory));
+            }
             var dataReturn =   _cashBookTransaction.LoadAllInclude(data);
             return OkList(dataReturn);
         }

@@ -28,15 +28,21 @@ namespace SALON_HAIR_API.Controllers
         }
         // GET: api/CashBooks
         [HttpGet]
-        public IActionResult GetCashBook(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", string date = "")
+        public IActionResult GetCashBook(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "", string date = "",string paymentMethodCode="")
         {
             var data = _cashBook.SearchAllFileds(keyword);
             data = GetByCurrentSpaBranch(data);
             data = GetByCurrentSalon(data);
-            var data2 = data;
+          
             var dateQuery = GetDateRangeQuery(date).Date;
-            data = data.Where(e => e.Created.Value.Date == dateQuery);           
-            if(data.Count() == 0)
+            data = data.Where(e => e.Created.Value.Date == dateQuery);
+
+            if (!string.IsNullOrEmpty(paymentMethodCode))
+            {
+                data = data.Where(e => e.PaymentMethod.Code.Equals(paymentMethodCode));
+            }
+            var data2 = data;
+            if (data.Count() == 0)
             {
                 data2 = data2.Where(e => e.Created.Value.Date < dateQuery).OrderByDescending(e => e.Created).Take(1);
                 if (data2.Count() == 0)

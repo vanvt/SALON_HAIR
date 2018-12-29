@@ -214,7 +214,7 @@ namespace SALON_HAIR_CORE.Service
 
             var listcustomerPackage = listPackge.Select(e => e.CustomerPackageId);
             var listCustomerPackageTransaction = new List<CustomerPackageTransaction>();
-            var customerPackage = _salon_hairContext.CustomerPackage.Where(e => listcustomerPackage.Contains(e.PackageId));
+            var customerPackage = _salon_hairContext.CustomerPackage.Where(e => listcustomerPackage.Contains(e.Id));
 
             listPackge.ToList().ForEach(e => {
 
@@ -448,7 +448,8 @@ namespace SALON_HAIR_CORE.Service
                CashBookTransactionCategoryId = cashBookTransactionCategoryId,
                SalonId = invoice.SalonId,
                SalonBranchId = invoice.SalonBranchId,
-               Code = code
+               Code = code,
+               Cashier = invoice.CreatedBy,
             };
             return cashBookTransaction;
         }

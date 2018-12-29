@@ -307,16 +307,12 @@ namespace SALON_HAIR_API.Controllers
                     : (dataUpdate.TotalDetails - (dataUpdate.TotalDetails*(decimal)dataUpdate.DiscountValue/100));
                 dataUpdate.InvoicePayment = invoice.InvoicePayment;               
                 dataUpdate.PaymentStatus = PAYSTATUS.PAID;
-                await _invoice.EditAsPayAsync(dataUpdate);              
-             
-                dataUpdate = _invoice.LoadAllReference(dataUpdate);
-               
+                await _invoice.EditAsPayAsync(dataUpdate);                           
+                dataUpdate = _invoice.LoadAllReference(dataUpdate);               
                 return CreatedAtAction("GetInvoice", new { id = invoice.Id }, dataUpdate);
-
-            }
+            }      
             catch (Exception e)
             {
-
                 throw new UnexpectedException(invoice, e);
             }
 

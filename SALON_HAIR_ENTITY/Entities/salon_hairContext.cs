@@ -6,9 +6,9 @@ namespace SALON_HAIR_ENTITY.Entities
 {
     public partial class salon_hairContext : DbContext
     {
-        public salon_hairContext()
-        {
-        }
+        //public salon_hairContext()
+        //{
+        //}
 
         public salon_hairContext(DbContextOptions<salon_hairContext> options)
             : base(options)
@@ -100,6 +100,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder = GlobalQueryFillter.BuilCustomFillter(modelBuilder);
             modelBuilder.Entity<Authority>(entity =>
             {
                 entity.ToTable("authority");
