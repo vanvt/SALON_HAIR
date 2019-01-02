@@ -34,8 +34,8 @@ namespace SALON_HAIR_API.Controllers
             var data = _commissionService.SearchAllFileds(keyword)
                 .Where(e => e.StaffId == staffId)
                 .Where(e => e.SalonBranchId == salonBranchId)
-                .Where(e=>! e.Service.Status.Equals("DELETED"))
-                .Where(e => !e.Service.ServiceCategory.Status.Equals("DELETED"));
+                .Where(e=>! e.Service.Status.Equals(OBJECTSTATUS.DELETED))
+                .Where(e => !e.Service.ServiceCategory.Status.Equals(OBJECTSTATUS.DELETED));
             var dataReturn = _commissionService.LoadAllInclude(data);
             dataReturn = dataReturn.Include(e => e.Service).ThenInclude(e => e.ServiceCategory);
             return OkList(dataReturn);

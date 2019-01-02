@@ -44,12 +44,13 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProductCategory(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data  = _productCategory.SearchAllFileds(keyword, orderBy, orderType).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
-            var dataReturn = data.Include(e => e.Product).ThenInclude(e => e.Photo);
+            var data = _productCategory.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+                
+            //var dataReturn = data.Include(e => e.Product).ThenInclude(e => e.Photo);
             //var dataReturn = _productCategory.LoadAllCollecttion(data);
             //dataReturn = _productCategory.LoadAllInclude(dataReturn);
-            return OkList(dataReturn);            
+            return OkList(data);            
         }
         // GET: api/ProductCategorys/5
         [HttpGet("{id}")]
@@ -169,6 +170,12 @@ namespace SALON_HAIR_API.Controllers
         private bool ProductCategoryExists(long id)
         {
             return _productCategory.Any<ProductCategory>(e => e.Id == id);
+        }
+        private IQueryable<ProductCategory> GetByCurrentSalon(IQueryable<ProductCategory> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
         }
     }
 }

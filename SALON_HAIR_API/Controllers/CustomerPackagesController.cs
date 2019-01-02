@@ -30,6 +30,7 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetCustomerPackage(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _customerPackage.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
             var dataReturn =   _customerPackage.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -166,6 +167,21 @@ namespace SALON_HAIR_API.Controllers
         private bool CustomerPackageExists(long id)
         {
             return _customerPackage.Any<CustomerPackage>(e => e.Id == id);
+        }
+        //private IQueryable<CustomerPackage> GetByCurrentSpaBranch(IQueryable<CustomerPackage> data)
+        //{
+        //    var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+        //    if (currentSalonBranch != default || currentSalonBranch != 0)
+        //    {
+        //        data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+        //    }
+        //    return data;
+        //}
+        private IQueryable<CustomerPackage> GetByCurrentSalon(IQueryable<CustomerPackage> data)
+        {
+            data = data.Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID)));
+            return data;
         }
     }
 }

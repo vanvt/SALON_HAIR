@@ -30,8 +30,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetAuthority(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _authority.SearchAllFileds(keyword).Where
-                (e=>e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));            
+            var data = _authority.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);                
             var dataReturn = _authority.LoadAllCollecttion(data);
             return OkList(dataReturn);
         }
@@ -153,17 +153,17 @@ namespace SALON_HAIR_API.Controllers
         {
             return _authority.Any<Authority>(e => e.Id == id);
         }
-        private IQueryable<Booking> GetByCurrentSpaBranch(IQueryable<Booking> data)
-        {
-            var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+        //private IQueryable<Authority> GetByCurrentSpaBranch(IQueryable<Authority> data)
+        //{
+        //    var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
 
-            if (currentSalonBranch != default || currentSalonBranch != 0)
-            {
-                data = data.Where(e => e.SalonBranchId == currentSalonBranch);
-            }
-            return data;
-        }
-        private IQueryable<Booking> GetByCurrentSalon(IQueryable<Booking> data)
+        //    if (currentSalonBranch != default || currentSalonBranch != 0)
+        //    {
+        //        data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+        //    }
+        //    return data;
+        //}
+        private IQueryable<Authority> GetByCurrentSalon(IQueryable<Authority> data)
         {
             var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
             data = data.Where(e => e.SalonId == salonId);

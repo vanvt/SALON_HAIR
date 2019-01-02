@@ -31,8 +31,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetSettingAdvance(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",string group="")
         {
-            var data = _settingAdvance.SearchAllFileds(keyword)
-                .Where(e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId")));
+            var data = _settingAdvance.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);               
             if (!string.IsNullOrEmpty(group))
             {
                 data = data.Where(e => e.Group.Equals(group));
@@ -66,8 +66,13 @@ namespace SALON_HAIR_API.Controllers
                   throw new UnexpectedException(settingAdvance,e);
             }
         }
+        private IQueryable<SettingAdvance> GetByCurrentSalon(IQueryable<SettingAdvance> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
+        }
 
-      
     }
 }
 

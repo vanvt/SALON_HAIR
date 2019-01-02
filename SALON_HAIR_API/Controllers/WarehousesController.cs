@@ -35,7 +35,7 @@ namespace SALON_HAIR_API.Controllers
 
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
-            data = data.Where(e => !e.Product.Status.Equals("DELETED"));
+            data = data.Where(e => !e.Product.Status.Equals(OBJECTSTATUS.DELETED));
             if (!string.IsNullOrEmpty(keyword))
             {
                 var listProductSearch = _product.SearchAllFileds(keyword)

@@ -36,6 +36,7 @@ namespace SALON_HAIR_API.Controllers
             firstQuery = GetByCurrentSalon(firstQuery);
             firstQuery = GetByCurrentSpaBranch(firstQuery);
             var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
+
             if (serviceCategoryId != 0)
             {
                 data = data.Where(e => e.ServiceCategoryId == serviceCategoryId)

@@ -29,8 +29,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetProductStatus(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _productStatus.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+            var data = _productStatus.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);              
             var dataReturn =   _productStatus.LoadAllInclude(data);
             return  OkList(dataReturn);
         }
@@ -118,7 +118,7 @@ namespace SALON_HAIR_API.Controllers
 
         //        throw new UnexpectedException(productStatus,e);
         //    }
-          
+
         //}
 
         //// DELETE: api/ProductStatuss/5
@@ -149,13 +149,19 @@ namespace SALON_HAIR_API.Controllers
 
         //        throw new UnexpectedException(id,e);
         //    }
-          
+
         //}
 
         //private bool ProductStatusExists(long id)
         //{
         //    return _productStatus.Any<ProductStatus>(e => e.Id == id);
         //}
+        private IQueryable<ProductStatus> GetByCurrentSalon(IQueryable<ProductStatus> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
+        }
     }
 }
 

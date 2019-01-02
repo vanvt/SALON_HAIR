@@ -29,8 +29,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetPaymentBanking(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _paymentBanking.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+            var data = _paymentBanking.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
             var dataReturn =   _paymentBanking.LoadAllInclude(data);
             dataReturn = dataReturn.Include(e => e.PaymentBankingMethod).ThenInclude(e => e.PaymentMethod);
             return OkList(dataReturn);
@@ -153,6 +153,12 @@ namespace SALON_HAIR_API.Controllers
         private bool PaymentBankingExists(long id)
         {
             return _paymentBanking.Any<PaymentBanking>(e => e.Id == id);
+        }
+        private IQueryable<PaymentBanking> GetByCurrentSalon(IQueryable<PaymentBanking> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
         }
     }
 }

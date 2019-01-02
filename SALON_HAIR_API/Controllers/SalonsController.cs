@@ -31,8 +31,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetSalon(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _salon.SearchAllFileds(keyword).Where
-                (e => e.Id == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); ;
+            var data = _salon.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
             var dataReturn =   _salon.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -180,6 +180,12 @@ namespace SALON_HAIR_API.Controllers
         private bool SalonExists(long id)
         {
             return _salon.Any<Salon>(e => e.Id == id);
+        }
+        private IQueryable<Salon> GetByCurrentSalon(IQueryable<Salon> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.Id == salonId);
+            return data;
         }
     }
 }

@@ -29,8 +29,8 @@ namespace SALON_HAIR_API.Controllers
         [HttpGet]
         public IActionResult GetCustomerChannel(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
-            var data = _customerChannel.SearchAllFileds(keyword).Where
-                (e => e.SalonId == JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"))); 
+            var data = _customerChannel.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);           
             var dataReturn =   _customerChannel.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -152,6 +152,22 @@ namespace SALON_HAIR_API.Controllers
         private bool CustomerChannelExists(long id)
         {
             return _customerChannel.Any<CustomerChannel>(e => e.Id == id);
+        }
+        //private IQueryable<Authority> GetByCurrentSpaBranch(IQueryable<Authority> data)
+        //{
+        //    var currentSalonBranch = _user.Find(JwtHelper.GetIdFromToken(User.Claims)).SalonBranchCurrentId;
+
+        //    if (currentSalonBranch != default || currentSalonBranch != 0)
+        //    {
+        //        data = data.Where(e => e.SalonBranchId == currentSalonBranch);
+        //    }
+        //    return data;
+        //}
+        private IQueryable<CustomerChannel> GetByCurrentSalon(IQueryable<CustomerChannel> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
         }
     }
 }

@@ -30,6 +30,8 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetCustomerDebtTransaction(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _customerDebtTransaction.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
+            data = GetByCurrentSpaBranch(data);
             var dataReturn =   _customerDebtTransaction.LoadAllInclude(data);
             return OkList(dataReturn);
         }
