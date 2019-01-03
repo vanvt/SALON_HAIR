@@ -35,7 +35,7 @@ namespace SALON_HAIR_API.Controllers
 
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
-            data = data.Where(e => !e.Product.Status.Equals(OBJECTSTATUS.DELETED));
+            data = data.Where(e => e.Product.Status.Equals(OBJECTSTATUS.ENABLE));          
             if (!string.IsNullOrEmpty(keyword))
             {
                 var listProductSearch = _product.SearchAllFileds(keyword)
@@ -194,6 +194,8 @@ namespace SALON_HAIR_API.Controllers
             var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
             data = data.Where(e => e.SalonId == salonId);
             return data;
+            
+
         }
     }
 }

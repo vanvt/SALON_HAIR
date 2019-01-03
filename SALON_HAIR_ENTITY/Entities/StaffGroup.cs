@@ -18,7 +18,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public string Code { get; set; }
+        public long? SalonId { get; set; }
 
+        public Salon Salon { get; set; }
         public ICollection<Staff> Staff { get; set; }
     }
 }

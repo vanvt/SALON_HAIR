@@ -14,11 +14,11 @@ namespace SALON_HAIR_CORE.Service
     public class InvoiceService: GenericRepository<Invoice> ,IInvoice
     {
         private salon_hairContext _salon_hairContext;
-        private ISysObjectAutoIncreament _sysObjectAutoIncreamentService;
+        private ISysObjectAutoIncreament _SysObjectAutoIncreament;
         public InvoiceService(ISysObjectAutoIncreament sysObjectAutoIncreamentService,salon_hairContext salon_hairContext) : base(salon_hairContext)
         {
             _salon_hairContext = salon_hairContext;
-            _sysObjectAutoIncreamentService = sysObjectAutoIncreamentService;
+            _SysObjectAutoIncreament = sysObjectAutoIncreamentService;
         }        
         public new void Edit(Invoice invoice)
         {
@@ -33,28 +33,11 @@ namespace SALON_HAIR_CORE.Service
         }
         public new async Task<int> AddAsync(Invoice invoice)
         {
-            var indexObject = _salon_hairContext.SysObjectAutoIncreament.Where(e => e.SpaId == invoice.SalonId && e.ObjectName.Equals("Invoice")).FirstOrDefault();
-         
-            if(indexObject == null)
-            {
-                indexObject = new SysObjectAutoIncreament
-                {
-                    SpaId = invoice.SalonId,
-                    ObjectIndex = 1,
-                    ObjectName = "Invoice"
-                };
-                await _salon_hairContext.SysObjectAutoIncreament.AddAsync(
-                 indexObject
-                    );
-            }
-            else
-            {
-                indexObject.ObjectIndex++;
-                _salon_hairContext.SysObjectAutoIncreament.Update(indexObject);
-            }
+            
+            var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(Invoice), invoice.SalonId);
             invoice.Created = DateTime.Now;
-            invoice.Code = "ES" + indexObject.ObjectIndex.ToString("000000");
-            //invoice = LoadAllReference(invoice);
+            invoice.Code = GENERATECODE.INVOICE + sysObjectAutoIncreamentService.ObjectIndex.ToString(GENERATECODE.FORMATSTRING);
+            await _SysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);        
             await  _salon_hairContext.Invoice.AddAsync(invoice);
             return await _salon_hairContext.SaveChangesAsync();
         }
@@ -89,7 +72,7 @@ namespace SALON_HAIR_CORE.Service
             //var cashBookIncome = CreateCashBookIncomeTransaction(dataUpdate, listInvoiceDetail);
             #region cashbook transaction           
             var listcashBookIncome = new List<CashBookTransaction>();
-            var sysObjectAutoIncreamentService = _sysObjectAutoIncreamentService.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), dataUpdate.SalonId);
+            var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), dataUpdate.SalonId);
             //var paymentMethod = _salon_hairContext.InvoicePayment.Where(e => e.InvoiceId == dataUpdate.Id).Include(e=>e.InvoiceMethod).AsNoTracking().ToList();
             var cashbookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory.Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.SALE)).Select(e => e.Id).FirstOrDefault();
             var listMethodId = dataUpdate.InvoicePayment.Select(e => e.InvoiceMethodId);
@@ -126,7 +109,7 @@ namespace SALON_HAIR_CORE.Service
             dataUpdate.CashBookTransaction = listcashBookIncome;
             _salon_hairContext.Invoice.Update(dataUpdate);
 
-            await _sysObjectAutoIncreamentService.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
+            await _SysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
            // _salon_hairContext.CashBookTransaction.AddRange(listcashBookIncome);
            // _salon_hairContext.CashBookTransaction.Add(cashBookOutcome);
             await _salon_hairContext.SaveChangesAsync();

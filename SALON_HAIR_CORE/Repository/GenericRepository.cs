@@ -730,6 +730,9 @@ namespace SALON_HAIR_CORE.Repository
            RawSqlString rawSqlString = new RawSqlString(sql);
           return await _easyspaContext.Database.ExecuteSqlCommandAsync(rawSqlString);
         }
-        
+        public IQueryable<T> GetExtenQuery<Tsoure>(Expression<Func<T, bool>> predicate, IQueryable<T> rs)
+        {
+            return rs.Where(predicate);
+        }
     }
 }

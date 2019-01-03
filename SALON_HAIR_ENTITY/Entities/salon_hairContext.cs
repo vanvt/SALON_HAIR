@@ -4264,6 +4264,9 @@ namespace SALON_HAIR_ENTITY.Entities
             {
                 entity.ToTable("staff_group");
 
+                entity.HasIndex(e => e.SalonId)
+                    .HasName("staff_group_salon_idx");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("bigint(20)");
@@ -4285,6 +4288,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("name")
                     .HasColumnType("varchar(255)");
 
+                entity.Property(e => e.SalonId)
+                    .HasColumnName("salon_id")
+                    .HasColumnType("bigint(20)");
+
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasColumnName("status")
@@ -4298,6 +4305,11 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.Property(e => e.UpdatedBy)
                     .HasColumnName("updated_by")
                     .HasColumnType("varchar(255)");
+
+                entity.HasOne(d => d.Salon)
+                    .WithMany(p => p.StaffGroup)
+                    .HasForeignKey(d => d.SalonId)
+                    .HasConstraintName("staff_group_salon");
             });
 
             modelBuilder.Entity<StaffPackageCommissionTransaction>(entity =>
@@ -4953,8 +4965,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnType("bigint(20)");
 
                 entity.Property(e => e.Status)
+                    .IsRequired()
                     .HasColumnName("status")
-                    .HasColumnType("varchar(255)");
+                    .HasColumnType("varchar(255)")
+                    .HasDefaultValueSql("'ENABLE'");
 
                 entity.Property(e => e.TotalVolume)
                     .HasColumnName("total_volume")

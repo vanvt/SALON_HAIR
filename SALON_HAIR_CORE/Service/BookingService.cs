@@ -129,13 +129,14 @@ namespace SALON_HAIR_CORE.Service
                 }
                 else if (booking.Customer.Id== default)
                 {
-                    var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), booking.SalonId);
+                    var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(Customer), booking.SalonId);
+                   
                     //Add new customer while create booking.
                     booking.Customer.CreatedBy = booking.CreatedBy;
                     booking.Customer.Created = DateTime.Now;
                     booking.Customer.SoucreCustomerId = booking.SourceChannelId;
                     booking.Customer.ChannelCustomerId = booking.CustomerChannelId;
-                    sysObjectAutoIncreamentService.ObjectIndex++;
+                    booking.Customer.Code = GENERATECODE.CUSTOMER + sysObjectAutoIncreamentService.ObjectIndex.ToString(GENERATECODE.FORMATSTRING);
                     await _SysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
                 }
             }

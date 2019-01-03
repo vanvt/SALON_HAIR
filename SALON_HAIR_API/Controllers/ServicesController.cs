@@ -35,8 +35,8 @@ namespace SALON_HAIR_API.Controllers
             var firstQuery = _service.SearchAllFileds(keyword, orderBy, orderType);
             firstQuery = GetByCurrentSalon(firstQuery);
             firstQuery = GetByCurrentSpaBranch(firstQuery);
+            firstQuery = firstQuery.Where(e => e.ServiceCategory.Status.Equals(OBJECTSTATUS.ENABLE));
             var data = firstQuery.Include(e => e.ServiceProduct).ThenInclude(x => x.Product).ThenInclude(t => t.Unit);
-
             if (serviceCategoryId != 0)
             {
                 data = data.Where(e => e.ServiceCategoryId == serviceCategoryId)
@@ -44,7 +44,7 @@ namespace SALON_HAIR_API.Controllers
                     .ThenInclude(x => x.Product)
                     .ThenInclude(t => t.Unit);
             }
-            return OkList(_service.Paging(data, page, rowPerPage));
+            return OkList(data);
         }
         // GET: api/Services/5
         [HttpGet("{id}")]

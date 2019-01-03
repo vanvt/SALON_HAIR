@@ -62,6 +62,47 @@ namespace SALON_HAIR_CORE.Service
             salon.SettingAdvance = listSettingAdvance.ToList();
             return salon;
         }
+        private Salon InitStaffGroup(Salon salon)
+        {
+            var staffGroups = _salon_hairContext.StaffGroup
+                 .Where(e => e.SalonId == 1)
+                 .Select(e => new StaffGroup {
+                     Name = e.Name,
+                     Code = e.Code,
+                     Created = DateTime.Now,                     
+                     CreatedBy = salon.Email
+                 });
+            salon.StaffGroup = staffGroups.ToList();
+            return salon;
+        }
+        private Salon InitTransactionCategory(Salon salon)
+        {
+            var staffGroups = _salon_hairContext.CashBookTransactionCategory
+                 .Where(e => e.SalonId == 1)
+                 .Select(e => new CashBookTransactionCategory
+                 {
+                     Type = e.Type,
+                     Name = e.Name,
+                     Code = e.Code,
+                     Created = DateTime.Now,
+                     CreatedBy = salon.Email
+                 });
+            salon.CashBookTransactionCategory = staffGroups.ToList();
+            return salon;
+        }
+        private Salon InitPaymentMethod(Salon salon)
+        {
+            var staffGroups = _salon_hairContext.PaymentMethod
+                 .Where(e => e.SalonId == 1)
+                 .Select(e => new PaymentMethod
+                 {
+                     Created = DateTime.Now,
+                     CreatedBy = salon.Email,
+                     Code = e.Code
+                 });
+            salon.PaymentMethod = staffGroups.ToList();
+            return salon;
+        }
         private List<Authority> InitListAuthority(Salon salon)
         {
           var list =    new List<Authority> {
@@ -71,7 +112,7 @@ namespace SALON_HAIR_CORE.Service
             };        
             return list;
         }      
-        private SalonBranch InitBranch(Salon salon)
+        private Salon InitBranch(Salon salon)
         {
            
             var salonBranch = 
@@ -83,16 +124,15 @@ namespace SALON_HAIR_CORE.Service
                 CreatedBy = salon.Email
                 }
             ;
-          
-            return salonBranch;
+            salon.SalonBranch = new List<SalonBranch> { salonBranch };
+            return salon;
         }
         private User InitUser(Salon salon)
         {
-            var salonBranch = InitBranch(salon);
+             salon = InitBranch(salon);
             var user =
                 new User
                 {
-
                     Email = salon.Email,
                     Name = salon.Name,
                     CreatedBy = salon.Email,
@@ -105,13 +145,14 @@ namespace SALON_HAIR_CORE.Service
                         Authority = e,
 
                     }).ToList(),
-                    SalonBranchCurrent = salonBranch,
+                    SalonBranchCurrent = salon.SalonBranch.FirstOrDefault(),
                     PasswordHash = _securityHelper.BCryptPasswordEncoder(SYSTEMDEFAULT.PASSWORD),
                     UserSalonBranch = new List<UserSalonBranch>
                     {
                         new UserSalonBranch
                         {
-                            SpaBranch = salonBranch, Created = DateTime.Now,
+                            SpaBranch = salon.SalonBranch.FirstOrDefault(),
+                            Created = DateTime.Now,
                             CreatedBy = salon.Email,                            
                         }
                     },                       
@@ -120,9 +161,11 @@ namespace SALON_HAIR_CORE.Service
             return user;
         }
         public async Task AddAsRegisterAsync(Salon salon)
-        {
-            
+        {            
             salon = InitSetting(salon);
+            salon = InitStaffGroup(salon);
+            salon = InitTransactionCategory(salon);
+            salon = InitPaymentMethod(salon);
             salon.User = new List<User> { InitUser(salon) };
             salon.Created = DateTime.Now;
             salon.CreatedBy = salon.Email;
