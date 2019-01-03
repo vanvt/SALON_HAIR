@@ -14,11 +14,12 @@ namespace SALON_HAIR_CORE.Service
     public class BookingService: GenericRepository<Booking> ,IBooking
     {
         private salon_hairContext _salon_hairContext;
-        private ISysObjectAutoIncreament _sysObjectAutoIncreamentService; 
+     
+        private ISysObjectAutoIncreament _SysObjectAutoIncreament; 
         public BookingService(ISysObjectAutoIncreament sysObjectAutoIncreamentService,salon_hairContext salon_hairContext) : base(salon_hairContext)
         {
             _salon_hairContext = salon_hairContext;
-            _sysObjectAutoIncreamentService = sysObjectAutoIncreamentService;
+            _SysObjectAutoIncreament = sysObjectAutoIncreamentService;
         }        
         public new void Edit(Booking booking)
         {
@@ -118,6 +119,7 @@ namespace SALON_HAIR_CORE.Service
         }
         public async Task AddRemoveNoNeedAsync(Booking booking)
         {
+            
             booking.SelectedPackage = null;
             if (booking.Customer != null)
             {
@@ -127,11 +129,14 @@ namespace SALON_HAIR_CORE.Service
                 }
                 else if (booking.Customer.Id== default)
                 {
+                    var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), booking.SalonId);
                     //Add new customer while create booking.
                     booking.Customer.CreatedBy = booking.CreatedBy;
                     booking.Customer.Created = DateTime.Now;
                     booking.Customer.SoucreCustomerId = booking.SourceChannelId;
-                    booking.Customer.ChannelCustomerId = booking.SourceChannelId;
+                    booking.Customer.ChannelCustomerId = booking.CustomerChannelId;
+                    sysObjectAutoIncreamentService.ObjectIndex++;
+                    await _SysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext, sysObjectAutoIncreamentService);
                 }
             }
             booking.BookingDetail.ToList().ForEach(e => {
@@ -140,8 +145,10 @@ namespace SALON_HAIR_CORE.Service
                 });
             });          
             booking.Created = DateTime.Now;
+            _salon_hairContext.Booking.Add(booking);
+           await _salon_hairContext.SaveChangesAsync();
             
-             await base.AddAsync(booking);
+             //await base.AddAsync(booking);
         }
         public async Task EditAsyncCheckinAsync(Booking booking)
         {
@@ -224,7 +231,7 @@ namespace SALON_HAIR_CORE.Service
             booking.Updated = DateTime.Now;
             booking.UpdatedBy = booking.CreatedBy;
             invoice.InvoiceDetail = listServiceBooking;
-            _salon_hairContext.Invoice.Add(invoice);          
+            booking.Invoice.Add(invoice);          
             _salon_hairContext.Booking.Update(booking);
          await  _salon_hairContext.SaveChangesAsync();
 
@@ -246,7 +253,7 @@ namespace SALON_HAIR_CORE.Service
                 .Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.PREPAY))
                 .Where(e=>e.SalonId==booking.SalonId).Select(e=>e.Id).FirstOrDefault();
 
-            var sysObjectAutoIncreamentService =  _sysObjectAutoIncreamentService.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), booking.SalonId);
+            var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), booking.SalonId);
 
             if (cashBookTransactionCategoryId == default) throw new Exception ($"Can't found the code:  {CASH_BOOK_TRANSACTION_CATEGORY.PREPAY} in the system.");
 
@@ -267,7 +274,7 @@ namespace SALON_HAIR_CORE.Service
                 sysObjectAutoIncreamentService.ObjectIndex++;
             });
 
-            await _sysObjectAutoIncreamentService.CreateOrUpdateAsync(_salon_hairContext,sysObjectAutoIncreamentService);
+            await _SysObjectAutoIncreament.CreateOrUpdateAsync(_salon_hairContext,sysObjectAutoIncreamentService);
 
             booking.BookingStatus = BOOKINGSTATUS.PREPAID;
            

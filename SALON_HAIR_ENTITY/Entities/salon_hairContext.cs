@@ -699,7 +699,7 @@ namespace SALON_HAIR_ENTITY.Entities
                 entity.HasIndex(e => e.SalonId)
                     .HasName("cash_book_salon_idx");
 
-                entity.HasIndex(e => new { e.SalonBranchId, e.Day, e.Year, e.Month })
+                entity.HasIndex(e => new { e.SalonBranchId, e.SalonId, e.Day, e.Year, e.Month, e.PaymentMethodId })
                     .HasName("unique_index")
                     .IsUnique();
 
@@ -721,11 +721,13 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.EarlyFund)
                     .HasColumnName("early_fund")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.EndFund)
                     .HasColumnName("end_fund")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Month)
                     .HasColumnName("month")
@@ -751,11 +753,13 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.TotalExpenditure)
                     .HasColumnName("total_expenditure")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.TotalRevenue)
                     .HasColumnName("total_revenue")
-                    .HasColumnType("decimal(10,0)");
+                    .HasColumnType("decimal(10,0)")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")
@@ -1573,6 +1577,10 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("channel_customer_id")
                     .HasColumnType("bigint(20)");
 
+                entity.Property(e => e.Code)
+                    .HasColumnName("code")
+                    .HasColumnType("varchar(45)");
+
                 entity.Property(e => e.Created)
                     .HasColumnName("created")
                     .HasColumnType("datetime");
@@ -2031,17 +2039,11 @@ namespace SALON_HAIR_ENTITY.Entities
                     .HasColumnName("month")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.NumberOfPaid)
-                    .HasColumnName("number_of_paid")
-                    .HasColumnType("int(11)");
+                entity.Property(e => e.NumberOfPaid).HasColumnName("number_of_paid");
 
-                entity.Property(e => e.NumberOfRemaining)
-                    .HasColumnName("number_of_remaining")
-                    .HasColumnType("int(11)");
+                entity.Property(e => e.NumberOfRemaining).HasColumnName("number_of_remaining");
 
-                entity.Property(e => e.NumberOfUsed)
-                    .HasColumnName("number_of_used")
-                    .HasColumnType("int(11)");
+                entity.Property(e => e.NumberOfUsed).HasColumnName("number_of_used");
 
                 entity.Property(e => e.PackageId)
                     .HasColumnName("package_id")
@@ -4956,7 +4958,7 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.TotalVolume)
                     .HasColumnName("total_volume")
-                    .HasColumnType("decimal(10,0) unsigned");
+                    .HasColumnType("decimal(10,0)");
 
                 entity.Property(e => e.Updated)
                     .HasColumnName("updated")

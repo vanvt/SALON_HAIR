@@ -33,6 +33,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? PhotoId { get; set; }
         public long? SoucreCustomerId { get; set; }
         public long? ChannelCustomerId { get; set; }
+        public string Code { get; set; }
 
         public CustomerChannel ChannelCustomer { get; set; }
         public Photo Photo { get; set; }

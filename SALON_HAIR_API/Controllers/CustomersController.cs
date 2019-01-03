@@ -19,13 +19,15 @@ namespace SALON_HAIR_API.Controllers
     [Authorize]
     public class CustomersController : CustomControllerBase
     {
+        private readonly ISysObjectAutoIncreament _sysObjectAutoIncreament;
         private readonly ICustomer _customer;
               private readonly IPackage _package;
         private readonly IUser _user;
         private readonly IInvoice _invoice;
         private readonly IInvoiceDetail _invoiceDetail;
-        public CustomersController(IPackage package, IInvoiceDetail invoiceDetail,IInvoice invoice,ICustomer customer, IUser user)
+        public CustomersController(ISysObjectAutoIncreament sysObjectAutoIncreament, IPackage package, IInvoiceDetail invoiceDetail,IInvoice invoice,ICustomer customer, IUser user)
         {
+            _sysObjectAutoIncreament = sysObjectAutoIncreament;
             _package = package;
             _invoiceDetail = invoiceDetail;
             _invoice = invoice;
@@ -116,6 +118,9 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 customer.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
+                customer.Code =  "ES" + _sysObjectAutoIncreament.
+                    GetCodeByObjectAsync(nameof(Customer), customer.SalonId).
+                    Result.ObjectIndex.ToString("000000");
                 await _customer.AddAsync(customer);
                 return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
             }

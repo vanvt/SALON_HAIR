@@ -27,12 +27,13 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/CustomerDebtTransactions
         [HttpGet]
-        public IActionResult GetCustomerDebtTransaction(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetCustomerDebtTransaction(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",long customerId = 0)
         {
             var data = _customerDebtTransaction.SearchAllFileds(keyword);
+            data = customerId==default? data: data.Where(e => e.CustomerId == customerId);
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
-            var dataReturn =   _customerDebtTransaction.LoadAllInclude(data);
+            var dataReturn =   _customerDebtTransaction.LoadAllInclude(data,nameof(Customer),nameof(Invoice));
             return OkList(dataReturn);
         }
         // GET: api/CustomerDebtTransactions/5
@@ -109,6 +110,7 @@ namespace SALON_HAIR_API.Controllers
                     return BadRequest(ModelState);
                 }
                 customerDebtTransaction.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals("emailAddress"));
+                customerDebtTransaction.Created = DateTime.Now;
                 customerDebtTransaction.Action = DEPT_BEHAVIOR.PAY;
                 await _customerDebtTransaction.AddAsyncAsGenCashBookAsync(customerDebtTransaction);
                 return CreatedAtAction("GetCustomerDebtTransaction", new { id = customerDebtTransaction.Id }, customerDebtTransaction);

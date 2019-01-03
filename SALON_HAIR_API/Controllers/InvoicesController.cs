@@ -101,7 +101,7 @@ namespace SALON_HAIR_API.Controllers
                 //invoiceUpdate.DiscountUnit = invoice.DiscountUnit;
                 //invoiceUpdate.IsDisplay = invoice.IsDisplay;
                 //invoiceUpdate.DiscountValue = invoice.DiscountValue;
-                //invoiceUpdate.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoiceUpdate.TotalDetails - invoice.DiscountValue : invoiceUpdate.TotalDetails * (1 - invoice.DiscountValue / 100);
+                invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoice.TotalDetails - invoice.DiscountValue : invoice.TotalDetails * (1 - invoice.DiscountValue / 100);
                 //invoice.TotalDetails = invoiceUpdate.TotalDetails;
                 //invoice.Total = invoice.DiscountUnit.Equals(DISCOUNTUNIT.MONEY) ? invoice.TotalDetails - invoice.DiscountValue : invoice.TotalDetails * (1 - invoice.DiscountValue / 100);
                 await _invoice.EditAsync(invoice);

@@ -13,10 +13,10 @@ namespace SALON_HAIR_ENTITY.Entities
         public long SalonId { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
-        public decimal? EarlyFund { get; set; }
-        public decimal? EndFund { get; set; }
-        public decimal? TotalExpenditure { get; set; }
-        public decimal? TotalRevenue { get; set; }
+        public decimal EarlyFund { get; set; }
+        public decimal EndFund { get; set; }
+        public decimal TotalExpenditure { get; set; }
+        public decimal TotalRevenue { get; set; }
         public int? Day { get; set; }
         public int? Year { get; set; }
         public int? Month { get; set; }

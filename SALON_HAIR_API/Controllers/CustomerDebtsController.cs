@@ -27,11 +27,12 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/CustomerDebts
         [HttpGet]
-        public IActionResult GetCustomerDebt(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetCustomerDebt(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",long customerId = 0)
         {
             var data = _customerDebt.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);
             data = GetByCurrentSpaBranch(data);
+           
             data = data.OrderBy(e => e.Updated);
             var dataReturn =   _customerDebt.LoadAllInclude(data);
             return OkList(dataReturn);
@@ -58,6 +59,29 @@ namespace SALON_HAIR_API.Controllers
             {
 
                   throw new UnexpectedException(id, e);
+            }
+        }
+        [HttpGet("{customerId}")]
+        public async Task<IActionResult> GetCustomerDebtByCustomerId([FromRoute] long customerId)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var customerDebt = await _customerDebt.FindBy(e=>e.CustomerId== customerId).FirstOrDefaultAsync();
+
+                if (customerDebt == null)
+                {
+                    return NotFound();
+                }
+                return Ok(customerDebt);
+            }
+            catch (Exception e)
+            {
+
+                throw new UnexpectedException(customerId, e);
             }
         }
 

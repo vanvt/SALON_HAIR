@@ -44,7 +44,7 @@ namespace SALON_HAIR_API.Controllers
             data = string.IsNullOrEmpty(bookingStatus)? data: data.Where(e => e.BookingStatus.Equals(bookingStatus));           
             data = OrderBy(data, orderType);
 
-            var dataReturn = _booking.LoadAllInclude(data);
+            var dataReturn = _booking.LoadAllInclude(data,nameof(CustomerChannel), nameof(CustomerSource));
             dataReturn = dataReturn.Include(e => e.Invoice);
             return OkList(dataReturn);
         }
@@ -181,6 +181,7 @@ namespace SALON_HAIR_API.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+
                 booking.CreatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 //booking.SalonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals("salonId"));               
                 booking.Date = DateTime.Parse(booking.DateString);
@@ -189,6 +190,7 @@ namespace SALON_HAIR_API.Controllers
                     Result.ObjectIndex.ToString("000000");
 
                 await _booking.AddRemoveNoNeedAsync(booking);
+                booking.Customer = _customer.Find(booking.CustomerId);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }
             catch (Exception e)
@@ -239,8 +241,19 @@ namespace SALON_HAIR_API.Controllers
             try
             {
                 //booking.Date = DateTime.Parse(booking.DateString);
+                var customer = booking.Customer;
+                var customerChannel = booking.CustomerChannel;
+                var sourceChannel = booking.SourceChannel;
+
+                booking.Customer = null;
+                booking.CustomerChannel = null;
+                booking.SourceChannel = null;
                 booking.UpdatedBy = JwtHelper.GetCurrentInformation(User, e => e.Type.Equals(CLAIMUSER.EMAILADDRESS));
                 await _booking.EditAsyncCheckinAsync(booking);
+
+                booking.Customer = customer;
+                booking.CustomerChannel = customerChannel;
+                booking.SourceChannel = sourceChannel;
                 //booking.Customer = _customer.Find(booking.CustomerId);
                 return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
             }

@@ -79,6 +79,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public const string BOOKING = "ES";
         public const string CASHBOOKTRANSACTION = "ES";
         public const string INVOICE = "ES";
+        public const string CUSTOMER = "KH";
         public const string FORMATSTRING = "000000";
     };
     public static class PAYMENT_METHOD {

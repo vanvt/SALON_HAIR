@@ -18,9 +18,9 @@ namespace SALON_HAIR_ENTITY.Entities
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public long? PackageId { get; set; }
-        public int? NumberOfPaid { get; set; }
-        public int? NumberOfUsed { get; set; }
-        public int? NumberOfRemaining { get; set; }
+        public uint? NumberOfPaid { get; set; }
+        public uint? NumberOfUsed { get; set; }
+        public uint? NumberOfRemaining { get; set; }
         public long? CustomerId { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
