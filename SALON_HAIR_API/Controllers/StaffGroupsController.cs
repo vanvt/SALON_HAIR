@@ -30,6 +30,7 @@ namespace SALON_HAIR_API.Controllers
         public IActionResult GetStaffGroup(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
         {
             var data = _staffGroup.SearchAllFileds(keyword);
+            data = GetByCurrentSalon(data);
             var dataReturn =   _staffGroup.LoadAllInclude(data);
             return OkList(dataReturn);
         }
@@ -151,6 +152,12 @@ namespace SALON_HAIR_API.Controllers
         private bool StaffGroupExists(long id)
         {
             return _staffGroup.Any<StaffGroup>(e => e.Id == id);
+        }
+        private IQueryable<StaffGroup> GetByCurrentSalon(IQueryable<StaffGroup> data)
+        {
+            var salonId = JwtHelper.GetCurrentInformationLong(User, x => x.Type.Equals(CLAIMUSER.SALONID));
+            data = data.Where(e => e.SalonId == salonId);
+            return data;
         }
     }
 }

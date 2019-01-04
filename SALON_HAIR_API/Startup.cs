@@ -218,7 +218,7 @@ namespace WebApplication4
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EASYSPA ADMIN API V1");
-                c.SwaggerEndpoint("/auth/swagger/v1/swagger.json", "EASYSPA ADMIN AUTHENTICATE API V1");
+                c.SwaggerEndpoint("https://auth.easyspa.vn/swagger/v1/swagger.json", "EASYSPA ADMIN AUTHENTICATE API V1");
                 c.RoutePrefix = string.Empty;
             });
             app.UseMvc();

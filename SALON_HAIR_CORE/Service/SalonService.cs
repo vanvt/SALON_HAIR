@@ -96,6 +96,7 @@ namespace SALON_HAIR_CORE.Service
                  .Where(e => e.SalonId == 1)
                  .Select(e => new PaymentMethod
                  {
+                     Name = e.Name,
                      Created = DateTime.Now,
                      CreatedBy = salon.Email,
                      Code = e.Code
@@ -117,14 +118,27 @@ namespace SALON_HAIR_CORE.Service
            
             var salonBranch = 
                 new SalonBranch{
-                Email = salon.Email,
-                Address = salon.Address,
-                Name = salon.Name,
-                Created = DateTime.Now,
-                CreatedBy = salon.Email
+                    Email = salon.Email,
+                    Address = salon.Address,
+                    Name = salon.Name,
+                    Created = DateTime.Now,
+                    CreatedBy = salon.Email,
+                    Mobile = salon.Mobile
                 }
             ;
             salon.SalonBranch = new List<SalonBranch> { salonBranch };
+            return salon;
+        }
+        private Salon InitProductStatus(Salon salon)
+        {
+
+            var listSettingAdvance = _salon_hairContext.ProductStatus
+               .Where(e => e.SalonId == 1)
+               .Select(e => new ProductStatus {
+                    Name = e.Name,
+                    Code =e.Code,
+               });
+            salon.ProductStatus = listSettingAdvance.ToList();
             return salon;
         }
         private User InitUser(Salon salon)
@@ -166,6 +180,7 @@ namespace SALON_HAIR_CORE.Service
             salon = InitStaffGroup(salon);
             salon = InitTransactionCategory(salon);
             salon = InitPaymentMethod(salon);
+            salon = InitProductStatus(salon);
             salon.User = new List<User> { InitUser(salon) };
             salon.Created = DateTime.Now;
             salon.CreatedBy = salon.Email;

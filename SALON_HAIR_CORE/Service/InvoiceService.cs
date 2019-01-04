@@ -88,7 +88,7 @@ namespace SALON_HAIR_CORE.Service
 
             #region customer dept transaction
             paymentMethod.Where(e => e.Code.Equals(PAYMENT_METHOD.DEBIT)).ToList().ForEach(e => {
-                var xxx = dataUpdate.InvoicePayment.Where(x => x.InvoiceMethodId == e.Id).FirstOrDefault().Total;
+                var xxx = dataUpdate.InvoicePayment.Where(x => x.InvoiceMethodId == e.Id).Where(c=>c.SalonId==dataUpdate.SalonId).FirstOrDefault().Total;
                 var customerDeptransaction = new CustomerDebtTransaction {
                   CustomerId = dataUpdate.CustomerId,
                   CreatedBy = dataUpdate.CreatedBy,
