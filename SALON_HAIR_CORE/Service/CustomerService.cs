@@ -48,4 +48,3 @@ namespace SALON_HAIR_CORE.Service
         }
     }
 }
-    
