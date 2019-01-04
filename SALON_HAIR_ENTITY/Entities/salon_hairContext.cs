@@ -2041,7 +2041,9 @@ namespace SALON_HAIR_ENTITY.Entities
 
                 entity.Property(e => e.NumberOfPaid).HasColumnName("number_of_paid");
 
-                entity.Property(e => e.NumberOfRemaining).HasColumnName("number_of_remaining");
+                entity.Property(e => e.NumberOfRemaining)
+                    .HasColumnName("number_of_remaining")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.NumberOfUsed).HasColumnName("number_of_used");
 

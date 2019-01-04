@@ -9,7 +9,7 @@ namespace XUnitTestProject1
         [Fact]
         public void invoiceDetail()
         {
-            var client = new RestClient(ConfigTest.url+"invoiceDetails");
+            var client = new RestClient(ConfigTest.url+"invoiceDetails?invoiceId=1412");
             var request = new RestRequest(Method.GET);
         request.AddHeader("cache-control", "no-cache");
             request.AddHeader("content-type", "application/json");

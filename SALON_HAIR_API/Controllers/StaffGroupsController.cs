@@ -27,7 +27,7 @@ namespace SALON_HAIR_API.Controllers
 
         // GET: api/StaffGroups
         [HttpGet]
-        public IActionResult GetStaffGroup(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "")
+        public IActionResult GetStaffGroup(int page = 1, int rowPerPage = 50, string keyword = "", string orderBy = "", string orderType = "",string include="")
         {
             var data = _staffGroup.SearchAllFileds(keyword);
             data = GetByCurrentSalon(data);

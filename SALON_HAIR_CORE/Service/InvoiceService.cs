@@ -74,7 +74,7 @@ namespace SALON_HAIR_CORE.Service
             var listcashBookIncome = new List<CashBookTransaction>();
             var sysObjectAutoIncreamentService = _SysObjectAutoIncreament.GetCodeByObjectAsyncWithoutSave(_salon_hairContext, nameof(CashBookTransaction), dataUpdate.SalonId);
             //var paymentMethod = _salon_hairContext.InvoicePayment.Where(e => e.InvoiceId == dataUpdate.Id).Include(e=>e.InvoiceMethod).AsNoTracking().ToList();
-            var cashbookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory.Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.SALE)).Select(e => e.Id).FirstOrDefault();
+            var cashbookTransactionCategoryId = _salon_hairContext.CashBookTransactionCategory.Where(e => e.Code.Equals(CASH_BOOK_TRANSACTION_CATEGORY.SALE)).Where(c=>c.SalonId==dataUpdate.SalonId).Select(e => e.Id).FirstOrDefault();
             var listMethodId = dataUpdate.InvoicePayment.Select(e => e.InvoiceMethodId);
             var paymentMethod = _salon_hairContext.PaymentMethod
                 .Where(e => listMethodId.Contains(e.Id))          

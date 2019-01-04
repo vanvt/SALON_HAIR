@@ -20,7 +20,7 @@ namespace SALON_HAIR_ENTITY.Entities
         public long? PackageId { get; set; }
         public uint? NumberOfPaid { get; set; }
         public uint? NumberOfUsed { get; set; }
-        public uint? NumberOfRemaining { get; set; }
+        public int? NumberOfRemaining { get; set; }
         public long? CustomerId { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
